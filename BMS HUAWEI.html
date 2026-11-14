@@ -409,7 +409,7 @@
         </div>
 
         <!-- 6. POWER -->
-        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+        <div onclick="bukaModalDiagram()" title="Klik untuk melihat aliran energi PLTS" class="space-y-1 bg-white/5 hover:bg-white/15 cursor-pointer transition p-2 rounded-lg flex flex-col items-center justify-center">
           <i class="fa-solid fa-plug-circle-bolt" style="color: red;"></i>
           <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL DAYA</div>
           <div id="total-power" class="font-semibold text-white-1500"></div>
@@ -1433,6 +1433,85 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
   }, 3000);
+</script>
+<!-- Style Animasi Aliran Bulatan DC & AC -->
+<style>
+  @keyframes gerakDC {
+    0%   { left: 19.5%; top: 42%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 32.5%; top: 42%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  @keyframes gerakAC {
+    0%   { left: 46.5%; top: 42%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    55%  { left: 58.8%; top: 42%; opacity: 1; }
+    85%  { left: 58.8%; top: 75%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 63.0%; top: 75%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  .bulatan-aliran {
+    position: absolute;
+    width: clamp(22px, 3.2vw, 36px);
+    height: clamp(22px, 3.2vw, 36px);
+    border-radius: 9999px;
+    background: radial-gradient(circle at 30% 30%, #3b82f6, #1d4ed8);
+    border: 2px solid #93c5fd;
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.95), 0 0 24px rgba(147, 197, 253, 0.6);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: clamp(9px, 1.1vw, 13px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .animasi-dc {
+    animation: gerakDC 2.4s linear infinite;
+  }
+
+  .animasi-ac {
+    animation: gerakAC 3.2s linear infinite;
+  }
+</style>
+
+<!-- Modal Diagram 3D dengan Animasi -->
+<div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
+  <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
+    
+    <!-- Header Pop-up -->
+    <div class="flex justify-between items-center mb-3">
+      <div>
+        <h3 class="text-white text-base sm:text-xl font-bold">⚡ Aliran Energi Sistem PLTS</h3>
+        <p class="text-slate-400 text-xs sm:text-sm">Visualisasi aliran daya DC (Panel Surya) ke AC (Beban Rumah)</p>
+      </div>
+      <button onclick="tutupModalDiagram()" class="text-gray-400 hover:text-white text-2xl font-bold px-2">✕</button>
+    </div>
+
+    <!-- Kontainer Gambar & Bulatan Bergerak -->
+    <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
+      <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
+      
+      <!-- Bulatan DC Bergerak dari Panel ke Inverter -->
+      <div class="bulatan-aliran animasi-dc">DC</div>
+      
+      <!-- Bulatan AC Bergerak dari Inverter ke Rumah -->
+      <div class="bulatan-aliran animasi-ac">AC</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function bukaModalDiagram() {
+    document.getElementById('modalDiagramPlts').classList.remove('hidden');
+  }
+  function tutupModalDiagram() {
+    document.getElementById('modalDiagramPlts').classList.add('hidden');
+  }
 </script>
 
 </body></html>
