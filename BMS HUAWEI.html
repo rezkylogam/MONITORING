@@ -1510,12 +1510,24 @@ document.addEventListener("DOMContentLoaded", function() {
     pointer-events: none;
     z-index: 8;
   }
+  /* Ikon SVG Matahari Bergerigi + 3 Panah Sinar (Seperti Gambar No 2) */
+  .ikon-matahari-plts {
+    position: absolute;
+    left: 22.8%;
+    top: 21.5%;
+    width: clamp(68px, 10.5vw, 132px);
+    height: clamp(68px, 10.5vw, 132px);
+    transform: translate(-50%, -50%);
+    animation: sinarMatahari 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 8;
+  }
 
-      /* Kotak Penampil Total Daya di Bawah TV (Tepat di Titik Tengah Meja TV) */
+  /* Kotak Penampil Total Daya di Bawah TV (Digeser Lebih ke Kanan & Bawah) */
   .display-daya-tv {
     position: absolute;
-    left: 90.3%;
-    top: 78.2%;
+    left: 91.2%;
+    top: 79.6%;
     transform: translate(-50%, -50%);
     background: rgba(15, 23, 42, 0.92);
     border: 1.5px solid #38bdf8;
@@ -1552,8 +1564,36 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
       <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
       
-      <!-- Matahari (Muncul hanya saat Charging) -->
-      <div id="elemenMatahari" class="ikon-matahari-plts hidden"></div>
+      <!-- Matahari Bergerigi + 3 Panah Sinar (Muncul hanya saat Charging) -->
+      <div id="elemenMatahari" class="ikon-matahari-plts hidden">
+        <svg viewBox="0 0 140 140" class="w-full h-full overflow-visible">
+          <defs>
+            <radialGradient id="gradMatahari" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="55%" stop-color="#fef08a"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </radialGradient>
+          </defs>
+          <!-- Sinar Bergerigi Matahari -->
+          <polygon fill="#fde047" opacity="0.9" points="
+            85,12 91,26 105,18 103,33 119,32 110,45 125,52 111,59 121,72 106,71 108,86 95,78 90,93 82,80 71,91 70,76 56,81 62,67 48,65 60,55 49,45 64,43 59,28 73,33 76,18 85,29"/>
+          <!-- Inti Bulatan Matahari -->
+          <circle cx="86" cy="52" r="21" fill="url(#gradMatahari)" />
+          
+          <!-- 3 Panah Sinar Menuju Panel Surya (Kiri Bawah) -->
+          <g stroke="#fef08a" stroke-width="2.5" stroke-linecap="round" fill="none">
+            <!-- Panah 1 (Atas) -->
+            <line x1="56" y1="56" x2="24" y2="72" />
+            <polyline points="31,64 23,72 34,74" />
+            <!-- Panah 2 (Tengah) -->
+            <line x1="60" y1="67" x2="28" y2="83" />
+            <polyline points="35,75 27,83 38,85" />
+            <!-- Panah 3 (Bawah) -->
+            <line x1="65" y1="77" x2="33" y2="93" />
+            <polyline points="40,85 32,93 43,95" />
+          </g>
+        </svg>
+      </div>
 
       <!-- Bulatan DC Panel Surya (Muncul hanya saat Charging) -->
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
