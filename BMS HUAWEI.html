@@ -1571,6 +1571,175 @@ document.addEventListener("DOMContentLoaded", function() {
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
       elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
     } else {
+<!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV -->
+<style>
+  /* 1. Lintasan DC Panel Surya -> Inverter (Horizontal) */
+  @keyframes gerakDcSolar {
+    0%   { left: 19.5%; top: 43.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 32.5%; top: 43.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  /* 2. Lintasan AC Inverter -> Rumah (Belokan vertikal pas di 55.3%) */
+  @keyframes gerakAcBeban {
+    0%   { left: 46.8%; top: 43.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    52%  { left: 55.3%; top: 43.5%; opacity: 1; }
+    82%  { left: 55.3%; top: 75.5%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 61.5%; top: 75.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Inverter -> Baterai) */
+  @keyframes gerakDcBattTurun {
+    0%   { left: 39.8%; top: 56.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 39.8%; top: 71.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Baterai -> Inverter) */
+  @keyframes gerakDcBattNaik {
+    0%   { left: 39.8%; top: 71.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 39.8%; top: 56.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  /* Efek Sinar Matahari saat Charging */
+  @keyframes sinarMatahari {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 18px #facc15); }
+    50%      { transform: translate(-50%, -50%) scale(1.08); filter: drop-shadow(0 0 32px #fde047); }
+  }
+
+  .bulatan-aliran {
+    position: absolute;
+    width: clamp(22px, 3.0vw, 36px);
+    height: clamp(22px, 3.0vw, 36px);
+    border-radius: 9999px;
+    background: radial-gradient(circle at 30% 30%, #3b82f6, #1e3a8a);
+    border: 2px solid #93c5fd;
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.95), 0 0 24px rgba(147, 197, 253, 0.7);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: clamp(9px, 1.05vw, 13px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .anim-solar-dc   { animation: gerakDcSolar 2.4s linear infinite; }
+  .anim-ac-beban   { animation: gerakAcBeban 3.2s linear infinite; }
+  .anim-batt-turun { animation: gerakDcBattTurun 2.0s linear infinite; }
+  .anim-batt-naik  { animation: gerakDcBattNaik 2.0s linear infinite; }
+
+  .ikon-matahari-plts {
+    position: absolute;
+    left: 25.0%;
+    top: 16.5%;
+    width: clamp(38px, 6.2vw, 76px);
+    height: clamp(38px, 6.2vw, 76px);
+    border-radius: 9999px;
+    background: radial-gradient(circle, #ffffff 15%, #fef08a 45%, #f59e0b 75%, rgba(245, 158, 11, 0) 100%);
+    animation: sinarMatahari 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  /* Kotak Penampil Total Daya di Bawah TV (Area Lingkaran Biru) */
+  .display-daya-tv {
+    position: absolute;
+    left: 88.2%;
+    top: 74.2%;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 23, 42, 0.92);
+    border: 1.5px solid #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+    color: #38bdf8;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 800;
+    font-size: clamp(9px, 1.25vw, 15px);
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 12;
+  }
+</style>
+
+<!-- Modal Diagram 3D dengan Animasi Dinamis -->
+<div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
+  <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
+    
+    <!-- Header Pop-up -->
+    <div class="flex justify-between items-center mb-3">
+      <div>
+        <h3 class="text-white text-base sm:text-xl font-bold flex items-center gap-2">
+          ⚡ Aliran Energi Sistem PLTS
+          <span id="badgeStatusDiagram" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-semibold">MEMUAT...</span>
+        </h3>
+        <p id="subjudulDiagram" class="text-slate-400 text-xs sm:text-sm">Mendeteksi status arus baterai secara otomatis...</p>
+      </div>
+      <button onclick="tutupModalDiagram()" class="text-gray-400 hover:text-white text-2xl font-bold px-2">✕</button>
+    </div>
+
+    <!-- Kontainer Gambar & Bulatan Bergerak -->
+    <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
+      <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
+      
+      <!-- Matahari (Muncul hanya saat Charging) -->
+      <div id="elemenMatahari" class="ikon-matahari-plts hidden"></div>
+
+      <!-- Bulatan DC Panel Surya (Muncul hanya saat Charging) -->
+      <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
+      
+      <!-- Bulatan DC Baterai (Turun saat Charging, Naik saat Discharging) -->
+      <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
+
+      <!-- Bulatan AC Beban Rumah (Selalu berjalan) -->
+      <div class="bulatan-aliran anim-ac-beban">AC</div>
+
+      <!-- Display Digital Total Daya Watt di Bawah TV -->
+      <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function perbaruiAnimasiDiagram() {
+    const teksHalaman = document.body.innerText || "";
+    
+    // Ambil nilai Total Daya Watt yang tampil di kartu halaman utama
+    const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
+    const elDayaTv = document.getElementById('nilaiDayaBawahTv');
+    if (elDayaTv && cocokDaya && cocokDaya[1]) {
+      elDayaTv.textContent = cocokDaya[1];
+    }
+
+    // Deteksi status Charging atau Discharging
+    const statusPertama = (teksHalaman.match(/\b(Charging|Discharging)\b/i) || [""])[0];
+    const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
+    const modeCharge = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
+
+    const elMatahari = document.getElementById('elemenMatahari');
+    const elDcSolar  = document.getElementById('bulatanDcSolar');
+    const elDcBatt   = document.getElementById('bulatanDcBaterai');
+    const elBadge    = document.getElementById('badgeStatusDiagram');
+    const elSub      = document.getElementById('subjudulDiagram');
+
+    if (modeCharge) {
+      elMatahari.classList.remove('hidden');
+      elDcSolar.classList.remove('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.add('anim-batt-turun');
+
+      elBadge.textContent = "☀️ CHARGING";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
+      elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
+    } else {
       elMatahari.classList.add('hidden');
       elDcSolar.classList.add('hidden');
       elDcBatt.classList.remove('anim-batt-turun');
