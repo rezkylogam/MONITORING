@@ -1568,33 +1568,38 @@ document.addEventListener("DOMContentLoaded", function() {
       z-index: 12;
     }
 
-    /* Seragamkan Ukuran & Posisi Lurus Ketiga Kotak Baterai */
+    /* Ukuran Lebar & Tinggi Sama Persis dengan Bodi Depan 3 Baterai */
     .display-tegangan-baterai,
     .display-arus-baterai,
     .display-daya-baterai {
       position: absolute;
-      top: 79.5%; /* Sejajar lurus satu garis horizontal */
+      top: 84.2%;   /* Pas di bagian badan depan 3 baterai (di bawah tutup atas) */
+      width: 6.8%;  /* Lebar sama persis dengan lebar bodi tiap baterai */
+      height: 8.6%; /* Tinggi sama persis dengan tinggi bodi tiap baterai */
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transform: translate(-50%, -50%);
-      background: rgba(15, 23, 42, 0.94);
+      background: rgba(15, 23, 42, 0.90);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-weight: 800;
-      font-size: clamp(9px, 1.15vw, 15px); /* Ukuran pas agar tidak bertabrakan */
-      padding: 4px 8px;
-      border-radius: 6px;
+      font-size: clamp(8px, 1.05vw, 13px); /* Otomatis muat di dalam lebar bodi baterai */
+      padding: 0;
+      border-radius: 5px;
       white-space: nowrap;
       pointer-events: none;
       z-index: 12;
     }
 
-    /* Kotak Kiri (Baterai 1): Tegangan (Biru Cyan) */
+    /* Kotak Kiri (Baterai 1): Tegangan */
     .display-tegangan-baterai {
-      left: 30.2%;
+      left: 31.3%;
       border: 1.5px solid #38bdf8;
       box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
       color: #38bdf8;
     }
 
-    /* Kotak Tengah (Baterai 2): Total Arus (Kuning Emas) */
+    /* Kotak Tengah (Baterai 2): Total Arus */
     .display-arus-baterai {
       left: 39.8%;
       border: 1.5px solid #f59e0b;
@@ -1602,9 +1607,9 @@ document.addEventListener("DOMContentLoaded", function() {
       color: #fbbf24;
     }
 
-    /* Kotak Kanan (Baterai 3): Total Daya (Hijau Neon) */
+    /* Kotak Kanan (Baterai 3): Total Daya */
     .display-daya-baterai {
-      left: 49.6%;
+      left: 48.3%;
       border: 1.5px solid #22c55e;
       box-shadow: 0 0 10px rgba(34, 197, 94, 0.55);
       color: #4ade80;
