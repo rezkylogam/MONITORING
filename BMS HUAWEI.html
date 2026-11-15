@@ -1643,24 +1643,26 @@ document.addEventListener("DOMContentLoaded", function() {
   function perbaruiAnimasiDiagram() {
     const teksHalaman = document.body.innerText || "";
     
-    // Ambil nilai Total Daya Watt
-    const elPowerUtama = document.getElementById('total-power');
-    const elDayaTv = document.getElementById('nilaiDayaBawahTv');
-    if (elDayaTv && elPowerUtama && elPowerUtama.textContent.trim() !== "") {
-      elDayaTv.textContent = elPowerUtama.textContent.trim();
-    } else {
-      const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
-      if (elDayaTv && cocokDaya && cocokDaya[1]) {
-        elDayaTv.textContent = cocokDaya[1];
-      }
-    }
+          // Ambil nilai Total Daya Watt ke variabel sementara
+      const elPowerUtama = document.getElementById('total-power');
+      const elDayaTv     = document.getElementById('nilaiDayaBawahTv');
+      let nilaiDayaAsli  = "0 W";
 
-            // Deteksi status Charging, Standby, atau Discharging
-      const matchStatus = teksHalaman.match(/\b(Charging|Discharging|Standby)\b/i);
+      if (elPowerUtama && elPowerUtama.textContent.trim() !== "") {
+        nilaiDayaAsli = elPowerUtama.textContent.trim();
+      } else {
+        const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
+        if (cocokDaya && cocokDaya[1]) {
+          nilaiDayaAsli = cocokDaya[1];
+        }
+      }
+
+      // Deteksi status Charging, Standby, Full, atau Discharging
+      const matchStatus = teksHalaman.match(/\b(Charging|Discharging|Standby|Full)\b/i);
       const statusPertama = matchStatus ? matchStatus[1] : "";
       const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
       const modeCharge = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
-      const modeStandby = /^standby$/i.test(statusPertama) && !cekDayaNegatif;
+      const modeStandby = /^(standby|full)$/i.test(statusPertama) && !cekDayaNegatif;
 
       const elMatahari = document.getElementById('elemenMatahari');
       const elDcSolar  = document.getElementById('bulatanDcSolar');
@@ -1673,6 +1675,7 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcSolar.classList.remove('hidden');
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.add('anim-batt-turun');
+        if (elDayaTv) elDayaTv.textContent = "0 W";
 
         elBadge.textContent = "🟢 CHARGING";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
@@ -1682,6 +1685,7 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcSolar.classList.remove('hidden');
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.remove('anim-batt-turun');
+        if (elDayaTv) elDayaTv.textContent = "0 W";
 
         elBadge.textContent = "🔵 STANDBY";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
@@ -1691,6 +1695,7 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcSolar.classList.add('hidden');
         elDcBatt.classList.remove('anim-batt-turun');
         elDcBatt.classList.add('anim-batt-naik');
+        if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;
 
         elBadge.textContent = "🟠 DISCHARGING";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
