@@ -1529,7 +1529,7 @@ document.addEventListener("DOMContentLoaded", function() {
   50%      { opacity: 1; transform: translate(-3px, 2.5px); }
 }
 
-  /* Kotak Penampil Total Daya di Bawah TV */
+  /* Kotak Penampil Total Daya di Bawah TV dan Baterai */
   .display-daya-tv {
     position: absolute;
     left: 91.5%;
@@ -1548,6 +1548,25 @@ document.addEventListener("DOMContentLoaded", function() {
     pointer-events: none;
     z-index: 12;
   }
+
+      .display-daya-baterai {
+      position: absolute;
+      left: 39.8%;
+      top: 88.5%;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+      color: #4ade80;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: clamp(13px, 1.85vw, 23px);
+      padding: 6px 16px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 12;
+    }
 </style>
 
 <!-- Modal Diagram 3D dengan Animasi Dinamis -->
@@ -1634,6 +1653,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
       <div class="bulatan-aliran anim-ac-beban">AC</div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
+      <div id="nilaiDayaBaterai" class="display-daya-baterai">0 W</div>
     </div>
 
   </div>
@@ -1669,6 +1689,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const elDcBatt   = document.getElementById('bulatanDcBaterai');
       const elBadge    = document.getElementById('badgeStatusDiagram');
       const elSub      = document.getElementById('subjudulDiagram');
+      const elDayaBatt = document.getElementById('nilaiDayaBaterai');
 
       if (modeCharge) {
         elMatahari.classList.remove('hidden');
@@ -1676,6 +1697,7 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.add('anim-batt-turun');
         if (elDayaTv) elDayaTv.textContent = "0 W";
+        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli;
 
         elBadge.textContent = "🟢 CHARGING";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
@@ -1686,6 +1708,7 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.remove('anim-batt-turun');
         if (elDayaTv) elDayaTv.textContent = "0 W";
+        if (elDayaBatt) elDayaBatt.textContent = "0 W";
 
         elBadge.textContent = "🔵 STANDBY";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
@@ -1696,6 +1719,7 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcBatt.classList.remove('anim-batt-turun');
         elDcBatt.classList.add('anim-batt-naik');
         if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;
+        if (elDayaBatt) elDayaBatt.textContent = "0 W";
 
         elBadge.textContent = "🟠 DISCHARGING";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
