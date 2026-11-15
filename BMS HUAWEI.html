@@ -1567,6 +1567,39 @@ document.addEventListener("DOMContentLoaded", function() {
       pointer-events: none;
       z-index: 12;
     }
+
+    /* Kolom Tegangan (Baterai Kiri) & Total Arus (Baterai Kanan) */
+    .display-tegangan-baterai,
+    .display-arus-baterai {
+      position: absolute;
+      top: 84.5%; /* Samakan dengan nilai top .display-daya-baterai Anda */
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.92);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: clamp(10px, 1.35vw, 18px);
+      padding: 5px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    /* Posisi Baterai Kiri (Tegangan - Biru Cyan) */
+    .display-tegangan-baterai {
+      left: 31.3%;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+      color: #38bdf8;
+    }
+
+    /* Posisi Baterai Kanan (Total Arus - Kuning/Oranye Lembut) */
+    .display-arus-baterai {
+      left: 48.3%;
+      border: 1.5px solid #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.65);
+      color: #fbbf24;
+    }
 </style>
 
 <!-- Modal Diagram 3D dengan Animasi Dinamis -->
@@ -1654,6 +1687,8 @@ document.addEventListener("DOMContentLoaded", function() {
       <div class="bulatan-aliran anim-ac-beban">AC</div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
       <div id="nilaiDayaBaterai" class="display-daya-baterai">0 W</div>
+      <div id="nilaiTeganganBaterai" class="display-tegangan-baterai">0.00 V</div>
+      <div id="nilaiArusBaterai" class="display-arus-baterai">0.00 A</div>
     </div>
 
   </div>
@@ -1663,9 +1698,10 @@ document.addEventListener("DOMContentLoaded", function() {
   function perbaruiAnimasiDiagram() {
     const teksHalaman = document.body.innerText || "";
     
-          // Ambil nilai Total Daya Watt ke variabel sementara
+      // 1. Ambil nilai Total Daya Watt
       const elPowerUtama = document.getElementById('total-power');
       const elDayaTv     = document.getElementById('nilaiDayaBawahTv');
+      const elDayaBatt   = document.getElementById('nilaiDayaBaterai');
       let nilaiDayaAsli  = "0 W";
 
       if (elPowerUtama && elPowerUtama.textContent.trim() !== "") {
@@ -1673,31 +1709,48 @@ document.addEventListener("DOMContentLoaded", function() {
       } else {
         const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
         if (cocokDaya && cocokDaya[1]) {
-          nilaiDayaAsli = cocokDaya[1];
+          nilaiDayaAsli = cocokDaya[1].trim();
         }
       }
 
-      // Deteksi status Charging, Standby, Full, atau Discharging
-      const matchStatus = teksHalaman.match(/\b(Charging|Discharging|Standby|Full)\b/i);
-      const statusPertama = matchStatus ? matchStatus[1] : "";
+      // 2. Ambil nilai Tegangan Baterai (Kiri) dan Total Arus Positif/Negatif (Kanan)
+      const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
+      const elArusBatt     = document.getElementById('nilaiArusBaterai');
+
+      const cocokTegangan = teksHalaman.match(/(?:TEGANGAN|VOLTAGE|TOTAL\s*V)[\s\S]{0,40}?(\d+(?:\.\d+)?\s*V)/i) 
+                         || teksHalaman.match(/\b(4\d\.\d+|5\d\.\d+)\s*V\b/i);
+      const cocokArus     = teksHalaman.match(/(?:TOTAL\s*ARUS|ARUS|CURRENT)[\s\S]{0,40}?([+-]?\d+(?:\.\d+)?\s*A)/i) 
+                         || teksHalaman.match(/([+-]?\d+\.\d+)\s*A\b/i);
+
+      if (elTeganganBatt && cocokTegangan && cocokTegangan[1]) {
+        elTeganganBatt.textContent = cocokTegangan[1].trim();
+      }
+      if (elArusBatt && cocokArus && cocokArus[1]) {
+        // Menghilangkan tanda '+' jika ada agar tampil rapi seperti "16.20 A" atau "-14.12 A"
+        elArusBatt.textContent = cocokArus[1].replace(/^\+/, '').trim();
+      }
+
+      // 3. Deteksi status Charging, Standby, Full, atau Discharging
+      const matchStatus    = teksHalaman.match(/\b(Charging|Discharging|Standby|Full)\b/i);
+      const statusPertama  = matchStatus ? matchStatus[0] : "";
       const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
-      const modeCharge = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
-      const modeStandby = /^(standby|full)$/i.test(statusPertama) && !cekDayaNegatif;
+      const modeCharge     = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
+      const modeStandby    = /^(standby|full)$/i.test(statusPertama) && !cekDayaNegatif;
 
       const elMatahari = document.getElementById('elemenMatahari');
       const elDcSolar  = document.getElementById('bulatanDcSolar');
       const elDcBatt   = document.getElementById('bulatanDcBaterai');
       const elBadge    = document.getElementById('badgeStatusDiagram');
       const elSub      = document.getElementById('subjudulDiagram');
-      const elDayaBatt = document.getElementById('nilaiDayaBaterai');
 
       if (modeCharge) {
         elMatahari.classList.remove('hidden');
         elDcSolar.classList.remove('hidden');
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.add('anim-batt-turun');
+
         if (elDayaTv) elDayaTv.textContent = "0 W";
-        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli;
+        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Terbaca saat Charging
 
         elBadge.textContent = "🟢 CHARGING";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
@@ -1707,8 +1760,9 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcSolar.classList.remove('hidden');
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.remove('anim-batt-turun');
+
         if (elDayaTv) elDayaTv.textContent = "0 W";
-        if (elDayaBatt) elDayaBatt.textContent = "0 W";
+        if (elDayaBatt) elDayaBatt.textContent = "0 W"; // Nol saat Standby / Full
 
         elBadge.textContent = "🔵 STANDBY";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
@@ -1718,8 +1772,9 @@ document.addEventListener("DOMContentLoaded", function() {
         elDcSolar.classList.add('hidden');
         elDcBatt.classList.remove('anim-batt-turun');
         elDcBatt.classList.add('anim-batt-naik');
-        if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;
-        if (elDayaBatt) elDayaBatt.textContent = "0 W";
+
+        if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;   // Terbaca saat Discharging
+        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Tetap terbaca saat Discharging
 
         elBadge.textContent = "🟠 DISCHARGING";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
