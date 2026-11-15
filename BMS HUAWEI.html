@@ -1655,38 +1655,48 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
 
-    // Deteksi status Charging atau Discharging
-    const matchStatus = teksHalaman.match(/\b(Charging|Discharging)\b/i);
-    const statusPertama = matchStatus ? matchStatus[1] : "";
-    const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
-    const modeCharge = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
+            // Deteksi status Charging, Standby, atau Discharging
+      const matchStatus = teksHalaman.match(/\b(Charging|Discharging|Standby)\b/i);
+      const statusPertama = matchStatus ? matchStatus[1] : "";
+      const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
+      const modeCharge = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
+      const modeStandby = /^standby$/i.test(statusPertama) && !cekDayaNegatif;
 
-    const elMatahari = document.getElementById('elemenMatahari');
-    const elDcSolar  = document.getElementById('bulatanDcSolar');
-    const elDcBatt   = document.getElementById('bulatanDcBaterai');
-    const elBadge    = document.getElementById('badgeStatusDiagram');
-    const elSub      = document.getElementById('subjudulDiagram');
+      const elMatahari = document.getElementById('elemenMatahari');
+      const elDcSolar  = document.getElementById('bulatanDcSolar');
+      const elDcBatt   = document.getElementById('bulatanDcBaterai');
+      const elBadge    = document.getElementById('badgeStatusDiagram');
+      const elSub      = document.getElementById('subjudulDiagram');
 
-    if (modeCharge) {
-      elMatahari.classList.remove('hidden');
-      elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.add('anim-batt-turun');
+      if (modeCharge) {
+        elMatahari.classList.remove('hidden');
+        elDcSolar.classList.remove('hidden');
+        elDcBatt.classList.remove('anim-batt-naik');
+        elDcBatt.classList.add('anim-batt-turun');
 
-      elBadge.textContent = "☀️ CHARGING";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
-      elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
-    } else {
-      elMatahari.classList.add('hidden');
-      elDcSolar.classList.add('hidden');
-      elDcBatt.classList.remove('anim-batt-turun');
-      elDcBatt.classList.add('anim-batt-naik');
+        elBadge.textContent = "🟢 CHARGING";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
+        elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
+      } else if (modeStandby) {
+        elMatahari.classList.remove('hidden');
+        elDcSolar.classList.remove('hidden');
+        elDcBatt.classList.remove('anim-batt-naik');
+        elDcBatt.classList.remove('anim-batt-turun');
 
-      elBadge.textContent = "🔋 DISCHARGING";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
-      elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik) untuk beban rumah (AC).";
-    }
-  }
+        elBadge.textContent = "🔵 STANDBY";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+        elSub.textContent = "Baterai penuh (Standby). Panel surya menyuplai langsung beban rumah (AC).";
+      } else {
+        elMatahari.classList.add('hidden');
+        elDcSolar.classList.add('hidden');
+        elDcBatt.classList.remove('anim-batt-turun');
+        elDcBatt.classList.add('anim-batt-naik');
+
+        elBadge.textContent = "🟠 DISCHARGING";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
+        elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik) untuk beban rumah (AC).";
+      }
+   }
 
   function bukaModalDiagram() {
     perbaruiAnimasiDiagram();
