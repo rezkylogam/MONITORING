@@ -1500,9 +1500,9 @@ document.addEventListener("DOMContentLoaded", function() {
 .ikon-matahari-plts {
   position: absolute;
   left: 22.0%;
-  top: 13.8%;
-  width: 11.8%;
-  aspect-ratio: 235 / 190;
+  top: 19.0%;
+  width: 13.8%;
+  aspect-ratio: 245 / 215;
   transform: translate(-50%, -50%);
   filter: drop-shadow(0 0 18px rgba(253, 224, 71, 0.8)) drop-shadow(0 0 38px rgba(245, 158, 11, 0.5));
   pointer-events: none;
@@ -1510,9 +1510,10 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 .matahari-inti-3d {
-  transform-origin: 115px 85px;
+  transform-origin: 145px 80px; /* Disesuaikan dengan titik pusat matahari baru */
   animation: sinarMatahari 3.2s ease-in-out infinite;
 }
+
 
 .panah-sinar-1 { animation: aliranSinar3d 1.8s ease-in-out infinite 0s; }
 .panah-sinar-2 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.25s; }
@@ -1569,9 +1570,9 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
       <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
       
-              <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
+      <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
         <div id="elemenMatahari" class="ikon-matahari-plts">
-          <svg viewBox="0 0 210 190" class="w-full h-full overflow-visible" xmlns="http://w3.org">
+         <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
             <defs>
               <radialGradient id="gradSinar3D" cx="45%" cy="42%" r="55%">
                 <stop offset="0%" stop-color="#fef9c3" />
@@ -1589,43 +1590,44 @@ document.addEventListener("DOMContentLoaded", function() {
                 <stop offset="50%" stop-color="#fef08a" />
                 <stop offset="100%" stop-color="#eab308" />
               </linearGradient>
-              <filter id="shadow3D" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id="shadow3D" x="-25%" y="-25%" width="150%" height="150%">
                 <feDropShadow dx="-1.5" dy="2.5" stdDeviation="2.2" flood-color="#78350f" flood-opacity="0.55" />
               </filter>
             </defs>
 
-            <!-- Matahari 3D (Digeser ke kanan dalam viewBox agar panah di kiri muat utuh) -->
+            <!-- Matahari 3D Simetris (16 Gerigi Runcing + Bola Inti) -->
             <g class="matahari-inti-3d" filter="url(#shadow3D)">
               <polygon fill="url(#gradSinar3D)" points="
-                135,20  143,41  160,25  159,47  181,39  171,59  194,60  177,75
-                198,85  177,95  194,110 171,111 181,131 159,123 160,145 143,129
-                135,150 127,129 110,145 111,123 89,131  99,111  76,110  93,95
-                72,85   93,75   76,60   99,59   89,39   111,47  110,25  127,41
+                145,15  153,36  170,20  169,42  191,34  181,54  204,55  187,70
+                208,80  187,90  204,105 181,106 191,126 169,118 170,140 153,124
+                145,145 137,124 120,140 121,118 99,126  109,106 86,105  103,90
+                82,80   103,70  86,55   109,54  99,34   121,42  120,20  137,36
               " />
-              <circle cx="135" cy="85" r="39" fill="#eab308" opacity="0.45" />
-              <circle cx="135" cy="85" r="36" fill="url(#gradInti3D)" />
+              <circle cx="145" cy="80" r="39" fill="#eab308" opacity="0.45" />
+              <circle cx="145" cy="80" r="36" fill="url(#gradInti3D)" />
             </g>
 
-            <!-- 3 Panah Sinar Diagonal (Pakai koordinat murni tanpa transform CSS yang menimpa) -->
+            <!-- 3 Panah Sinar Diagonal (Lebih Jauh dari Matahari & Melebar ke Panel Surya) -->
             <g filter="url(#shadow3D)">
-              <!-- Panah 1 -->
+              <!-- Panah 1 (Kiri Atas - Mengarah ke bagian atas panel surya) -->
               <g class="panah-sinar-1">
-                <line x1="72" y1="102" x2="46" y2="128" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
-                <polygon points="41,133 53,130 44,121" fill="url(#gradPanah3D)" />
+                <line x1="66" y1="92" x2="26" y2="122" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="20,127 34,125 26,114" fill="url(#gradPanah3D)" />
               </g>
-              <!-- Panah 2 -->
+
+              <!-- Panah 2 (Tengah - Mengarah ke tengah panel surya) -->
               <g class="panah-sinar-2">
-                <line x1="82" y1="114" x2="56" y2="140" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
-                <polygon points="51,145 63,142 54,133" fill="url(#gradPanah3D)" />
+                <line x1="78" y1="112" x2="40" y2="146" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="34,151 48,148 39,138" fill="url(#gradPanah3D)" />
               </g>
-              <!-- Panah 3 -->
+
+              <!-- Panah 3 (Kanan Bawah - Mengarah lebih melebar ke bawah) -->
               <g class="panah-sinar-3">
-                <line x1="94" y1="124" x2="68" y2="150" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
-                <polygon points="63,155 75,152 66,143" fill="url(#gradPanah3D)" />
+                <line x1="94" y1="130" x2="60" y2="168" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="55,174 68,169 58,160" fill="url(#gradPanah3D)" />
               </g>
             </g>
           </svg>
-        </div>
 
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
