@@ -724,47 +724,123 @@
             <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill" style="width: ${batt.soc}%"></div>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-5 text-sm">
+                <div class="grid grid-cols-2 gap-5 text-sm">
           <div class="space-y-2">
+            <!-- 1. Tegangan (Petir 3D Emas) -->
             <div class="flex items-center">
-              <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(234,179,8,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <linearGradient id="cBolt3d" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#fef08a"/>
+                    <stop offset="50%" stop-color="#facc15"/>
+                    <stop offset="100%" stop-color="#b45309"/>
+                  </linearGradient>
+                </defs>
+                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#78350f"/>
+                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cBolt3d)"/>
+              </svg>
               <div>
                 <div class="text-gray-500">Tegangan</div>
                 <div id="voltage-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.voltage} V</div>
               </div>
             </div>
+
+            <!-- 2. Selisih Sel (Bola Biru 3D dengan Garis Selisih) -->
             <div class="flex items-center">
-              <i class="fas fa-minus-circle  text-blue-500 mr-2"></i>
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(59,130,246,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cDiff3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#93c5fd"/>
+                    <stop offset="55%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#1e3a8a"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cDiff3d)"/>
+                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
+                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
+              </svg>
               <div>
                 <div class="text-gray-500">Selisih Sel</div>
                 <div id="voltagedif-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vdif} mV</div>
               </div>
             </div>
+
+            <!-- 3. Min Cell (Bola Merah 3D Minus) -->
             <div class="flex items-center">
-              <i class="fas fa-minus-circle text-red-500 mr-2"></i>
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cMin3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#fca5a5"/>
+                    <stop offset="55%" stop-color="#ef4444"/>
+                    <stop offset="100%" stop-color="#7f1d1d"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cMin3d)"/>
+                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
+                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
+              </svg>
               <div>
                 <div class="text-gray-500">Min Cell</div>
                 <div id="cellmin-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmin} V</div>
               </div>
             </div>
           </div>
+
           <div class="space-y-2">
+            <!-- 4. Arus (Gauge/Speedometer 3D Biru-Cyan) -->
             <div class="flex items-center">
-              <i class="fas fa-tachometer-alt text-blue-500 mr-2"></i>
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(56,189,248,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cCurr3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#7dd3fc"/>
+                    <stop offset="55%" stop-color="#0284c7"/>
+                    <stop offset="100%" stop-color="#0c4a6e"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cCurr3d)"/>
+                <path d="M7 14.5C7 11.7 9.2 9.5 12 9.5C14.8 9.5 17 11.7 17 14.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 14.5L15 11" stroke="#fef08a" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="14.5" r="1.5" fill="#ffffff"/>
+              </svg>
               <div>
                 <div class="text-gray-500">Arus</div>
                 <div id="current-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.current} A</div>
               </div>
             </div>
+
+            <!-- 5. Daya (Petir 3D Merah-Oranye) -->
             <div class="flex items-center">
-              <i class="fas fa-bolt text-red-500 mr-2"></i>
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <linearGradient id="cPow3d" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#fca5a5"/>
+                    <stop offset="45%" stop-color="#ef4444"/>
+                    <stop offset="100%" stop-color="#7f1d1d"/>
+                  </linearGradient>
+                </defs>
+                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#450a0a"/>
+                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cPow3d)"/>
+              </svg>
               <div>
                 <div class="text-gray-500">Daya</div>
                 <div id="power-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${(batt.voltage*batt.current).toFixed(1)} W</div>
               </div>
             </div>
+
+            <!-- 6. Max Cell (Bola Hijau 3D Plus) -->
             <div class="flex items-center">
-              <i class="fas fa-plus-circle text-green-500 mr-2"></i>
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(34,197,94,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cMax3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#86efac"/>
+                    <stop offset="55%" stop-color="#22c55e"/>
+                    <stop offset="100%" stop-color="#14532d"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cMax3d)"/>
+                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
+                <path d="M12 7.5V16.5M7.5 12H16.5" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
               <div>
                 <div class="text-gray-500">Max Cell</div>
                 <div id="cellmax-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmax} V</div>
