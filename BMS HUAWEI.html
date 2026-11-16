@@ -1813,4 +1813,84 @@ document.addEventListener("DOMContentLoaded", function() {
   }, 2000);
 </script>
 
+  <!-- ================= INTEGRASI LIVE MQTT AT4PW INVERTER AC ================= -->
+<style>
+  .display-info-ac {
+    position: absolute;
+    left: 91.5%;
+    top: 86.2%;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 23, 42, 0.90);
+    border: 1px solid #38bdf8;
+    color: #e0f2fe;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 700;
+    font-size: clamp(9px, 1.05vw, 13px);
+    padding: 3px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 12;
+  }
+</style>
+
+<script>
+  let dataAcInverter = null;
+
+  // Tambahkan kotak kecil Tegangan & Arus AC tepat di bawah kotak Watt AC
+  document.addEventListener("DOMContentLoaded", () => {
+    const elDayaTv = document.getElementById("nilaiDayaBawahTv");
+    if (elDayaTv && elDayaTv.parentElement && !document.getElementById("nilaiInfoAcBawahTv")) {
+      const infoAc = document.createElement("div");
+      infoAc.id = "nilaiInfoAcBawahTv";
+      infoAc.className = "display-info-ac";
+      infoAc.textContent = "-- V | -- A";
+      elDayaTv.parentElement.appendChild(infoAc);
+    }
+  });
+
+  // Subscribe ke topik AT4PW (sysMon/[id_logger]/inverter) setelah client2 MQTT terhubung
+  const timerSubAt4pw = setInterval(() => {
+    if (typeof client2 !== "undefined" && client2 && client2.connected && typeof id_logger !== "undefined" && id_logger !== "-") {
+      const loggerUtama = id_logger.split("-")[0];
+      const topikInverter = "sysMon/" + loggerUtama + "/inverter";
+      client2.subscribe(topikInverter);
+      console.log("Subscribed AT4PW Inverter:", topikInverter);
+
+      client2.on("message", (topic, message) => {
+        if (topic === topikInverter) {
+          try {
+            dataAcInverter = JSON.parse(message.toString());
+            terapkanDataAcKeDiagram();
+          } catch (e) {}
+        }
+      });
+
+      clearInterval(timerSubAt4pw);
+    }
+  }, 1500);
+
+  // Fungsi memaksa nilai AC pada Diagram 3D PLTS memakai data real-time dari AT4PW
+  function terapkanDataAcKeDiagram() {
+    if (!dataAcInverter) return;
+    const elDayaTv = document.getElementById("nilaiDayaBawahTv");
+    const elInfoAc = document.getElementById("nilaiInfoAcBawahTv");
+
+    if (elDayaTv && dataAcInverter.power !== undefined) {
+      elDayaTv.textContent = parseFloat(dataAcInverter.power).toFixed(1) + " W";
+    }
+    if (elInfoAc && dataAcInverter.voltage !== undefined && dataAcInverter.current !== undefined) {
+      elInfoAc.textContent = parseFloat(dataAcInverter.voltage).toFixed(1) + " V | " + parseFloat(dataAcInverter.current).toFixed(2) + " A";
+    }
+  }
+
+  // Bungkus fungsi bawaan perbaruiAnimasiDiagram agar data AT4PW tidak tertimpa 0 W
+  if (typeof perbaruiAnimasiDiagram === "function") {
+    const fungsiDiagramAsli = perbaruiAnimasiDiagram;
+    perbaruiAnimasiDiagram = function() {
+      fungsiDiagramAsli();
+      terapkanDataAcKeDiagram();
+    };
+  }
+</script>
 </body></html>
