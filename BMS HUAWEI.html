@@ -581,15 +581,11 @@
         <thead>
           <tr class="bg-gray-800/90 text-gray-300 border-b border-gray-700 uppercase text-[11px] tracking-wider">
             <th class="py-3 px-3">Unit</th>
-            <th class="py-3 px-3">SOC</th>
-            <th class="py-3 px-3">SOH</th>
             <th class="py-3 px-3">Tegangan</th>
             <th class="py-3 px-3">Arus</th>
             <th class="py-3 px-3">Daya</th>
             <th class="py-3 px-3">Min / Max Cell</th>
-            <th class="py-3 px-3">Selisih</th>
             <th class="py-3 px-3">Suhu</th>
-            <th class="py-3 px-3">Siklus</th>
           </tr>
         </thead>
         <tbody id="batteryTableBody" class="divide-y divide-gray-800 text-gray-200"></tbody>
@@ -2242,15 +2238,11 @@ function updateModal() {
             </div>
           </div>
         </td>
-        <td class="py-3 px-3 font-bold ${socColor}">${batt.soc}%</td>
-        <td class="py-3 px-3">${batt.soh}%</td>
         <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
         <td class="py-3 px-3 font-medium">${batt.current} A</td>
         <td class="py-3 px-3 font-medium">${powerVal} W</td>
         <td class="py-3 px-3 whitespace-nowrap">${batt.cell_vmin}V / ${batt.cell_vmax}V</td>
-        <td class="py-3 px-3">${batt.cell_vdif} mV</td>
         <td class="py-3 px-3">${batt.temp_max || batt.temp || '--'}°C</td>
-        <td class="py-3 px-3">${batt.cycles || '--'}</td>
       `;
       tbody.appendChild(tr);
     });
