@@ -557,11 +557,44 @@
         </div>
       </div>
     </div>
-    <h3 class="text-lg font-semibold text-light gray-850 mb-4 mt-6">
-  DAFTAR UNIT BATERAI <span class="text-lg font-semibold text-slate-400">(Klik kartu untuk detail 15 sel)</span>
-</h3>
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 mt-6">
+      <h3 class="text-lg font-semibold text-light gray-850">
+        DAFTAR UNIT BATERAI <span class="text-sm sm:text-base font-normal text-slate-400">(Klik untuk detail 15 sel)</span>
+      </h3>
 
-  <div id="batteryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 hidden"></div>
+      <!-- Tombol Pengubah Tampilan Table / Card di Pojok Kanan -->
+      <div class="inline-flex bg-gray-800/90 border border-gray-700 p-1 rounded-lg shadow-sm ml-auto">
+        <button id="btnViewTable" onclick="setBatteryViewMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-gray-400 hover:text-white transition">
+          <i class="fas fa-table"></i> Table
+        </button>
+        <button id="btnViewCard" onclick="setBatteryViewMode('card')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-700 text-white shadow transition">
+          <i class="fas fa-th-large"></i> Card
+        </button>
+      </div>
+    </div>
+
+    <div id="batteryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 hidden"></div>
+
+    <!-- Wadah Tampilan Table -->
+    <div id="batteryTableContainer" class="hidden overflow-x-auto rounded-xl border border-gray-700/60 bg-gray-900/60 shadow-sm mb-6">
+      <table class="w-full text-left border-collapse text-xs sm:text-sm">
+        <thead>
+          <tr class="bg-gray-800/90 text-gray-300 border-b border-gray-700 uppercase text-[11px] tracking-wider">
+            <th class="py-3 px-3">Unit</th>
+            <th class="py-3 px-3">SOC</th>
+            <th class="py-3 px-3">SOH</th>
+            <th class="py-3 px-3">Tegangan</th>
+            <th class="py-3 px-3">Arus</th>
+            <th class="py-3 px-3">Daya</th>
+            <th class="py-3 px-3">Min / Max Cell</th>
+            <th class="py-3 px-3">Selisih</th>
+            <th class="py-3 px-3">Suhu</th>
+            <th class="py-3 px-3">Siklus</th>
+          </tr>
+        </thead>
+        <tbody id="batteryTableBody" class="divide-y divide-gray-800 text-gray-200"></tbody>
+      </table>
+    </div>
     
     <div id="empty-state" class="text-center py-12 bg-white rounded-xl shadow-sm">
       <div class="text-blue-500 mb-4">
@@ -2117,4 +2150,89 @@ function updateModal() {
     };
   }
 </script>
+<script>
+  let currentViewMode = localStorage.getItem('bms_view_mode') || 'card';
+
+  function setBatteryViewMode(mode) {
+    currentViewMode = mode;
+    localStorage.setItem('bms_view_mode', mode);
+
+    const cardContainer = document.getElementById('batteryGrid');
+    const tableContainer = document.getElementById('batteryTableContainer');
+    const btnTable = document.getElementById('btnViewTable');
+    const btnCard = document.getElementById('btnViewCard');
+
+    if (mode === 'table') {
+      if (cardContainer) cardContainer.classList.add('hidden');
+      if (tableContainer) tableContainer.classList.remove('hidden');
+
+      btnTable.classList.add('bg-gray-700', 'text-white', 'shadow');
+      btnTable.classList.remove('text-gray-400');
+
+      btnCard.classList.remove('bg-gray-700', 'text-white', 'shadow');
+      btnCard.classList.add('text-gray-400');
+      renderBatteryTable();
+    } else {
+      if (tableContainer) tableContainer.classList.add('hidden');
+      if (cardContainer && typeof batteries !== 'undefined' && Object.keys(batteries).length > 0) {
+        cardContainer.classList.remove('hidden');
+      }
+
+      btnCard.classList.add('bg-gray-700', 'text-white', 'shadow');
+      btnCard.classList.remove('text-gray-400');
+
+      btnTable.classList.remove('bg-gray-700', 'text-white', 'shadow');
+      btnTable.classList.add('text-gray-400');
+    }
+  }
+
+  function renderBatteryTable() {
+    const tbody = document.getElementById('batteryTableBody');
+    if (!tbody || typeof batteries === 'undefined') return;
+    tbody.innerHTML = '';
+
+    const sortedList = Object.values(batteries).sort((a, b) => Number(a.addr) - Number(b.addr));
+
+    sortedList.forEach(batt => {
+      const socVal = parseFloat(batt.soc) || 0;
+      const socColor = socVal > 50 ? 'text-emerald-400' : (socVal > 20 ? 'text-amber-400' : 'text-red-400');
+      const powerVal = (parseFloat(batt.voltage) * parseFloat(batt.current)).toFixed(1);
+
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-white/5 cursor-pointer transition';
+      tr.onclick = () => {
+        if (typeof openCellModal === 'function') {
+          openCellModal(batt.loggerId, batt.typeBattery, batt.addr);
+        }
+      };
+
+      tr.innerHTML = `
+        <td class="py-3 px-3 font-semibold text-white whitespace-nowrap">${batt.typeBattery} #${batt.addr}</td>
+        <td class="py-3 px-3 font-bold ${socColor}">${batt.soc}%</td>
+        <td class="py-3 px-3">${batt.soh}%</td>
+        <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
+        <td class="py-3 px-3 font-medium">${batt.current} A</td>
+        <td class="py-3 px-3 font-medium">${powerVal} W</td>
+        <td class="py-3 px-3 whitespace-nowrap">${batt.cell_vmin}V / ${batt.cell_vmax}V</td>
+        <td class="py-3 px-3">${batt.cell_vdif} mV</td>
+        <td class="py-3 px-3">${batt.temp_max || batt.temp || '--'}°C</td>
+        <td class="py-3 px-3">${batt.cycles || '--'}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Perbarui isi tabel otomatis setiap 1 detik saat mode Table aktif
+  setInterval(() => {
+    if (currentViewMode === 'table') {
+      const cardContainer = document.getElementById('batteryGrid');
+      if (cardContainer) cardContainer.classList.add('hidden');
+      renderBatteryTable();
+    }
+  }, 1000);
+
+  // Jalankan mode awal
+  setBatteryViewMode(currentViewMode);
+</script>
+
 </body></html>
