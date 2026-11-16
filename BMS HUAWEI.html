@@ -1813,7 +1813,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }, 2000);
 </script>
 
-  <!-- ================= INTEGRASI LIVE MQTT AT4PW INVERTER AC ================= -->
+<!-- ================= INTEGRASI LIVE MQTT AT4PW INVERTER AC ================= -->
 <style>
   .display-info-ac {
     position: absolute;
@@ -1875,7 +1875,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const timerSubAt4pw = setInterval(() => {
     if (typeof id_logger !== "undefined" && id_logger !== "-") {
-      const topikInverter = "sysMon/" + id_logger.split("-") + "/inverter";
+      const topikInverter = "sysMon/" + id_logger.split("-")[0] + "/inverter";
       if (!subClient1 && typeof client !== "undefined" && client && client.connected) {
         subClient1 = true;
         pasangListenerAt4pw(client, topikInverter);
@@ -1886,7 +1886,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
       if (subClient1 && subClient2) clearInterval(timerSubAt4pw);
     }
-  }, 200);
+  }, 150);
 
   function terapkanDataAcKeDiagram() {
     const elDayaTv = document.getElementById("nilaiDayaBawahTv");
