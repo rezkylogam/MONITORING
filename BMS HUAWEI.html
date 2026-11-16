@@ -1816,53 +1816,54 @@ document.addEventListener("DOMContentLoaded", function() {
   <!-- ================= INTEGRASI LIVE MQTT AT4PW INVERTER AC ================= -->
 <style>
   .display-info-ac {
-  position: absolute;
-  left: 85.4%;
-  top: 61.8%;
-  width: 11.6%;
-  height: 12.0%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.25;
-  transform: translate(-50%, -50%);
-  background: rgba(15, 23, 42, 0.92);
-  border: 1px solid #38bdf8;
-  box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
-  color: #e0f2fe;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-weight: 800;
-  font-size: clamp(8px, 1.0vw, 13px);
-  padding: 2px;
-  border-radius: 5px;
-  text-align: center;
-  box-sizing: border-box;
-}
+    position: absolute;
+    right: 4.1%;
+    top: 49.6%;
+    width: 12.1%;
+    height: 12.2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.25;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.94);
+    border: 1px solid #38bdf8;
+    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
+    color: #e0f2fe;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 800;
+    font-size: clamp(9px, 1.1vw, 14px);
+    padding: 2px;
+    border-radius: 3px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 12;
+  }
 </style>
 
 <script>
   let dataAcInverter = null;
+  let sudahSubAt4pw = false;
 
-  // Tambahkan kotak kecil Tegangan & Arus AC tepat di bawah kotak Watt AC
   document.addEventListener("DOMContentLoaded", () => {
     const elDayaTv = document.getElementById("nilaiDayaBawahTv");
     if (elDayaTv && elDayaTv.parentElement && !document.getElementById("nilaiInfoAcBawahTv")) {
       const infoAc = document.createElement("div");
       infoAc.id = "nilaiInfoAcBawahTv";
       infoAc.className = "display-info-ac";
-      infoAc.textContent = "-- V | -- A";
+      infoAc.innerHTML = `<span style="color:#38bdf8;">-- V</span><span style="color:#fbbf24;">-- A</span>`;
       elDayaTv.parentElement.appendChild(infoAc);
     }
   });
 
-  // Subscribe ke topik AT4PW (sysMon/[id_logger]/inverter) setelah client2 MQTT terhubung
+  // Langsung subscribe ke client2 (broker.emqx.io)
   const timerSubAt4pw = setInterval(() => {
-    if (typeof client2 !== "undefined" && client2 && client2.connected && typeof id_logger !== "undefined" && id_logger !== "-") {
+    if (!sudahSubAt4pw && typeof client2 !== "undefined" && client2 && client2.connected && typeof id_logger !== "undefined" && id_logger !== "-") {
+      sudahSubAt4pw = true;
       const loggerUtama = id_logger.split("-")[0];
       const topikInverter = "sysMon/" + loggerUtama + "/inverter";
-      client2.subscribe(topikInverter);
-      console.log("Subscribed AT4PW Inverter:", topikInverter);
+      client2.subscribe(topikInverter, { qos: 0 });
 
       client2.on("message", (topic, message) => {
         if (topic === topikInverter) {
@@ -1872,12 +1873,10 @@ document.addEventListener("DOMContentLoaded", function() {
           } catch (e) {}
         }
       });
-
       clearInterval(timerSubAt4pw);
     }
-  }, 1500);
+  }, 500);
 
-  // Fungsi memaksa nilai AC pada Diagram 3D PLTS memakai data real-time dari AT4PW
   function terapkanDataAcKeDiagram() {
     if (!dataAcInverter) return;
     const elDayaTv = document.getElementById("nilaiDayaBawahTv");
@@ -1886,12 +1885,11 @@ document.addEventListener("DOMContentLoaded", function() {
     if (elDayaTv && dataAcInverter.power !== undefined) {
       elDayaTv.textContent = parseFloat(dataAcInverter.power).toFixed(1) + " W";
     }
-     if (elInfoAc && dataAcInverter.voltage !== undefined && dataAcInverter.current !== undefined) {
-   elInfoAc.innerHTML = `<span style="color:#38bdf8;">${parseFloat(dataAcInverter.voltage).toFixed(1)} V</span><span style="color:#fbbf24;">${parseFloat(dataAcInverter.current).toFixed(2)} A</span>`;
- }
-}
+    if (elInfoAc && dataAcInverter.voltage !== undefined && dataAcInverter.current !== undefined) {
+      elInfoAc.innerHTML = `<span style="color:#38bdf8;">${parseFloat(dataAcInverter.voltage).toFixed(1)} V</span><span style="color:#fbbf24;">${parseFloat(dataAcInverter.current).toFixed(2)} A</span>`;
+    }
+  }
 
-  // Bungkus fungsi bawaan perbaruiAnimasiDiagram agar data AT4PW tidak tertimpa 0 W
   if (typeof perbaruiAnimasiDiagram === "function") {
     const fungsiDiagramAsli = perbaruiAnimasiDiagram;
     perbaruiAnimasiDiagram = function() {
