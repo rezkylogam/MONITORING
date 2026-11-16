@@ -2207,30 +2207,41 @@ function updateModal() {
       };
 
       tr.innerHTML = `
-      <td class="py-3 px-3 font-semibold text-white whitespace-nowrap">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 shrink-0 drop-shadow-[0_2px_4px_rgba(16,185,129,0.5)]" viewBox="0 0 24 24" fill="none">
-            <defs>
-              <linearGradient id="tblBat3d" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#6ee7b7"/>
-                <stop offset="50%" stop-color="#10b981"/>
-                <stop offset="100%" stop-color="#065f46"/>
-              </linearGradient>
-              <linearGradient id="tblBatCap" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#f3f4f6"/>
-                <stop offset="100%" stop-color="#9ca3af"/>
-              </linearGradient>
-            </defs>
-            <rect x="9" y="2" width="6" height="2.2" rx="1" fill="url(#tblBatCap)"/>
-            <rect x="6" y="4.2" width="12" height="17.8" rx="2.8" fill="url(#tblBat3d)" stroke="#a7f3d0" stroke-width="0.7"/>
-            <rect x="7.5" y="5.8" width="2.2" height="14.5" rx="1.1" fill="#ffffff" fill-opacity="0.35"/>
-            <rect x="10.5" y="8" width="5" height="2" rx="0.8" fill="#ffffff" fill-opacity="0.85"/>
-            <rect x="10.5" y="11.5" width="5" height="2" rx="0.8" fill="#ffffff" fill-opacity="0.85"/>
-            <rect x="10.5" y="15" width="5" height="2" rx="0.8" fill="#ffffff" fill-opacity="0.85"/>
-          </svg>
-          <span>${batt.typeBattery} #${batt.addr}</span>
-        </div>
-      </td>
+        <td class="py-3 px-3 whitespace-nowrap">
+          <div class="flex items-center gap-3">
+            <!-- Ikon Baterai Horizontal 3D + Nilai SOC -->
+            <div class="flex items-center shrink-0">
+              <!-- Kutub Positif 3D di Kiri -->
+              <div class="w-1.5 h-3.5 rounded-l-sm bg-gradient-to-b from-gray-200 via-gray-400 to-gray-600 shadow-sm border-y border-l border-gray-300/60"></div>
+              
+              <!-- Bodi Baterai 3D -->
+              <div class="relative w-16 h-7 rounded-md bg-gradient-to-b from-gray-800 via-gray-900 to-black border border-gray-600/80 p-0.5 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),0_2px_5px_rgba(0,0,0,0.5)]">
+                <!-- Bar Isi 3D Otomatis Sesuai Persen SOC -->
+                <div class="h-full rounded-[4px] transition-all duration-500 ${
+                  socVal > 50
+                    ? 'bg-gradient-to-b from-emerald-300 via-emerald-500 to-emerald-800 shadow-[0_0_8px_rgba(16,185,129,0.6)]'
+                    : socVal > 20
+                    ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-800 shadow-[0_0_8px_rgba(245,158,11,0.6)]'
+                    : 'bg-gradient-to-b from-rose-400 via-red-600 to-red-900 shadow-[0_0_8px_rgba(239,68,68,0.6)]'
+                }" style="width: ${Math.max(0, Math.min(100, socVal))}%;"></div>
+
+                <!-- Efek Kilau Kaca 3D Bagian Atas -->
+                <div class="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent pointer-events-none"></div>
+
+                <!-- Angka Nilai SOC di Tengah Baterai -->
+                <div class="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)] tracking-wide">
+                  ${parseFloat(batt.soc || 0).toFixed(1)}
+                </div>
+              </div>
+            </div>
+
+            <!-- Nama Unit & Info Diff / Cycles di Bawahnya -->
+            <div>
+              <div class="font-bold text-white text-xs sm:text-sm leading-tight">${batt.typeBattery} #${batt.addr}</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
+            </div>
+          </div>
+        </td>
         <td class="py-3 px-3 font-bold ${socColor}">${batt.soc}%</td>
         <td class="py-3 px-3">${batt.soh}%</td>
         <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
