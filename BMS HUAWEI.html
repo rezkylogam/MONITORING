@@ -226,7 +226,7 @@
         <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50">
            <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">📱 Modul Info</a>
            <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙️ Setting BMS</a>
-           <a id="pollingState" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">▶️ Active</a>
+           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Audio Pembuka: ON</a>
         </div>
       </div>
     </div>
@@ -771,18 +771,7 @@
       let a = message.toString().split(",");
       document.getElementById("network_ip").innerText = "IP Address: " + a[0];
       document.getElementById("network_signal").innerText = "Signal: " + a[1];
-      let varpol = document.getElementById("pollingState");
-      let text_head = " 🌐 " + a[0] + " 📶"+a[1];
-      if(a[3] === "1"){
-        varpol.innerHTML= "▶️ Active";
-        pollingSts =true;
-        text_head += " ▶️ "
-      }
-      else{
-        varpol.innerHTML= "⏹️ Passive";
-        pollingSts=false;
-        text_head += " ⏹️ "
-      }
+      
       //document.getElementById("id_monitoring").innerText =text_head;
       //document.getElementById("id_monitoring_footer").innerText =text_head;
     } else {
@@ -1236,19 +1225,6 @@ function updateModal() {
     menu.classList.add("hidden");
   });
 
-  const pollingStateData = document.getElementById("pollingState");
-
-  pollingStateData.addEventListener("click",(e) => {
-    if(pollingSts === true ){
-      client.publish(id_logger+"/seting", "POLL0",0);
-      console.log("deactivate");
-    }
-    else{
-      client.publish(id_logger+"/seting", "POLL1",0);
-      console.log("activated")
-    }
-  });
-
   const networkModal = document.getElementById("networkModal");
   const closeNetwork = document.getElementById("closeNetwork");
 
@@ -1274,11 +1250,52 @@ function updateModal() {
   document.body.classList.add('dark');
   localStorage.setItem('theme', 'dark');
 
-  // 1. Inisialisasi objek audio dengan file mp3 Jarvis Anda
-  const jarvisAudio = new Audio('./jarvis.mp3');
+  <script>
+  // Kunci permanen ke Dark Mode
+  document.body.setAttribute('data-theme', 'dark');
+  document.body.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
 
-  // 2. Fungsi untuk memutar audio Jarvis
+  // Pengaturan Audio Jarvis ON/OFF
+  const jarvisAudio = new Audio('./jarvis.mp3');
+  const jarvisToggleBtn = document.getElementById('jarvisToggleBtn');
+  let isJarvisOn = localStorage.getItem('jarvis_audio') !== 'off';
+
+  function updateJarvisButtonUI() {
+      if (!jarvisToggleBtn) return;
+      if (isJarvisOn) {
+          jarvisToggleBtn.innerHTML = '🔊 Jarvis: ON';
+          jarvisToggleBtn.classList.remove('text-red-500');
+          jarvisToggleBtn.classList.add('text-green-600');
+      } else {
+          jarvisToggleBtn.innerHTML = '🔇 Jarvis: OFF';
+          jarvisToggleBtn.classList.remove('text-green-600');
+          jarvisToggleBtn.classList.add('text-red-500');
+      }
+  }
+
+  updateJarvisButtonUI();
+
+  if (jarvisToggleBtn) {
+      jarvisToggleBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          isJarvisOn = !isJarvisOn;
+          localStorage.setItem('jarvis_audio', isJarvisOn ? 'on' : 'off');
+          updateJarvisButtonUI();
+
+          if (isJarvisOn) {
+              speakWelcome();
+          } else {
+              jarvisAudio.pause();
+              jarvisAudio.currentTime = 0;
+          }
+      });
+  }
+
   function speakWelcome() {
+      if (!isJarvisOn) return;
       jarvisAudio.currentTime = 0;
       jarvisAudio.play().then(() => {
           console.log("Audio Jarvis berhasil diputar!");
@@ -1287,20 +1304,17 @@ function updateModal() {
       });
   }
 
-  // 3. Logika untuk tombol masuk dan menghilangkan Splash Screen
   document.addEventListener("DOMContentLoaded", function() {
       const splash = document.getElementById("welcomeSplash");
       const btnStart = document.getElementById("btnStartApp");
       
       if (btnStart && splash) {
           btnStart.addEventListener("click", function() {
-              // Putar suara Jarvis dengan segera saat tombol diklik
               speakWelcome();
               
-              // Berikan efek transisi menghilang pada Splash Screen
               splash.style.opacity = "0";
               setTimeout(() => {
-                  splash.remove(); // Hapus elemen splash screen dari layar setelah menghilang
+                  splash.remove();
               }, 500);
           });
       }
