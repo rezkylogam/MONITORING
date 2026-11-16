@@ -193,7 +193,8 @@
             <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
         </div>
         <h1 class="text-4xl font-black mb-4 tracking-wide text-white uppercase">BMS MONITORING</h1>
-        <p class="text-lg text-gray-100 mb-10 leading-relaxed font-medium">Sistem 48V siap digunakan. Ketuk tombol di bawah untuk mengaktifkan Pemantauan dan Audio Jarvis.</p>
+        <p class="text-lg text-gray-100 mb-10 leading-relaxed font-medium">Sistem 48V siap digunakan. Ketuk tombol di bawah untuk mengaktifkan Pemantauan dan Audio
+          Jarvis.</p>
         
         <button id="btnStartApp" class="w-full bg-[#0455d1] hover:bg-[#2563eb] text-white font-bold text-xl py-4 px-8 rounded-2xl shadow-xl transform active:scale-95 transition duration-200 flex items-center justify-center gap-3">
             <i class="fas fa-play"></i> Buka Aplikasi
@@ -226,7 +227,7 @@
         <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50">
            <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">📱 Modul Info</a>
            <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙️ Setting BMS</a>
-           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Audio Jarvis: ON</a>
+           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Jarvis : ON</a>
         </div>
       </div>
     </div>
@@ -1264,11 +1265,11 @@ function updateModal() {
   function updateJarvisButtonUI() {
     if (!jarvisToggleBtn) return;
     if (isJarvisOn) {
-      jarvisToggleBtn.innerHTML = '🔊 Audio Jarvis: ON';
+      jarvisToggleBtn.innerHTML = '🔊 Jarvis : ON';
       jarvisToggleBtn.classList.remove('text-red-500');
       jarvisToggleBtn.classList.add('text-green-600');
     } else {
-      jarvisToggleBtn.innerHTML = '🔇 Audio Jarvis: OFF';
+      jarvisToggleBtn.innerHTML = '🔇 Jarvis : OFF';
       jarvisToggleBtn.classList.remove('text-green-600');
       jarvisToggleBtn.classList.add('text-red-500');
     }
