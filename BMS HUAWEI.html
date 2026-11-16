@@ -226,7 +226,7 @@
         <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50">
            <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">📱 Modul Info</a>
            <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙️ Setting BMS</a>
-           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Audio Pembuka: ON</a>
+           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Jarvis: ON</a>
         </div>
       </div>
     </div>
@@ -1213,112 +1213,108 @@ function updateModal() {
     </script>
 
 <script>
+  // 1. Kunci permanen ke Dark Mode
+  document.body.setAttribute('data-theme', 'dark');
+  document.body.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
+
+  // 2. Pengaturan Menu Dropdown & Modal Info
   const btn = document.getElementById("settingsBtn");
   const menu = document.getElementById("dropdownMenu");
 
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    menu.classList.toggle("hidden");
-  });
+  if (btn && menu) {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("hidden");
+    });
 
-  window.addEventListener("click", () => {
-    menu.classList.add("hidden");
-  });
+    window.addEventListener("click", () => {
+      menu.classList.add("hidden");
+    });
+  }
 
   const networkModal = document.getElementById("networkModal");
   const closeNetwork = document.getElementById("closeNetwork");
+  const networkBtn = document.getElementById("networkBtn");
 
-  networkBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    networkModal.classList.remove("hidden");
-  });
+  if (networkBtn && networkModal) {
+    networkBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      networkModal.classList.remove("hidden");
+    });
+  }
 
-  closeNetwork.addEventListener("click", () => {
-    networkModal.classList.add("hidden");
-  });
+  if (closeNetwork && networkModal) {
+    closeNetwork.addEventListener("click", () => {
+      networkModal.classList.add("hidden");
+    });
+  }
 
   window.addEventListener("click", (e) => {
     if (e.target === networkModal) {
       networkModal.classList.add("hidden");
     }
   });
-</script>
 
-<script>
-  // Kunci permanen ke Dark Mode
-  document.body.setAttribute('data-theme', 'dark');
-  document.body.classList.add('dark');
-  localStorage.setItem('theme', 'dark');
-
-  <script>
-  // Kunci permanen ke Dark Mode
-  document.body.setAttribute('data-theme', 'dark');
-  document.body.classList.add('dark');
-  localStorage.setItem('theme', 'dark');
-
-  // Pengaturan Audio Jarvis ON/OFF
+  // 3. Pengaturan Audio Jarvis (ON/OFF) & Splash Screen
   const jarvisAudio = new Audio('./jarvis.mp3');
   const jarvisToggleBtn = document.getElementById('jarvisToggleBtn');
   let isJarvisOn = localStorage.getItem('jarvis_audio') !== 'off';
 
   function updateJarvisButtonUI() {
-      if (!jarvisToggleBtn) return;
-      if (isJarvisOn) {
-          jarvisToggleBtn.innerHTML = '🔊 Jarvis: ON';
-          jarvisToggleBtn.classList.remove('text-red-500');
-          jarvisToggleBtn.classList.add('text-green-600');
-      } else {
-          jarvisToggleBtn.innerHTML = '🔇 Jarvis: OFF';
-          jarvisToggleBtn.classList.remove('text-green-600');
-          jarvisToggleBtn.classList.add('text-red-500');
-      }
+    if (!jarvisToggleBtn) return;
+    if (isJarvisOn) {
+      jarvisToggleBtn.innerHTML = '🔊 Jarvis: ON';
+      jarvisToggleBtn.classList.remove('text-red-500');
+      jarvisToggleBtn.classList.add('text-green-600');
+    } else {
+      jarvisToggleBtn.innerHTML = '🔇 Jarvis: OFF';
+      jarvisToggleBtn.classList.remove('text-green-600');
+      jarvisToggleBtn.classList.add('text-red-500');
+    }
   }
 
   updateJarvisButtonUI();
 
   if (jarvisToggleBtn) {
-      jarvisToggleBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          isJarvisOn = !isJarvisOn;
-          localStorage.setItem('jarvis_audio', isJarvisOn ? 'on' : 'off');
-          updateJarvisButtonUI();
+    jarvisToggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-          if (isJarvisOn) {
-              speakWelcome();
-          } else {
-              jarvisAudio.pause();
-              jarvisAudio.currentTime = 0;
-          }
-      });
+      isJarvisOn = !isJarvisOn;
+      localStorage.setItem('jarvis_audio', isJarvisOn ? 'on' : 'off');
+      updateJarvisButtonUI();
+
+      if (isJarvisOn) {
+        speakWelcome();
+      } else {
+        jarvisAudio.pause();
+        jarvisAudio.currentTime = 0;
+      }
+    });
   }
 
   function speakWelcome() {
-      if (!isJarvisOn) return;
-      jarvisAudio.currentTime = 0;
-      jarvisAudio.play().then(() => {
-          console.log("Audio Jarvis berhasil diputar!");
-      }).catch(error => {
-          console.log("Gagal memutar audio:", error);
-      });
+    if (!isJarvisOn) return;
+    jarvisAudio.currentTime = 0;
+    jarvisAudio.play().catch(error => {
+      console.log("Audio tidak diputar:", error);
+    });
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-      const splash = document.getElementById("welcomeSplash");
-      const btnStart = document.getElementById("btnStartApp");
-      
-      if (btnStart && splash) {
-          btnStart.addEventListener("click", function() {
-              speakWelcome();
-              
-              splash.style.opacity = "0";
-              setTimeout(() => {
-                  splash.remove();
-              }, 500);
-          });
-      }
-  });
+  // Jalankan langsung tanpa menunggu DOMContentLoaded agar tombol selalu responsif
+  const splash = document.getElementById("welcomeSplash");
+  const btnStart = document.getElementById("btnStartApp");
+
+  if (btnStart && splash) {
+    btnStart.addEventListener("click", function() {
+      speakWelcome();
+      splash.style.opacity = "0";
+      setTimeout(() => {
+        splash.remove();
+      }, 500);
+    });
+  }
 </script>
 
   <script>
