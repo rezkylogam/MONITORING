@@ -1817,18 +1817,26 @@ document.addEventListener("DOMContentLoaded", function() {
 <style>
   .display-info-ac {
     position: absolute;
-    left: 91.5%;
-    top: 86.2%;
+    left: 86.2%;
+    top: 56.1%;
+    width: 11.4%;
+    height: 11.5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.25;
     transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.90);
+    background: rgba(15, 23, 42, 0.92);
     border: 1px solid #38bdf8;
+    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
     color: #e0f2fe;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 700;
-    font-size: clamp(9px, 1.05vw, 13px);
-    padding: 3px 10px;
-    border-radius: 5px;
-    white-space: nowrap;
+    font-weight: 800;
+    font-size: clamp(8px, 1.0vw, 13px);
+    padding: 2px;
+    border-radius: 3px;
+    text-align: center;
     pointer-events: none;
     z-index: 12;
   }
@@ -1879,10 +1887,10 @@ document.addEventListener("DOMContentLoaded", function() {
     if (elDayaTv && dataAcInverter.power !== undefined) {
       elDayaTv.textContent = parseFloat(dataAcInverter.power).toFixed(1) + " W";
     }
-    if (elInfoAc && dataAcInverter.voltage !== undefined && dataAcInverter.current !== undefined) {
-      elInfoAc.textContent = parseFloat(dataAcInverter.voltage).toFixed(1) + " V | " + parseFloat(dataAcInverter.current).toFixed(2) + " A";
-    }
-  }
+     if (elInfoAc && dataAcInverter.voltage !== undefined && dataAcInverter.current !== undefined) {
+   elInfoAc.innerHTML = `<span style="color:#38bdf8;">${parseFloat(dataAcInverter.voltage).toFixed(1)} V</span><span style="color:#fbbf24;">${parseFloat(dataAcInverter.current).toFixed(2)} A</span>`;
+ }
+}
 
   // Bungkus fungsi bawaan perbaruiAnimasiDiagram agar data AT4PW tidak tertimpa 0 W
   if (typeof perbaruiAnimasiDiagram === "function") {
