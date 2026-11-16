@@ -1844,44 +1844,58 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
   let dataAcInverter = null;
-  let sudahSubAt4pw = false;
+  let subClient1 = false;
+  let subClient2 = false;
 
   document.addEventListener("DOMContentLoaded", () => {
     const elDayaTv = document.getElementById("nilaiDayaBawahTv");
-    if (elDayaTv && elDayaTv.parentElement && !document.getElementById("nilaiInfoAcBawahTv")) {
-      const infoAc = document.createElement("div");
-      infoAc.id = "nilaiInfoAcBawahTv";
-      infoAc.className = "display-info-ac";
-      infoAc.innerHTML = `<span style="color:#38bdf8;">-- V</span><span style="color:#fbbf24;">-- A</span>`;
-      elDayaTv.parentElement.appendChild(infoAc);
+    if (elDayaTv) {
+      elDayaTv.textContent = "-- W";
+      if (elDayaTv.parentElement && !document.getElementById("nilaiInfoAcBawahTv")) {
+        const infoAc = document.createElement("div");
+        infoAc.id = "nilaiInfoAcBawahTv";
+        infoAc.className = "display-info-ac";
+        infoAc.innerHTML = `<span style="color:#38bdf8;">-- V</span><span style="color:#fbbf24;">-- A</span>`;
+        elDayaTv.parentElement.appendChild(infoAc);
+      }
     }
   });
 
-  // Langsung subscribe ke client2 (broker.emqx.io)
-  const timerSubAt4pw = setInterval(() => {
-    if (!sudahSubAt4pw && typeof client2 !== "undefined" && client2 && client2.connected && typeof id_logger !== "undefined" && id_logger !== "-") {
-      sudahSubAt4pw = true;
-      const loggerUtama = id_logger.split("-")[0];
-      const topikInverter = "sysMon/" + loggerUtama + "/inverter";
-      client2.subscribe(topikInverter, { qos: 0 });
+  function pasangListenerAt4pw(mqttClient, topik) {
+    mqttClient.subscribe(topik, { qos: 0 });
+    mqttClient.on("message", (topic, message) => {
+      if (topic === topik) {
+        try {
+          dataAcInverter = JSON.parse(message.toString());
+          terapkanDataAcKeDiagram();
+        } catch (e) {}
+      }
+    });
+  }
 
-      client2.on("message", (topic, message) => {
-        if (topic === topikInverter) {
-          try {
-            dataAcInverter = JSON.parse(message.toString());
-            terapkanDataAcKeDiagram();
-          } catch (e) {}
-        }
-      });
-      clearInterval(timerSubAt4pw);
+  const timerSubAt4pw = setInterval(() => {
+    if (typeof id_logger !== "undefined" && id_logger !== "-") {
+      const topikInverter = "sysMon/" + id_logger.split("-") + "/inverter";
+      if (!subClient1 && typeof client !== "undefined" && client && client.connected) {
+        subClient1 = true;
+        pasangListenerAt4pw(client, topikInverter);
+      }
+      if (!subClient2 && typeof client2 !== "undefined" && client2 && client2.connected) {
+        subClient2 = true;
+        pasangListenerAt4pw(client2, topikInverter);
+      }
+      if (subClient1 && subClient2) clearInterval(timerSubAt4pw);
     }
-  }, 500);
+  }, 200);
 
   function terapkanDataAcKeDiagram() {
-    if (!dataAcInverter) return;
     const elDayaTv = document.getElementById("nilaiDayaBawahTv");
     const elInfoAc = document.getElementById("nilaiInfoAcBawahTv");
 
+    if (!dataAcInverter) {
+      if (elDayaTv) elDayaTv.textContent = "-- W";
+      return;
+    }
     if (elDayaTv && dataAcInverter.power !== undefined) {
       elDayaTv.textContent = parseFloat(dataAcInverter.power).toFixed(1) + " W";
     }
