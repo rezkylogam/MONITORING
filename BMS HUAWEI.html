@@ -361,61 +361,161 @@
         </div>
     </div>
     
-    <!-- Summary Section -->
-      <div id="summarySection" class="mb-8 hidden">
-        <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
-            <div class="summary-card rounded-xl border border-gray-700/50 shadow-sm p-5">
-      <!-- Grid diubah menjadi grid-cols-3 agar mengunci tampilan menjadi 3 kolom sejajar (2 Baris) -->
-      <div class="grid grid-cols-3 gap-4 text-center justify-center text-lg">
-        
-        <!-- ==================== BARIS 1 (ATAS) ==================== -->
-        
-        <!-- 1. SOC -->
-        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
-          <i class="fa fa-battery-three-quarters" style="color: green;"></i>
-          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOC</div>
-          <div id="avg-soc" class="font-semibold text-white-1500"></div>
-        </div>
+        <!-- Summary Section dengan Ikon 3D -->
+    <div id="summarySection" class="mb-8 hidden">
+      <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
+      <div class="summary-card rounded-xl border border-gray-700/50 shadow-sm p-5">
+        <div class="grid grid-cols-3 gap-4 text-center justify-center text-lg">
+          
+          <!-- ==================== BARIS 1 (ATAS) ==================== -->
+          
+          <!-- 1. RATA RATA SOC (Baterai 3D Hijau Glossy) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-9 h-9 drop-shadow-[0_4px_6px_rgba(16,185,129,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="bat3dBody" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#6ee7b7"/>
+                  <stop offset="45%" stop-color="#10b981"/>
+                  <stop offset="100%" stop-color="#065f46"/>
+                </linearGradient>
+                <linearGradient id="bat3dCap" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f3f4f6"/>
+                  <stop offset="100%" stop-color="#9ca3af"/>
+                </linearGradient>
+              </defs>
+              <!-- Tutup Positif Baterai -->
+              <rect x="19" y="4" width="10" height="4" rx="1.5" fill="url(#bat3dCap)"/>
+              <!-- Bodi Utama 3D -->
+              <rect x="12" y="8" width="24" height="35" rx="5" fill="url(#bat3dBody)" stroke="#a7f3d0" stroke-width="1"/>
+              <!-- Kilau Kaca Samping -->
+              <rect x="14.5" y="10.5" width="4.5" height="30" rx="2.2" fill="#ffffff" fill-opacity="0.32"/>
+              <!-- Petir Energi di Tengah -->
+              <path d="M25.5 16L19.5 26H24L22.5 35L28.5 25H24L25.5 16Z" fill="#fef08a"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOC</div>
+            <div id="avg-soc" class="font-semibold text-white-1500"></div>
+          </div>
 
-        <!-- 2. SOH -->
-        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
-          <i class="fa fa-heartbeat" style="color: pink;"></i>
-          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOH</div>
-          <div id="avg-soh" class="font-semibold text-white-1500"></div>
-        </div>
+          <!-- 2. RATA RATA SOH (Hati 3D Pink/Merah Glossy) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-9 h-9 drop-shadow-[0_4px_6px_rgba(244,63,94,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <radialGradient id="heart3d" cx="35%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#fda4af"/>
+                  <stop offset="45%" stop-color="#f43f5e"/>
+                  <stop offset="100%" stop-color="#881337"/>
+                </radialGradient>
+              </defs>
+              <path d="M24 41C24 41 7 30.2 7 17.8C7 12.1 11.4 8 16.6 8C19.8 8 22.6 9.6 24 12.1C25.4 9.6 28.2 8 31.4 8C36.6 8 41 12.1 41 17.8C41 30.2 24 41 24 41Z" fill="url(#heart3d)"/>
+              <!-- Kilau 3D pada Lekukan Atas -->
+              <ellipse cx="15.5" cy="14.5" rx="3.5" ry="2" transform="rotate(-30 15.5 14.5)" fill="#ffffff" fill-opacity="0.5"/>
+              <!-- Garis Detak Kesehatan -->
+              <path d="M13 24H18.5L21 19.5L24.5 28.5L27 23H35" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOH</div>
+            <div id="avg-soh" class="font-semibold text-white-1500"></div>
+          </div>
 
-        <!-- 3. RENTANG SUHU -->
-        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
-          <i class="fa fa-thermometer-half" style="color: #fb923c;"></i>
-          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RENTANG SUHU</div>
-          <div id="avg-temp" class="font-semibold text-white-1500">-- / -- °C</div>
-        </div>
+          <!-- 3. RENTANG SUHU (Termometer 3D Oranye-Merah) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-9 h-9 drop-shadow-[0_4px_6px_rgba(249,115,22,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="thermoGlass" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#e2e8f0"/>
+                  <stop offset="50%" stop-color="#94a3b8"/>
+                  <stop offset="100%" stop-color="#475569"/>
+                </linearGradient>
+                <radialGradient id="thermoMercury" cx="35%" cy="35%" r="65%">
+                  <stop offset="0%" stop-color="#fed7aa"/>
+                  <stop offset="45%" stop-color="#f97316"/>
+                  <stop offset="100%" stop-color="#9a3412"/>
+                </radialGradient>
+              </defs>
+              <!-- Tabung Kaca Luar -->
+              <path d="M20 9C20 6.79 21.79 5 24 5C26.21 5 28 6.79 28 9V26.2C30.4 27.6 32 30.1 32 33C32 37.42 28.42 41 24 41C19.58 41 16 37.42 16 33C16 30.1 17.6 27.6 20 26.2V9Z" fill="url(#thermoGlass)" stroke="#cbd5e1" stroke-width="1"/>
+              <!-- Air Raksa 3D -->
+              <circle cx="24" cy="33" r="5.5" fill="url(#thermoMercury)"/>
+              <rect x="22.2" y="13" width="3.6" height="17" rx="1.8" fill="url(#thermoMercury)"/>
+              <!-- Kilau Bola Bawah -->
+              <circle cx="22.2" cy="31.2" r="1.6" fill="#ffffff" fill-opacity="0.6"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RENTANG SUHU</div>
+            <div id="avg-temp" class="font-semibold text-white-1500">-- / -- °C</div>
+          </div>
 
-        <!-- ==================== BARIS 2 (BAWAH) ==================== -->
+          <!-- ==================== BARIS 2 (BAWAH) ==================== -->
 
-        <!-- 4. VOLTAGE -->
-        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
-          <i class="fa fa-bolt" style="color: yellow;"></i>
-          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TEGANGAN RATA RATA</div>
-          <div id="avg-voltage" class="font-semibold text-white-1500"></div>
-        </div>
+          <!-- 4. TEGANGAN RATA RATA (Petir 3D Emas Mengkilap) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-9 h-9 drop-shadow-[0_4px_6px_rgba(234,179,8,0.55)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="bolt3d" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#fef9c3"/>
+                  <stop offset="40%" stop-color="#facc15"/>
+                  <stop offset="100%" stop-color="#b45309"/>
+                </linearGradient>
+              </defs>
+              <!-- Bayangan Tebal 3D di Belakang -->
+              <path d="M28.5 5L12.5 26H24.5L21.5 43L37.5 22H25.5L28.5 5Z" fill="#78350f"/>
+              <!-- Bodi Petir Emas Utama -->
+              <path d="M27 4L11 25H23L20 42L36 21H24L27 4Z" fill="url(#bolt3d)" stroke="#fef08a" stroke-width="0.8"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TEGANGAN RATA RATA</div>
+            <div id="avg-voltage" class="font-semibold text-white-1500"></div>
+          </div>
 
-        <!-- 5. CURRENT -->
-        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
-          <i class="fa fa-wave-square" style="color: orange;"></i>
-          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL ARUS</div>
-          <div id="total-current" class="font-semibold text-white-1500"></div>
-        </div>
+          <!-- 5. TOTAL ARUS (Gelombang Arus 3D Biru-Cyan) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-9 h-9 drop-shadow-[0_4px_6px_rgba(56,189,248,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="curr3dBg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="50%" stop-color="#0284c7"/>
+                  <stop offset="100%" stop-color="#1e3a8a"/>
+                </linearGradient>
+              </defs>
+              <!-- Lencana Kotak 3D Membulat -->
+              <rect x="6" y="7" width="36" height="34" rx="9" fill="url(#curr3dBg)" stroke="#7dd3fc" stroke-width="1"/>
+              <!-- Kilau Atas -->
+              <path d="M10 12C10 9.8 11.8 8 14 8H34C36.2 8 38 9.8 38 12V15H10V12Z" fill="#ffffff" fill-opacity="0.22"/>
+              <!-- Garis Gelombang Arus 3D -->
+              <path d="M11 25H17L20.5 14L27.5 34L31 25H37" stroke="#0c4a6e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,1.5)"/>
+              <path d="M11 25H17L20.5 14L27.5 34L31 25H37" stroke="#fef08a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL ARUS</div>
+            <div id="total-current" class="font-semibold text-white-1500"></div>
+          </div>
 
-        <!-- 6. POWER -->
-        <div onclick="bukaModalDiagram()" title="Klik untuk melihat aliran energi PLTS" class="space-y-1 bg-white/5 hover:bg-white/15 cursor-pointer transition p-2 rounded-lg flex flex-col items-center justify-center">
-          <i class="fa-solid fa-plug-circle-bolt" style="color: red;"></i>
-          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL DAYA</div>
-          <div id="total-power" class="font-semibold text-white-1500"></div>
+          <!-- 6. TOTAL DAYA (Steker/Colokan Listrik 3D Merah-Oranye) -->
+          <div onclick="bukaModalDiagram()" title="Klik untuk melihat aliran energi PLTS" class="space-y-1.5 bg-white/5 hover:bg-white/15 cursor-pointer transition p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-9 h-9 drop-shadow-[0_4px_6px_rgba(239,68,68,0.55)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="plug3dBody" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#fca5a5"/>
+                  <stop offset="45%" stop-color="#ef4444"/>
+                  <stop offset="100%" stop-color="#7f1d1d"/>
+                </linearGradient>
+                <linearGradient id="plugPin" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#f8fafc"/>
+                  <stop offset="100%" stop-color="#94a3b8"/>
+                </linearGradient>
+              </defs>
+              <!-- Dua Pin Colokan Logam 3D -->
+              <rect x="17" y="5" width="3.5" height="9" rx="1.5" fill="url(#plugPin)"/>
+              <rect x="27.5" y="5" width="3.5" height="9" rx="1.5" fill="url(#plugPin)"/>
+              <!-- Kepala Steker 3D -->
+              <path d="M12 14H36V23C36 29.6274 30.6274 35 24 35C17.3726 35 12 29.6274 12 23V14Z" fill="url(#plug3dBody)" stroke="#fecaca" stroke-width="1"/>
+              <!-- Kabel Bawah -->
+              <path d="M24 35V43" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+              <!-- Simbol Petir Daya di Tengah Steker -->
+              <path d="M25 18L20.5 24.5H24L23 30.5L27.5 24H24L25 18Z" fill="#fef08a"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL DAYA</div>
+            <div id="total-power" class="font-semibold text-white-1500"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
     <h3 class="text-lg font-semibold text-light gray-850 mb-4 mt-6">
   DAFTAR UNIT BATERAI <span class="text-lg font-semibold text-slate-400">(Klik kartu untuk detail 15 sel)</span>
 </h3>
