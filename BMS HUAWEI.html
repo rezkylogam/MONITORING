@@ -223,12 +223,10 @@
           <i class="fas fa-cog text-2xl text-orange-500 hover:text-orange-600"></i>
         </button>
 
-       <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden">
-           <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600 ">📱 Modul Info</a>
+        <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50">
+           <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">📱 Modul Info</a>
            <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙️ Setting BMS</a>
            <a id="pollingState" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">▶️ Active</a>
-           <hr class="my-1">
-           <a id="themeToggleLink" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">☀️ Light Mode</a>
         </div>
       </div>
     </div>
@@ -1271,62 +1269,41 @@ function updateModal() {
 </script>
 
 <script>
-  const themeToggleLink = document.getElementById('themeToggleLink');
-  const body = document.body;
-  const header = document.getElementById('mainHeader');
+  // Kunci permanen ke Dark Mode
+  document.body.setAttribute('data-theme', 'dark');
+  document.body.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
 
   // 1. Inisialisasi objek audio dengan file mp3 Jarvis Anda
-const jarvisAudio = new Audio('./jarvis.mp3');
+  const jarvisAudio = new Audio('./jarvis.mp3');
 
-// 2. Fungsi untuk memutar audio Jarvis
-function speakWelcome() {
-    jarvisAudio.currentTime = 0;
-    jarvisAudio.play().then(() => {
-        console.log("Audio Jarvis berhasil diputar!");
-    }).catch(error => {
-        console.log("Gagal memutar audio:", error);
-    });
-}
-
-// 3. Logika untuk tombol masuk dan menghilangkan Splash Screen
-document.addEventListener("DOMContentLoaded", function() {
-    const splash = document.getElementById("welcomeSplash");
-    const btnStart = document.getElementById("btnStartApp");
-    
-    if (btnStart && splash) {
-        btnStart.addEventListener("click", function() {
-            // Putar suara Jarvis dengan segera saat tombol diklik
-            speakWelcome();
-            
-            // Berikan efek transisi menghilang pada Splash Screen
-            splash.style.opacity = "0";
-            setTimeout(() => {
-                splash.remove(); // Hapus elemen splash screen dari layar setelah menghilang
-            }, 500);
-        });
-    }
-});
-
-  function setTheme(theme) {
-    body.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-
-    themeToggleLink.innerHTML = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-
-    if (theme === 'dark') {
-      document.body.classList.add('dark');
-    } else {
-      document.body.classList.remove('dark');
-    }
+  // 2. Fungsi untuk memutar audio Jarvis
+  function speakWelcome() {
+      jarvisAudio.currentTime = 0;
+      jarvisAudio.play().then(() => {
+          console.log("Audio Jarvis berhasil diputar!");
+      }).catch(error => {
+          console.log("Gagal memutar audio:", error);
+      });
   }
 
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  setTheme(savedTheme);
-
-  themeToggleLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
+  // 3. Logika untuk tombol masuk dan menghilangkan Splash Screen
+  document.addEventListener("DOMContentLoaded", function() {
+      const splash = document.getElementById("welcomeSplash");
+      const btnStart = document.getElementById("btnStartApp");
+      
+      if (btnStart && splash) {
+          btnStart.addEventListener("click", function() {
+              // Putar suara Jarvis dengan segera saat tombol diklik
+              speakWelcome();
+              
+              // Berikan efek transisi menghilang pada Splash Screen
+              splash.style.opacity = "0";
+              setTimeout(() => {
+                  splash.remove(); // Hapus elemen splash screen dari layar setelah menghilang
+              }, 500);
+          });
+      }
   });
 </script>
 
