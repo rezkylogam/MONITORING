@@ -846,7 +846,7 @@
 </div>
 
 <script>
-  let id_logger = "-";
+    let id_logger = "-";
   let client;
   let client2;
   let batteries = [];
@@ -854,42 +854,42 @@
   let timer_poll;
   let xxx;
   const cardTimers = {};
-  
-  // Fungsi untuk mengurutkan baterai berdasarkan typeBattery dan address
+  const CARD_TIMEOUT_MS = 60000;
+
   function sortBatteries() {
     batteries.sort((a, b) => {
-      // Urutkan berdasarkan typeBattery terlebih dahulu
       if (a.typeBattery < b.typeBattery) return -1;
       if (a.typeBattery > b.typeBattery) return 1;
-      
-      // Jika typeBattery sama, urutkan berdasarkan address
       return parseInt(a.addr) - parseInt(b.addr);
     });
-    
-    // Setelah mengurutkan array, re-render semua card
     reRenderAllCards();
   }
-  
-  // Fungsi untuk merender ulang semua card berdasarkan urutan terbaru
+
   function reRenderAllCards() {
     const grid = document.getElementById("batteryGrid");
-    
-    // Kosongkan grid
     grid.innerHTML = '';
-    
-    // Render ulang semua baterai sesuai urutan terbaru
+
     batteries.forEach(batt => {
       let cardId = `card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
-      
-      // Hapus timer lama jika ada
+
       if (cardTimers[cardId]) {
         clearTimeout(cardTimers[cardId]);
         delete cardTimers[cardId];
       }
 
+      let statusColor = '#9ca3af';
+      let statusWeight = 'normal';
+      if (batt.status === 'Charging') {
+        statusColor = '#22c55e';
+        statusWeight = 'bold';
+      } else if (batt.status === 'Discharging') {
+        statusColor = '#f97316';
+        statusWeight = 'bold';
+      }
+
       let card = document.createElement("div");
       card.id = cardId;
-      card.className = "battery-card rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md fade-in hidden";
+      card.className = "battery-card rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md fade-in";
       card.dataset.loggerId = batt.loggerId;
       card.dataset.addr = String(batt.addr);
       card.dataset.typeBattery = batt.typeBattery;
@@ -904,132 +904,53 @@
               <span class="text-sm font-semibold text-gray-800">SOC :</span>
               <span class="text-sm font-semibold" id="soc-value-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.soc}%</span>
             </div>
-            <span class="text-sm font-semibold" id="status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.status || '--'}</span>
+            <span class="text-sm font-semibold" style="color: ${statusColor}; font-weight: ${statusWeight};" id="status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.status || '--'}</span>
           </div>
-          <div class="mini-batt-wrapper">
-            <div class="mini-batt-body">
-              <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill bg-green-500" style="width: ${batt.soc}%"></div>
-            </div>
-            <div class="mini-batt-cap"></div>
+          <div class="progress-bar">
+            <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill ${getSocColorClass(batt.soc)}" style="width: ${batt.soc}%"></div>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-5 text-sm">
           <div class="space-y-2">
-            <!-- 1. Tegangan (Petir 3D Emas) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(234,179,8,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <linearGradient id="cBolt3d" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#fef08a"/>
-                    <stop offset="50%" stop-color="#facc15"/>
-                    <stop offset="100%" stop-color="#b45309"/>
-                  </linearGradient>
-                </defs>
-                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#78350f"/>
-                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cBolt3d)"/>
-              </svg>
+              <i class="fas fa-bolt text-yellow-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Tegangan</div>
                 <div id="voltage-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.voltage} V</div>
               </div>
             </div>
-
-            <!-- 2. Selisih Sel (Bola Biru 3D dengan Garis Selisih) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(59,130,246,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cDiff3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#93c5fd"/>
-                    <stop offset="55%" stop-color="#3b82f6"/>
-                    <stop offset="100%" stop-color="#1e3a8a"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cDiff3d)"/>
-                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
-                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
-              </svg>
+              <i class="fas fa-minus-circle text-blue-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Selisih Sel</div>
                 <div id="voltagedif-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vdif} mV</div>
               </div>
             </div>
-
-            <!-- 3. Min Cell (Bola Merah 3D Minus) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cMin3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#fca5a5"/>
-                    <stop offset="55%" stop-color="#ef4444"/>
-                    <stop offset="100%" stop-color="#7f1d1d"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cMin3d)"/>
-                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
-                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
-              </svg>
+              <i class="fas fa-minus-circle text-red-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Min Cell</div>
                 <div id="cellmin-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmin} V</div>
               </div>
             </div>
           </div>
-
           <div class="space-y-2">
-            <!-- 4. Arus (Gauge/Speedometer 3D Biru-Cyan) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(56,189,248,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cCurr3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#7dd3fc"/>
-                    <stop offset="55%" stop-color="#0284c7"/>
-                    <stop offset="100%" stop-color="#0c4a6e"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cCurr3d)"/>
-                <path d="M7 14.5C7 11.7 9.2 9.5 12 9.5C14.8 9.5 17 11.7 17 14.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M12 14.5L15 11" stroke="#fef08a" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="14.5" r="1.5" fill="#ffffff"/>
-              </svg>
+              <i class="fas fa-tachometer-alt text-blue-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Arus</div>
                 <div id="current-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.current} A</div>
               </div>
             </div>
-
-            <!-- 5. Daya (Petir 3D Merah-Oranye) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <linearGradient id="cPow3d" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#fca5a5"/>
-                    <stop offset="45%" stop-color="#ef4444"/>
-                    <stop offset="100%" stop-color="#7f1d1d"/>
-                  </linearGradient>
-                </defs>
-                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#450a0a"/>
-                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cPow3d)"/>
-              </svg>
+              <i class="fas fa-bolt text-red-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Daya</div>
                 <div id="power-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${(batt.voltage*batt.current).toFixed(1)} W</div>
               </div>
             </div>
-
-            <!-- 6. Max Cell (Bola Hijau 3D Plus) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(34,197,94,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cMax3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#86efac"/>
-                    <stop offset="55%" stop-color="#22c55e"/>
-                    <stop offset="100%" stop-color="#14532d"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cMax3d)"/>
-                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
-                <path d="M12 7.5V16.5M7.5 12H16.5" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
-              </svg>
+              <i class="fas fa-plus-circle text-green-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Max Cell</div>
                 <div id="cellmax-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmax} V</div>
@@ -1037,26 +958,20 @@
             </div>
           </div>
         </div>
-         <div class="mt-4 pt-3 border-t border-gray-100 text-gray-500 flex justify-between items-center w-full">
+        <div class="mt-4 pt-3 border-t border-gray-100 text-gray-500 flex justify-between items-center w-full">
           <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Suhu: <span id="temp-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.temp || '--'}</span></span>
-           <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Siklus (Cycles) : <span id="cycles-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.cycles}</span></span>
+          <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Siklus (Cycles) : <span id="cycles-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.cycles}</span></span>
         </div>
       `;
       card.onclick = () => openModal(batt.loggerId, batt.addr, batt.typeBattery);
       grid.appendChild(card);
 
-      // Set SOC bar color
-      const socBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-      if (batt.soc > 70) socBar.className = 'progress-fill bg-green-500';
-      else if (batt.soc > 30) socBar.className = 'progress-fill bg-yellow-500';
-      else socBar.className = 'progress-fill bg-red-500';
-
-      // Blink LED
       const led = document.getElementById(`led-card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-      led.classList.add("active");
-      setTimeout(() => led.classList.remove("active"), 250);
+      if (led) {
+        led.classList.add("active");
+        setTimeout(() => led.classList.remove("active"), 250);
+      }
 
-      // Set timeout untuk remove card
       cardTimers[cardId] = setTimeout(() => {
         let c = document.getElementById(cardId);
         if (c) {
@@ -1064,38 +979,34 @@
           removeBatteryFromArray(batt.loggerId, batt.typeBattery, batt.addr);
         }
         delete cardTimers[cardId];
-      }, 30000);
+      }, CARD_TIMEOUT_MS);
     });
-    
+
     updateConnectionCount();
   }
-  
-  function startMQTT(){
+
+    function startMQTT() {
     client = mqtt.connect("wss://public.cloud.shiftr.io", {
       username: "public",
       password: "public"
     });
-    
+
     client.on("connect", () => {
       console.log("Connected to MQTT");
       xxx = id_logger.split("-");
-      for(var a=0; a<xxx.length;a++){
-        client.subscribe("sysMon/"+xxx[a]+"/AutoPoll/#");
-        console.log("Subscribed topic: ", xxx[a]);
-        client.publish(xxx[a]+"/seting","POLL1",0);
+      for (var a = 0; a < xxx.length; a++) {
+        client.subscribe("sysMon/" + xxx[a] + "/AutoPoll/#");
+        client.publish(xxx[a] + "/seting", "POLL1", 0);
       }
-      client.subscribe("sysMon/"+xxx[0]+"/info/#");
+      client.subscribe("sysMon/" + xxx[0] + "/info/#");
       updateConnectionStatus(true);
     });
 
     client.on("message", (topic, message) => {
-      handleJSON(topic,message);
+      handleJSON(topic, message);
     });
-    
-    client.on("close", () => {
-      updateConnectionStatus(false);
-    });
-    
+
+    client.on("close", () => updateConnectionStatus(false));
     client.on("error", (error) => {
       console.error("MQTT Error:", error);
       updateConnectionStatus(false);
@@ -1105,68 +1016,76 @@
       username: "emqx",
       password: "emqx"
     });
-    
+
     client2.on("connect", () => {
       console.log("Connected to MQTT 2");
       xxx = id_logger.split("-");
-      for(var a=0; a<xxx.length;a++){
-        client2.subscribe("sysMon/"+xxx[a]+"/AutoPoll/#");
-        console.log("Subscribed topic: ", xxx[a]);
-        client2.publish(xxx[a]+"/seting","POLL1",0);
+      for (var a = 0; a < xxx.length; a++) {
+        client2.subscribe("sysMon/" + xxx[a] + "/AutoPoll/#");
+        client2.publish(xxx[a] + "/seting", "POLL1", 0);
       }
-      client2.subscribe("sysMon/"+xxx[0]+"/info/#");
+      client2.subscribe("sysMon/" + xxx[0] + "/info/#");
       updateConnectionStatus(true);
     });
 
     client2.on("message", (topic, message) => {
-      handleJSON(topic,message);
+      handleJSON(topic, message);
     });
-    
-    client2.on("close", () => {
-      updateConnectionStatus(false);
-    });
-    
+
+    client2.on("close", () => updateConnectionStatus(false));
     client2.on("error", (error) => {
       console.error("MQTT Error:", error);
       updateConnectionStatus(false);
     });
   }
 
-  function handleJSON(topic, message){
-    if(topic == "sysMon/"+xxx[0]+"/info/" || topic == "sysMon/"+xxx[0]+"/info" ){
+  function handleJSON(topic, message) {
+    if (topic == "sysMon/" + xxx[0] + "/info/" || topic == "sysMon/" + xxx[0] + "/info") {
       let a = message.toString().split(",");
-      document.getElementById("network_ip").innerText = "IP Address: " + a[0];
-      document.getElementById("network_signal").innerText = "Signal: " + a[1];
-      
-      //document.getElementById("id_monitoring").innerText =text_head;
-      //document.getElementById("id_monitoring_footer").innerText =text_head;
-    } else {
-      try {
-        const raw = JSON.parse(message.toString());
-        const batt = normalizeFromMqtt(raw, topic);
-        console.log("ISI DATA MQTT:", raw);
-
-        const idx = batteries.findIndex(b => b.loggerId === batt.loggerId && b.addr === batt.addr && b.typeBattery === batt.typeBattery);
-        if (idx >= 0) { 
-          batteries[idx] = batt;
-          update_cards(batt);
-        } else {
-          batt.elementId = `battery-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
-          batteries.push(batt);
-          // Setelah menambahkan baterai baru, urutkan semua baterai
-          sortBatteries();
-        }
-
-        updateSummary();
-        updateModal(); 
-      } catch (e) {
-        console.error("Invalid JSON", e);
+      document.getElementById("network_ip").innerText = "IP Address: " + (a[0] || "-");
+      document.getElementById("network_signal").innerText = "Signal: " + (a[1] || "-");
+      let varpol = document.getElementById("pollingState");
+      if (a[3] === "1") {
+        varpol.innerHTML = "▶️ Active";
+        pollingSts = true;
+      } else {
+        varpol.innerHTML = "⏹️ Passive";
+        pollingSts = false;
       }
+      return;
+    }
+
+    if (!topic.includes("/AutoPoll/")) return;
+
+    try {
+      const msgStr = message.toString().trim();
+      if (!msgStr.startsWith("{")) return;
+
+      const raw = JSON.parse(msgStr);
+      if (!raw || raw.AddrBattery === undefined || !Array.isArray(raw.cell_voltages) || raw.cell_voltages.length === 0) {
+        return;
+      }
+
+      const batt = normalizeFromMqtt(raw, topic);
+
+      const idx = batteries.findIndex(b => b.loggerId === batt.loggerId && b.addr === batt.addr && b.typeBattery === batt.typeBattery);
+      if (idx >= 0) {
+        batteries[idx] = batt;
+        update_cards(batt);
+      } else {
+        batt.elementId = `battery-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
+        batteries.push(batt);
+        sortBatteries();
+      }
+
+      updateSummary();
+      updateModal();
+    } catch (e) {
+      console.warn("Pesan MQTT diabaikan:", e.message);
     }
   }
 
   function updateConnectionStatus(connected) {
-    const statusIndicator = document.getElementById('connection-status');
     if (connected) {
       document.body.classList.remove('disconnected');
       document.body.classList.add('connected');
@@ -1185,41 +1104,49 @@
   }
 
   function normalizeFromMqtt(data, topic) {
-  const cells = data.cell_voltages.map(v => (v / 1000).toFixed(3));
-  const cell_temps = data.cell_temps || []; // <-- BARIS BARU: Tangkap array suhu sel dari MQTT
-  const cell_vmax = Math.max(...data.cell_voltages) / 1000;
-  const cell_vmin = Math.min(...data.cell_voltages) / 1000;
-  const cell_vdiff = (cell_vmax - cell_vmin) * 1000;
+    const cellVoltages = Array.isArray(data.cell_voltages) ? data.cell_voltages : [];
+    const cells = cellVoltages.map(v => (Number(v) / 1000).toFixed(3));
+    const cell_temps = Array.isArray(data.cell_temps) ? data.cell_temps : [];
+    const cell_vmax = cellVoltages.length > 0 ? Math.max(...cellVoltages) / 1000 : 0;
+    const cell_vmin = cellVoltages.length > 0 ? Math.min(...cellVoltages) / 1000 : 0;
+    const cell_vdiff = (cell_vmax - cell_vmin) * 1000;
 
-  return {
-    loggerId: topic.split('/')[1],
-    typeBattery: data.typeBattery,
-    addr: data.AddrBattery,
-    soc: data.SOC !== undefined ? parseFloat(data.SOC).toFixed(2) : (data.remaining_capacity !== undefined ? parseFloat(data.remaining_capacity).toFixed(2) : "0.00"),
-    soh: parseFloat(data.SOH).toFixed(2),
-    voltage: data.bat_voltage.toFixed(2),
-    busVoltage: data.bus_voltage.toFixed(2),
-    busCurrent: data.bus_current !== undefined ? data.bus_current.toFixed(2) : data.bat_current.toFixed(2),
-    current: data.bat_current.toFixed(2),
-    capacity: data.full_capacity.toFixed(2),
-    remaining: data.rem_capacity.toFixed(2),
-    cycles: data.cycle_count,
-    cycle_count: data.cycle_count,
-    cells,
-    cell_temps, // <-- BARIS BARU: Masukkan ke objek baterai
-    cell_vmax: cell_vmax.toFixed(3),
-    cell_vmin: cell_vmin.toFixed(3),
-    cell_vdif: cell_vdiff.toFixed(0),
-    time: getCurrentTimeHHMMSS(),
-    power: (data.bat_voltage * data.bat_current).toFixed(2),
-    status: data.bat_current > 0.1 ? 'Charging' : (data.bat_current < -0.1 ? 'Discharging' : 'Standby'),
-    temp: (data.min_temp !== undefined && data.max_temp !== undefined) ? `${data.min_temp}°C ~ ${data.max_temp}°C` : (data.min_temp !== undefined ? `${data.min_temp}°C` : '--'),
-    min_temp: data.min_temp,
-    max_temp: data.max_temp,
-  };
-}
+    const batVolt = Number(data.bat_voltage) || 0;
+    const busVolt = Number(data.bus_voltage) || batVolt;
+    const batCurr = Number(data.bat_current) || 0;
+    const busCurr = data.bus_current !== undefined ? Number(data.bus_current) : batCurr;
+    const socVal = data.SOC !== undefined ? Number(data.SOC) : (Number(data.remaining_capacity) || 0);
+    const sohVal = data.SOH !== undefined ? Number(data.SOH) : 100;
 
-  const grid = document.getElementById("batteryGrid");
+    return {
+      loggerId: topic.split('/')[1] || "default",
+      typeBattery: data.typeBattery || "HUAWEI",
+      addr: data.AddrBattery,
+      soc: socVal.toFixed(2),
+      soh: sohVal.toFixed(2),
+      voltage: batVolt.toFixed(2),
+      busVoltage: busVolt.toFixed(2),
+      busCurrent: busCurr.toFixed(2),
+      current: batCurr.toFixed(2),
+      capacity: (Number(data.full_capacity) || 0).toFixed(2),
+      remaining: (Number(data.rem_capacity) || 0).toFixed(2),
+      cycles: data.cycle_count ?? 0,
+      cycle_count: data.cycle_count ?? 0,
+      cells,
+      cell_temps,
+      cell_vmax: cell_vmax.toFixed(3),
+      cell_vmin: cell_vmin.toFixed(3),
+      cell_vdif: cell_vdiff.toFixed(0),
+      time: getCurrentTimeHHMMSS(),
+      power: (batVolt * batCurr).toFixed(2),
+      status: batCurr > 0.1 ? 'Charging' : (batCurr < -0.1 ? 'Discharging' : 'Standby'),
+      temp: (data.min_temp !== undefined && data.max_temp !== undefined) ? `${data.min_temp}°C ~ ${data.max_temp}°C` : (data.min_temp !== undefined ? `${data.min_temp}°C` : '--'),
+      min_temp: data.min_temp,
+      max_temp: data.max_temp,
+    };
+  }
+
+    const grid = document.getElementById("batteryGrid");
   const modal = document.getElementById("batteryModal");
   const emptyState = document.getElementById("empty-state");
   const summarySection = document.getElementById("summarySection");
@@ -1229,7 +1156,6 @@
 
   function updateConnectionCount() {
     document.getElementById('total-batteries').textContent = batteries.length.toString();
-    
     if (batteries.length === 0) {
       grid.classList.add('hidden');
       emptyState.classList.remove('hidden');
@@ -1240,48 +1166,40 @@
       summarySection.classList.remove('hidden');
     }
   }
-  
+
   function removeBatteryFromArray(loggerId, typeBattery, addr) {
     batteries = batteries.filter(b => !(b.loggerId === loggerId && b.typeBattery === typeBattery && b.addr === addr));
     updateConnectionCount();
     updateSummary();
-    // Setelah menghapus baterai, urutkan ulang
     sortBatteries();
   }
-  
+
   function getSocColorClass(soc) {
     let val = parseFloat(soc);
-    if (val <= 20) return 'bg-red-500';       // Merah jika baterai ≤ 20%
-    if (val <= 50) return 'bg-yellow-500';    // Kuning jika baterai 21% - 50%
-    return 'bg-green-500';                    // Hijau jika baterai > 50%
+    if (val <= 20) return 'bg-red-500';
+    if (val <= 50) return 'bg-yellow-500';
+    return 'bg-green-500';
   }
 
   function update_cards(batt) {
     let cardId = `card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
     let card = document.getElementById(cardId);
-    
+
     if (!card) {
-      // Jika card tidak ada, tambahkan baterai ke array dan urutkan
       batt.elementId = `battery-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
       batteries.push(batt);
       sortBatteries();
       return;
     }
 
-    // Update card yang sudah ada
     document.getElementById(`soc-value-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).textContent = `${batt.soc}%`;
+
     let progressBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
     if (progressBar) {
-    // 1. Update lebar bar sesuai persentase baterai
-    progressBar.style.width = `${batt.SOC}%`;
-    
-    // 2. Bersihkan kelas warna bawaan Tailwind agar tidak bentrok
-    progressBar.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-blue-500');
-    
-    // 3. Pasang warna baru yang sesuai dengan kondisi SOC saat ini
-    let colorClass = getSocColorClass(batt.SOC);
-    progressBar.classList.add(colorClass);
+      progressBar.style.width = `${batt.soc}%`;
+      progressBar.className = `progress-fill ${getSocColorClass(batt.soc)}`;
     }
+
     document.getElementById(`voltage-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.voltage} V`;
     document.getElementById(`current-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.current} A`;
     document.getElementById(`cellmin-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.cell_vmin} V`;
@@ -1289,43 +1207,33 @@
     document.getElementById(`power-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${(batt.voltage*batt.current).toFixed(1)} W`;
     document.getElementById(`voltagedif-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.cell_vdif} mV`;
 
-    const socBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-    if (batt.soc > 70) socBar.className = 'progress-fill bg-green-500';
-    else if (batt.soc > 30) socBar.className = 'progress-fill bg-yellow-500';
-    else socBar.className = 'progress-fill bg-red-500';
-
     const tempElem = document.getElementById(`temp-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-if (tempElem) {
-    tempElem.textContent = batt.temp;
-}
-    
+    if (tempElem) tempElem.textContent = batt.temp;
+
     const cyclesElem = document.getElementById(`cycles-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-if (cyclesElem) {
-    cyclesElem.textContent = batt.cycles;
-}
+    if (cyclesElem) cyclesElem.textContent = batt.cycles;
 
     const statusElem = document.getElementById(`status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
     if (statusElem) {
       statusElem.textContent = batt.status;
-
-      // Memaksa pewarnaan teks secara mutlak menggunakan inline styles
       if (batt.status === 'Charging') {
-        statusElem.style.color = '#22c55e'; // Warna Hijau Terang (Green-500)
+        statusElem.style.color = '#22c55e';
         statusElem.style.fontWeight = 'bold';
       } else if (batt.status === 'Discharging') {
-        statusElem.style.color = '#f97316'; // Warna Oranye Terang (Orange-500)
+        statusElem.style.color = '#f97316';
         statusElem.style.fontWeight = 'bold';
       } else {
-        statusElem.style.color = '#9ca3af'; // Warna Abu-abu Standby (Gray-400)
+        statusElem.style.color = '#9ca3af';
         statusElem.style.fontWeight = 'normal';
       }
     }
 
     const led = document.getElementById(`led-card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-    led.classList.add("active");
-    setTimeout(() => led.classList.remove("active"), 250);
+    if (led) {
+      led.classList.add("active");
+      setTimeout(() => led.classList.remove("active"), 250);
+    }
 
-    // Reset timeout
     if (cardTimers[cardId]) {
       clearTimeout(cardTimers[cardId]);
     }
@@ -1336,12 +1244,9 @@ if (cyclesElem) {
         removeBatteryFromArray(batt.loggerId, batt.typeBattery, batt.addr);
       }
       delete cardTimers[cardId];
-    }, 30000);
+    }, CARD_TIMEOUT_MS);
 
-    let currentCard = document.getElementById(cardId);
-    if (currentCard) {
-        currentCard.classList.remove('hidden');
-    }
+    card.classList.remove('hidden');
   }
 
   function updateSummary() {
