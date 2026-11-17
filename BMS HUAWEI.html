@@ -258,6 +258,31 @@
       z-index: 3;
       pointer-events: none;
     }
+
+    /* === IKON BATERAI MINI UNTUK KARTU DAFTAR UNIT (KUTUB DI KANAN) === */
+    .mini-batt-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .mini-batt-body {
+      flex: 1;
+      height: 14px;
+      background-color: #1f2937;
+      border: 1.5px solid #64748b;
+      border-radius: 4px;
+      padding: 1.5px;
+      overflow: hidden;
+      position: relative;
+    }
+    .mini-batt-cap {
+      width: 4px;
+      height: 8px;
+      background-color: #94a3b8;
+      border-radius: 0 2px 2px 0;
+      margin-left: 1px;
+    }
   </style>
 
   <style>
@@ -881,11 +906,14 @@
             </div>
             <span class="text-sm font-semibold" id="status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.status || '--'}</span>
           </div>
-          <div class="progress-bar">
-            <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill" style="width: ${batt.soc}%"></div>
+          <div class="mini-batt-wrapper">
+            <div class="mini-batt-body">
+              <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill bg-green-500" style="width: ${batt.soc}%"></div>
+            </div>
+            <div class="mini-batt-cap"></div>
           </div>
         </div>
-                <div class="grid grid-cols-2 gap-5 text-sm">
+        <div class="grid grid-cols-2 gap-5 text-sm">
           <div class="space-y-2">
             <!-- 1. Tegangan (Petir 3D Emas) -->
             <div class="flex items-center">
