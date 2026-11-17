@@ -437,7 +437,17 @@
       </div>
     </div>
 
-    <!-- 3. Mode Teknisi (Custom Register Write) -->
+    <!-- 3. Kontrol Auto Load & Charge Sharing -->
+    <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
+      <div class="text-sm font-bold text-gray-700 uppercase mb-1">3. AUTO LOAD & CHARGE SHARING</div>
+      <p class="text-xs text-gray-500 mb-3">Membagi arus pengisian dan beban secara otomatis antar unit baterai agar SOC seimbang.</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="sendSharingCommand('SHARING_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-base font-bold py-3 px-4 rounded-xl">AKTIFKAN (ON)</button>
+        <button onclick="sendSharingCommand('SHARING_OFF')" class="bg-rose-600 hover:bg-rose-700 text-white text-base font-bold py-3 px-4 rounded-xl">MATIKAN (OFF)</button>
+      </div>
+    </div>
+
+    <!-- 4. Mode Teknisi (Custom Register Write) -->
     <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-gray-50 shadow-sm">
       <div class="text-sm font-bold text-gray-700 uppercase mb-2.5">3. Custom Register (Mode Teknisi)</div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1712,6 +1722,31 @@ function updateModal() {
       return;
     }
     sendBmsCommand(reg, val);
+  }
+
+  // Fungsi ON/OFF Auto Load & Charge Sharing
+  function sendSharingCommand(modeCmd) {
+    const pin = document.getElementById("setSecurityPin").value.trim();
+    if (!pin) {
+      showSettingStatus(false, "Harap masukkan PIN Keamanan terlebih dahulu!");
+      return;
+    }
+
+    const activeClient = (typeof client2 !== "undefined" && client2.connected) ? client2 : client;
+    if (!activeClient || !activeClient.connected) {
+      showSettingStatus(false, "Koneksi MQTT belum terhubung!");
+      return;
+    }
+
+    const loggerTarget = id_logger.split("-");
+    const topic = loggerTarget + "/seting";
+    const payload = JSON.stringify({
+      cmd: modeCmd,
+      pin: pin
+    });
+
+    showSettingStatus(null, "⏳ Mengirim pengaturan Sharing ke ESP32...");
+    activeClient.publish(topic, payload, 0);
   }
 
   // Mendengarkan Balasan Status dari ESP32 (sysMon/[id_logger]/status)
