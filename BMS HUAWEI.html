@@ -184,19 +184,14 @@
     }
   </style>
   <style>
-    @keyframes putarRodaGigi {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
+      @keyframes putarRodaGigi3D {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    .roda-gigi-3d-putar {
-      animation: putarRodaGigi 14s linear infinite;
-      transform-origin: center;
-    }
-
-    #settingsBtn:hover .roda-gigi-3d-putar,
-    #settingsBtn:active .roda-gigi-3d-putar {
-      animation-duration: 3s;
+    #settingsBtn:hover svg g,
+    #settingsBtn:active svg g {
+      animation-duration: 2.5s !important;
     }
   </style>
 <style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
@@ -236,32 +231,40 @@
     <div class="flex items-center space-x-4">
 
       <div class="relative">
-        <button id="settingsBtn" class="p-1 rounded-full transition transform hover:scale-105 active:scale-95">
-          <svg class="w-10 h-10 roda-gigi-3d-putar drop-shadow-[0_3px_5px_rgba(249,115,22,0.65)]" viewBox="0 0 48 48" fill="none">
+                <button id="settingsBtn" class="p-1 rounded-full transition transform hover:scale-105 active:scale-95 focus:outline-none">
+          <svg class="w-10 h-10 drop-shadow-[0_0_10px_rgba(245,158,11,0.75)]" viewBox="0 0 48 48" fill="none" xmlns="http://w3.org">
             <defs>
-              <linearGradient id="gear3dRim" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#fde047"/>
-                <stop offset="40%" stop-color="#f97316"/>
+              <linearGradient id="neonGold3D" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#fef08a"/>
+                <stop offset="45%" stop-color="#f59e0b"/>
                 <stop offset="100%" stop-color="#9a3412"/>
               </linearGradient>
-              <linearGradient id="gear3dInner" x1="14" y1="14" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#7c2d12"/>
-                <stop offset="50%" stop-color="#ea580c"/>
-                <stop offset="100%" stop-color="#fdba74"/>
+              <linearGradient id="depthShadow3D" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#78350f"/>
+                <stop offset="100%" stop-color="#451a03"/>
               </linearGradient>
+              <filter id="neonGlow3D" x="-25%" y="-25%" width="150%" height="150%">
+                <feGaussianBlur stdDeviation="1.4" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
 
-            <!-- Lapisan Bayangan Tebal 3D di Belakang -->
-            <path d="M21 5H27L28.2 10.2C29.6 10.7 30.9 11.4 32 12.4L37.1 10.7L40.1 15.9L36.1 19.5C36.4 21 36.6 22.5 36.6 24C36.6 25.5 36.4 27 36.1 28.5L40.1 32.1L37.1 37.3L32 35.6C30.9 36.6 29.6 37.3 28.2 37.8L27 43H21L19.8 37.8C18.4 37.3 17.1 36.6 16 35.6L10.9 37.3L7.9 32.1L11.9 28.5C11.6 27 11.4 25.5 11.4 24C11.4 22.5 11.6 21 11.9 19.5L7.9 15.9L10.9 10.7L16 12.4C17.1 11.4 18.4 10.7 19.8 10.2L21 5Z" fill="#7c2d12" transform="translate(0, 1.8)"/>
+            <g style="transform-origin: 24px 22.7px; animation: putarRodaGigi3D 10s linear infinite;">
+              <g transform="translate(0, 2.2)" opacity="0.85">
+                <path d="M21.4 4H26.6L27.5 8.6C28.8 9 30.1 9.5 31.2 10.2L35.3 7.7L39 11.4L36.5 15.5C37.2 16.6 37.7 17.9 38.1 19.2L42.7 20.1V25.3L38.1 26.2C37.7 27.5 37.2 28.8 36.5 29.9L39 34L35.3 37.7L31.2 35.2C30.1 35.9 28.8 36.4 27.5 36.8L26.6 41.4H21.4L20.5 36.8C19.2 36.4 17.9 35.9 16.8 35.2L12.7 37.7L9 34L11.5 29.9C10.8 28.8 10.3 27.5 9.9 26.2L5.3 25.3V20.1L9.9 19.2C10.3 17.9 10.8 16.6 11.5 15.5L9 11.4L12.7 7.7L16.8 10.2C17.9 9.5 19.2 9 20.5 8.6L21.4 4Z" stroke="url(#depthShadow3D)" stroke-width="3.2" stroke-linejoin="round"/>
+                <circle cx="24" cy="22.7" r="9.2" stroke="url(#depthShadow3D)" stroke-width="2.8"/>
+                <circle cx="24" cy="22.7" r="4.8" stroke="url(#depthShadow3D)" stroke-width="2.5"/>
+              </g>
 
-            <!-- Bodi Utama Roda Gigi 3D -->
-            <path d="M21 5H27L28.2 10.2C29.6 10.7 30.9 11.4 32 12.4L37.1 10.7L40.1 15.9L36.1 19.5C36.4 21 36.6 22.5 36.6 24C36.6 25.5 36.4 27 36.1 28.5L40.1 32.1L37.1 37.3L32 35.6C30.9 36.6 29.6 37.3 28.2 37.8L27 43H21L19.8 37.8C18.4 37.3 17.1 36.6 16 35.6L10.9 37.3L7.9 32.1L11.9 28.5C11.6 27 11.4 25.5 11.4 24C11.4 22.5 11.6 21 11.9 19.5L7.9 15.9L10.9 10.7L16 12.4C17.1 11.4 18.4 10.7 19.8 10.2L21 5Z" fill="url(#gear3dRim)" stroke="#fef08a" stroke-width="0.9"/>
-
-            <!-- Cincin Cekung Dalam 3D -->
-            <circle cx="24" cy="24" r="9.5" fill="url(#gear3dInner)"/>
-
-            <!-- Lubang Poros Tengah -->
-            <circle cx="24" cy="24" r="5" fill="#1f2937" stroke="#fdba74" stroke-width="1.2"/>
+              <g filter="url(#neonGlow3D)">
+                <path d="M21.4 4H26.6L27.5 8.6C28.8 9 30.1 9.5 31.2 10.2L35.3 7.7L39 11.4L36.5 15.5C37.2 16.6 37.7 17.9 38.1 19.2L42.7 20.1V25.3L38.1 26.2C37.7 27.5 37.2 28.8 36.5 29.9L39 34L35.3 37.7L31.2 35.2C30.1 35.9 28.8 36.4 27.5 36.8L26.6 41.4H21.4L20.5 36.8C19.2 36.4 17.9 35.9 16.8 35.2L12.7 37.7L9 34L11.5 29.9C10.8 28.8 10.3 27.5 9.9 26.2L5.3 25.3V20.1L9.9 19.2C10.3 17.9 10.8 16.6 11.5 15.5L9 11.4L12.7 7.7L16.8 10.2C17.9 9.5 19.2 9 20.5 8.6L21.4 4Z" stroke="url(#neonGold3D)" stroke-width="2.6" stroke-linejoin="round"/>
+                <circle cx="24" cy="22.7" r="9.2" stroke="url(#neonGold3D)" stroke-width="2.4"/>
+                <circle cx="24" cy="22.7" r="4.8" stroke="#fef9c3" stroke-width="2"/>
+              </g>
+            </g>
           </svg>
         </button>
 
