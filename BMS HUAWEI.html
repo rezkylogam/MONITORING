@@ -275,17 +275,6 @@
   </div>
 </header>
 
-<!-- Modal Network -->
-<div id="networkModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
-  <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
-    <button id="closeNetwork" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-      ✖
-    </button>
-    <h2 class="text-xl font-bold mb-4">Network Info</h2>
-    <p id="network_ip" class="mb-2">IP Address: -</p>
-    <p id="network_signal">Signal: -</p>
-  </div>
-</div>
 <!-- Modal Setting BMS -->
 <div id="bmsSettingModal" class="fixed inset-0 bg-black/60 flex items-center justify-center hidden z-50 p-4">
       <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto p-5 sm:p-8 relative">
@@ -528,7 +517,7 @@
           </div>
 
           <!-- 6. TOTAL DAYA (Steker/Colokan Listrik 3D Merah-Oranye) -->
-          <div onclick="bukaModalDiagram()" title="Klik untuk melihat aliran energi PLTS" class="space-y-1.5 bg-white/5 hover:bg-white/15 cursor-pointer transition p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+          <div class="space-y-1.5 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
             <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(239,68,68,0.55)]" viewBox="0 0 48 48" fill="none">
               <defs>
                 <linearGradient id="plug3dBody" x1="0" y1="0" x2="1" y2="1">
@@ -1480,28 +1469,15 @@ function updateModal() {
     });
   }
 
-  const networkModal = document.getElementById("networkModal");
-  const closeNetwork = document.getElementById("closeNetwork");
-  const networkBtn = document.getElementById("networkBtn");
+    const networkBtn = document.getElementById("networkBtn");
 
-  if (networkBtn && networkModal) {
+  if (networkBtn) {
     networkBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      networkModal.classList.remove("hidden");
+      menu.classList.add("hidden");
+      bukaModalDiagram();
     });
   }
-
-  if (closeNetwork && networkModal) {
-    closeNetwork.addEventListener("click", () => {
-      networkModal.classList.add("hidden");
-    });
-  }
-
-  window.addEventListener("click", (e) => {
-    if (e.target === networkModal) {
-      networkModal.classList.add("hidden");
-    }
-  });
 
   // 3. Pengaturan Audio Jarvis (ON/OFF) & Splash Screen
   const jarvisAudio = new Audio('./jarvis.mp3');
@@ -1854,14 +1830,21 @@ function updateModal() {
 <div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
   <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
     
-    <!-- Header Pop-up -->
-    <div class="flex justify-between items-center mb-3">
+            <!-- Header Pop-up -->
+    <div class="flex justify-between items-start mb-3">
       <div>
         <h3 class="text-white text-base sm:text-xl font-bold flex items-center gap-2">
           ⚡ Aliran Energi Sistem PLTS
           <span id="badgeStatusDiagram" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-semibold">MEMUAT...</span>
         </h3>
         <p id="subjudulDiagram" class="text-slate-400 text-xs sm:text-sm">Mendeteksi status arus baterai secara otomatis...</p>
+        
+        <!-- Info IP & Signal dipindahkan ke sini -->
+        <div class="flex flex-wrap gap-3 mt-1.5 text-xs text-sky-300 font-mono">
+          <span id="network_ip">IP Address: -</span>
+          <span>|</span>
+          <span id="network_signal">Signal: -</span>
+        </div>
       </div>
       <button onclick="tutupModalDiagram()" class="text-gray-400 hover:text-white text-2xl font-bold px-2">✕</button>
     </div>
