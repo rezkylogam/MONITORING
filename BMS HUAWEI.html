@@ -238,6 +238,22 @@
       position: relative;
       z-index: 1;
     }
+    
+    /* Teks di tengah dalam baterai 3D */
+    .battery-3d-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
+      z-index: 3;
+      pointer-events: none;
+    }
   </style>
 
   <style>
@@ -685,24 +701,25 @@
       <div>
         <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-2">KAPASITAS & KESEHATAN</div>
         <div class="rounded-lg border p-3.5 space-y-3" style="background-color: #11141c; border-color: #2d3343;">
-          <div class="flex justify-between items-center text-xs font-bold">
-            <span class="text-white">SOC: <span id="modalSoc">0.00%</span> (<span id="modalRem">0.00 Ah</span>)</span>
-            <span class="text-white">SOH: <span id="modalSoh">100.00%</span></span>
-          </div>
-
-          <!-- Ikon Baterai 3D Memanjang untuk SOC (Hijau) -->
+        <!-- Ikon Baterai 3D Memanjang untuk SOC (Hijau + Teks di Dalam) -->
           <div class="battery-3d-wrapper" title="State of Charge (SOC)">
             <div class="battery-3d-cap"></div>
             <div class="battery-3d-body">
               <div id="modalSocBar" class="battery-3d-fill-soc" style="width: 0%;"></div>
+              <div class="battery-3d-text">
+                SOC: &nbsp;<span id="modalSoc">0.00%</span>&nbsp; (<span id="modalRem">0.00 Ah</span>)
+              </div>
             </div>
           </div>
 
-          <!-- Ikon Baterai 3D Memanjang untuk SOH (Biru) -->
+          <!-- Ikon Baterai 3D Memanjang untuk SOH (Biru + Teks di Dalam) -->
           <div class="battery-3d-wrapper" title="State of Health (SOH)">
             <div class="battery-3d-cap"></div>
             <div class="battery-3d-body">
               <div id="modalSohBar" class="battery-3d-fill-soh" style="width: 0%;"></div>
+              <div class="battery-3d-text">
+                SOH: &nbsp;<span id="modalSoh">100.00%</span>
+              </div>
             </div>
           </div>
 
