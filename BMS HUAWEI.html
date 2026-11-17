@@ -179,10 +179,67 @@
       cursor: pointer;
     }
     
-        .sort-indicator i {
+    .sort-indicator i {
       font-size: 10px;
     }
+
+    /* === GAYA IKON BATERAI 3D MEMANJANG (SOC & SOH) === */
+    .battery-3d-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .battery-3d-cap {
+      width: 8px;
+      height: 16px;
+      background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+      border-radius: 3px 0 0 3px;
+      border: 1px solid #334155;
+      border-right: none;
+      box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+    .battery-3d-body {
+      flex: 1;
+      height: 26px;
+      background: linear-gradient(180deg, #090d16 0%, #161d2d 50%, #0f172a 100%);
+      border-radius: 6px;
+      border: 1.5px solid #475569;
+      padding: 2.5px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85), inset 0 -2px 4px rgba(255, 255, 255, 0.1), 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+    .battery-3d-body::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-radius: 4px 4px 0 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .battery-3d-fill-soc {
+      height: 100%;
+      border-radius: 3.5px;
+      background: linear-gradient(180deg, #6ee7b7 0%, #10b981 45%, #047857 100%);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+      transition: width 0.5s ease;
+      position: relative;
+      z-index: 1;
+    }
+    .battery-3d-fill-soh {
+      height: 100%;
+      border-radius: 3.5px;
+      background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 45%, #0369a1 100%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+      transition: width 0.5s ease;
+      position: relative;
+      z-index: 1;
+    }
   </style>
+
   <style>
       @keyframes putarRodaGigi3D {
       0%   { transform: rotate(0deg); }
@@ -632,12 +689,23 @@
             <span class="text-white">SOC: <span id="modalSoc">0.00%</span> (<span id="modalRem">0.00 Ah</span>)</span>
             <span class="text-white">SOH: <span id="modalSoh">100.00%</span></span>
           </div>
-          <div class="w-full h-2 rounded-full overflow-hidden" style="background-color: #232734;">
-            <div id="modalSocBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 0%;"></div>
+
+          <!-- Ikon Baterai 3D Memanjang untuk SOC (Hijau) -->
+          <div class="battery-3d-wrapper" title="State of Charge (SOC)">
+            <div class="battery-3d-cap"></div>
+            <div class="battery-3d-body">
+              <div id="modalSocBar" class="battery-3d-fill-soc" style="width: 0%;"></div>
+            </div>
           </div>
-          <div class="w-full h-1.5 rounded-full overflow-hidden" style="background-color: #232734; margin-top: 6px;">
-            <div id="modalSohBar" class="h-full transition-all duration-300" style="width: 0%; background-color: #38bdf8;"></div>
+
+          <!-- Ikon Baterai 3D Memanjang untuk SOH (Biru) -->
+          <div class="battery-3d-wrapper" title="State of Health (SOH)">
+            <div class="battery-3d-cap"></div>
+            <div class="battery-3d-body">
+              <div id="modalSohBar" class="battery-3d-fill-soh" style="width: 0%;"></div>
+            </div>
           </div>
+
           <div class="grid grid-cols-3 gap-2 pt-2 border-t text-xs" style="border-color: #232734;">
             <div>
               <div class="text-[10px] text-slate-400">Siklus (Cycles)</div>
