@@ -1894,30 +1894,29 @@ function updateModal() {
   50%      { opacity: 1; transform: translate(-3px, 2.5px); }
 }
 
-  /* Kotak Penampil Total Daya di Bawah TV (Responsif HP & Laptop) */
-  .display-daya-tv {
-    position: absolute;
-    left: 88.2%;
-    top: 79.8%;
-    width: 17.8%;
-    height: 11.2%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.92);
-    border: 1.5px solid #38bdf8;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
-    color: #38bdf8;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 800;
-    font-size: clamp(8px, 1.75vw, 22px);
-    padding: 0 2px;
-    border-radius: 5px;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 12;
-  }
+/* Kotak Penampil Total Daya di Bawah TV dan Baterai */
+.display-daya-tv {
+  position: absolute;
+  left: 91.5%;
+  top: 79.8%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.92);
+  border: 1.5px solid #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+  color: #38bdf8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 800;
+  font-size: clamp(14px, 1.8vw, 22px); /* Ukuran teks diperkecil */
+  width: 170px;                        /* Mengunci lebar kotak */
+  height: 46px;                        /* Mengunci tinggi kotak */
+  display: flex;                       /* Menjaga teks tetap di tengah */
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 12;
+}
 
     /* Kotak Penampil Tegangan & Arus Baterai DC di Sisi Kanan Atas */
   .display-info-dc {
