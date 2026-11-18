@@ -854,6 +854,7 @@
   let timer_poll;
   let xxx;
   const cardTimers = {};
+  let acMeterData = { voltage: "0.0", current: "0.00", power: "0.0", active: false };
   
   // Fungsi untuk mengurutkan baterai berdasarkan typeBattery dan address
   function sortBatteries() {
@@ -1115,6 +1116,7 @@
         client2.publish(xxx[a]+"/seting","POLL1",0);
       }
       client2.subscribe("sysMon/"+xxx[0]+"/info/#");
+      client2.subscribe("sysMon/"+xxx[0]+"/ac_meter");
       updateConnectionStatus(true);
     });
 
@@ -1140,7 +1142,24 @@
       
       //document.getElementById("id_monitoring").innerText =text_head;
       //document.getElementById("id_monitoring_footer").innerText =text_head;
-    } else {
+  } else if (topic == "sysMon/"+xxx[0]+"/ac_meter") {
+    try {
+      const ac = JSON.parse(message.toString());
+      acMeterData = {
+        voltage: ac.voltage,
+        current: ac.current,
+        power: ac.power,
+        active: true
+      };
+      const elDayaTv = document.getElementById('nilaiDayaBawahTv');
+      if (elDayaTv) {
+        elDayaTv.textContent = `${ac.power} W`;
+      }
+    } catch (e) {
+      console.error("Error parsing AC meter:", e);
+    }
+  } else {
+
       try {
         const raw = JSON.parse(message.toString());
         const batt = normalizeFromMqtt(raw, topic);
@@ -2128,6 +2147,7 @@ function updateModal() {
       const elDcBatt   = document.getElementById('bulatanDcBaterai');
       const elBadge    = document.getElementById('badgeStatusDiagram');
       const elSub      = document.getElementById('subjudulDiagram');
+      const teksDayaAc = acMeterData.active ? `${acMeterData.power} W` : nilaiDayaAsli;
 
       if (modeCharge) {
         elMatahari.classList.remove('hidden');
@@ -2135,7 +2155,7 @@ function updateModal() {
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.add('anim-batt-turun');
 
-        if (elDayaTv) elDayaTv.textContent = "0 W";
+        if (elDayaTv) elDayaTv.textContent = teksDayaAc;
         if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Terbaca saat Charging
 
         elBadge.textContent = "🟢 CHARGING";
@@ -2147,7 +2167,7 @@ function updateModal() {
         elDcBatt.classList.remove('anim-batt-naik');
         elDcBatt.classList.remove('anim-batt-turun');
 
-        if (elDayaTv) elDayaTv.textContent = "0 W";
+        if (elDayaTv) elDayaTv.textContent = teksDayaAc;
         if (elDayaBatt) elDayaBatt.textContent = "0 W"; // Nol saat Standby / Full
 
         elBadge.textContent = "🔵 STANDBY";
@@ -2159,7 +2179,7 @@ function updateModal() {
         elDcBatt.classList.remove('anim-batt-turun');
         elDcBatt.classList.add('anim-batt-naik');
 
-        if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;   // Terbaca saat Discharging
+        if (elDayaTv) elDayaTv.textContent = teksDayaAc;   // Terbaca saat Discharging
         if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Tetap terbaca saat Discharging
 
         elBadge.textContent = "🟠 DISCHARGING";
