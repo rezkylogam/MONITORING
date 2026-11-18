@@ -1914,6 +1914,33 @@ function updateModal() {
     z-index: 12;
   }
 
+    /* Kotak Penampil Tegangan & Arus Baterai DC di Sisi Kanan Atas */
+  .display-info-dc {
+    position: absolute;
+    right: 4.1%;
+    top: 45.7%;
+    width: 12.2%;
+    height: 19.0%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.15;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.94);
+    border: 1px solid #38bdf8;
+    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
+    color: #e0f2fe;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 800;
+    font-size: clamp(13px, 1.6vw, 22px);
+    padding: 2px;
+    border-radius: 3px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 12;
+  }
+
       .display-daya-baterai {
       position: absolute;
       left: 39.8%;
@@ -2071,6 +2098,10 @@ function updateModal() {
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
       <div class="bulatan-aliran anim-ac-beban">AC</div>
+      <div id="nilaiInfoDcBawahTv" class="display-info-dc">
+      <span style="color:#38bdf8;">0.00 V</span>
+      <span style="color:#fbbf24;">0.00 A</span>
+      </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
       <div id="nilaiDayaBaterai" class="display-daya-baterai">0 W</div>
       <div id="nilaiTeganganBaterai" class="display-tegangan-baterai">0.00 V</div>
@@ -2082,91 +2113,75 @@ function updateModal() {
 
 <script>
   function perbaruiAnimasiDiagram() {
-    const teksHalaman = document.body.innerText || "";
-    
-      // 1. Ambil nilai Total Daya Watt
-      const elPowerUtama = document.getElementById('total-power');
-      const elDayaTv     = document.getElementById('nilaiDayaBawahTv');
-      const elDayaBatt   = document.getElementById('nilaiDayaBaterai');
-      let nilaiDayaAsli  = "0 W";
+    // 1. Ambil langsung data Baterai DC dari Ringkasan Sistem Total
+    const elVoltUtama  = document.getElementById('avg-voltage');
+    const elArusUtama  = document.getElementById('total-current');
+    const elPowerUtama = document.getElementById('total-power');
 
-      if (elPowerUtama && elPowerUtama.textContent.trim() !== "") {
-        nilaiDayaAsli = elPowerUtama.textContent.trim();
-      } else {
-        const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
-        if (cocokDaya && cocokDaya[1]) {
-          nilaiDayaAsli = cocokDaya[1].trim();
-        }
-      }
+    const voltDcAsli  = (elVoltUtama && elVoltUtama.textContent.trim() !== "-" && elVoltUtama.textContent.trim() !== "") ? elVoltUtama.textContent.trim() : "0.00 V";
+    const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
+    const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
 
-      // 2. Ambil nilai Tegangan Baterai (Kiri) dan Total Arus Positif/Negatif (Kanan)
-      const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
-      const elArusBatt     = document.getElementById('nilaiArusBaterai');
+    // 2. Isi ke 3 kotak Baterai di bagian bawah
+    const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
+    const elArusBatt     = document.getElementById('nilaiArusBaterai');
+    const elDayaBatt     = document.getElementById('nilaiDayaBaterai');
 
-      const cocokTegangan = teksHalaman.match(/(?:TEGANGAN|VOLTAGE|TOTAL\s*V)[\s\S]{0,40}?(\d+(?:\.\d+)?\s*V)/i) 
-                         || teksHalaman.match(/\b(4\d\.\d+|5\d\.\d+)\s*V\b/i);
-      const cocokArus     = teksHalaman.match(/(?:TOTAL\s*ARUS|ARUS|CURRENT)[\s\S]{0,40}?([+-]?\d+(?:\.\d+)?\s*A)/i) 
-                         || teksHalaman.match(/([+-]?\d+\.\d+)\s*A\b/i);
+    if (elTeganganBatt) elTeganganBatt.textContent = voltDcAsli;
+    if (elArusBatt)     elArusBatt.textContent     = arusDcAsli;
+    if (elDayaBatt)     elDayaBatt.textContent     = dayaDcAsli;
 
-      if (elTeganganBatt && cocokTegangan && cocokTegangan[1]) {
-        elTeganganBatt.textContent = cocokTegangan[1].trim();
-      }
-      if (elArusBatt && cocokArus && cocokArus[1]) {
-        // Menghilangkan tanda '+' jika ada agar tampil rapi seperti "16.20 A" atau "-14.12 A"
-        elArusBatt.textContent = cocokArus[1].replace(/^\+/, '').trim();
-      }
+    // 3. Isi ke 2 kotak Sisi Kanan dengan Data Baterai DC (Menggantikan AT4PW)
+    const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
+    const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
 
-      // 3. Deteksi status Charging, Standby, Full, atau Discharging
-      const matchStatus    = teksHalaman.match(/\b(Charging|Discharging|Standby|Full)\b/i);
-      const statusPertama  = matchStatus ? matchStatus[0] : "";
-      const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
-      const modeCharge     = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
-      const modeStandby    = /^(standby|full)$/i.test(statusPertama) && !cekDayaNegatif;
+    if (elInfoKanan) {
+      elInfoKanan.innerHTML = `<span style="color:#38bdf8;">${voltDcAsli}</span><span style="color:#fbbf24;">${arusDcAsli}</span>`;
+    }
+    if (elDayaTv) {
+      elDayaTv.textContent = dayaDcAsli;
+    }
 
-      const elMatahari = document.getElementById('elemenMatahari');
-      const elDcSolar  = document.getElementById('bulatanDcSolar');
-      const elDcBatt   = document.getElementById('bulatanDcBaterai');
-      const elBadge    = document.getElementById('badgeStatusDiagram');
-      const elSub      = document.getElementById('subjudulDiagram');
+    // 4. Deteksi status Charging, Standby, atau Discharging berdasarkan nilai arus DC
+    const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
+    const modeCharge     = nilaiArusAngka > 0.1;
+    const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
 
-      if (modeCharge) {
-        elMatahari.classList.remove('hidden');
-        elDcSolar.classList.remove('hidden');
-        elDcBatt.classList.remove('anim-batt-naik');
-        elDcBatt.classList.add('anim-batt-turun');
+    const elMatahari = document.getElementById('elemenMatahari');
+    const elDcSolar  = document.getElementById('bulatanDcSolar');
+    const elDcBatt   = document.getElementById('bulatanDcBaterai');
+    const elBadge    = document.getElementById('badgeStatusDiagram');
+    const elSub      = document.getElementById('subjudulDiagram');
 
-        if (elDayaTv) elDayaTv.textContent = "0 W";
-        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Terbaca saat Charging
+    if (modeCharge) {
+      elMatahari.classList.remove('hidden');
+      elDcSolar.classList.remove('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.add('anim-batt-turun');
 
-        elBadge.textContent = "🟢 CHARGING";
-        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
-        elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
-      } else if (modeStandby) {
-        elMatahari.classList.remove('hidden');
-        elDcSolar.classList.remove('hidden');
-        elDcBatt.classList.remove('anim-batt-naik');
-        elDcBatt.classList.remove('anim-batt-turun');
+      elBadge.textContent = "🟢 CHARGING";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
+      elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
+    } else if (modeStandby) {
+      elMatahari.classList.remove('hidden');
+      elDcSolar.classList.remove('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.remove('anim-batt-turun');
 
-        if (elDayaTv) elDayaTv.textContent = "0 W";
-        if (elDayaBatt) elDayaBatt.textContent = "0 W"; // Nol saat Standby / Full
+      elBadge.textContent = "🔵 STANDBY";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+      elSub.textContent = "Baterai penuh (Standby).";
+    } else {
+      elMatahari.classList.add('hidden');
+      elDcSolar.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-turun');
+      elDcBatt.classList.add('anim-batt-naik');
 
-        elBadge.textContent = "🔵 STANDBY";
-        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-        elSub.textContent = "Baterai penuh (Standby). Panel surya menyuplai langsung beban rumah (AC).";
-      } else {
-        elMatahari.classList.add('hidden');
-        elDcSolar.classList.add('hidden');
-        elDcBatt.classList.remove('anim-batt-turun');
-        elDcBatt.classList.add('anim-batt-naik');
-
-        if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;   // Terbaca saat Discharging
-        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Tetap terbaca saat Discharging
-
-        elBadge.textContent = "🟠 DISCHARGING";
-        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
-        elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik) untuk beban rumah (AC).";
-      }
-   }
+      elBadge.textContent = "🟠 DISCHARGING";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
+      elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik).";
+    }
+  }
 
   function bukaModalDiagram() {
     perbaruiAnimasiDiagram();
@@ -2185,105 +2200,6 @@ function updateModal() {
   }, 2000);
 </script>
 
-<!-- ================= INTEGRASI LIVE MQTT AT4PW INVERTER AC ================= -->
-<style>
-  .display-info-ac {
-    position: absolute;
-    right: 4.1%;
-    top: 45.7%;
-    width: 12.2%;
-    height: 19.0%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 1.15;
-    transform: translateY(-50%);
-    background: rgba(15, 23, 42, 0.94);
-    border: 1px solid #38bdf8;
-    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
-    color: #e0f2fe;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 800;
-    font-size: clamp(13px, 1.6vw, 22px);
-    padding: 2px;
-    border-radius: 3px;
-    text-align: center;
-    pointer-events: none;
-    z-index: 12;
-  }
-</style>
-
-<script>
-  let dataAcInverter = null;
-  let subClient1 = false;
-  let subClient2 = false;
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const elDayaTv = document.getElementById("nilaiDayaBawahTv");
-    if (elDayaTv) {
-      elDayaTv.textContent = "-- W";
-      if (elDayaTv.parentElement && !document.getElementById("nilaiInfoAcBawahTv")) {
-        const infoAc = document.createElement("div");
-        infoAc.id = "nilaiInfoAcBawahTv";
-        infoAc.className = "display-info-ac";
-        infoAc.innerHTML = `<span style="color:#38bdf8;">-- V</span><span style="color:#fbbf24;">-- A</span>`;
-        elDayaTv.parentElement.appendChild(infoAc);
-      }
-    }
-  });
-
-  function pasangListenerAt4pw(mqttClient, topik) {
-    mqttClient.subscribe(topik, { qos: 0 });
-    mqttClient.on("message", (topic, message) => {
-      if (topic === topik) {
-        try {
-          dataAcInverter = JSON.parse(message.toString());
-          terapkanDataAcKeDiagram();
-        } catch (e) {}
-      }
-    });
-  }
-
-  const timerSubAt4pw = setInterval(() => {
-    if (typeof id_logger !== "undefined" && id_logger !== "-") {
-      const topikInverter = "sysMon/" + id_logger.split("-")[0] + "/inverter";
-      if (!subClient1 && typeof client !== "undefined" && client && client.connected) {
-        subClient1 = true;
-        pasangListenerAt4pw(client, topikInverter);
-      }
-      if (!subClient2 && typeof client2 !== "undefined" && client2 && client2.connected) {
-        subClient2 = true;
-        pasangListenerAt4pw(client2, topikInverter);
-      }
-      if (subClient1 && subClient2) clearInterval(timerSubAt4pw);
-    }
-  }, 150);
-
-  function terapkanDataAcKeDiagram() {
-    const elDayaTv = document.getElementById("nilaiDayaBawahTv");
-    const elInfoAc = document.getElementById("nilaiInfoAcBawahTv");
-
-    if (!dataAcInverter) {
-      if (elDayaTv) elDayaTv.textContent = "-- W";
-      return;
-    }
-    if (elDayaTv && dataAcInverter.power !== undefined) {
-      elDayaTv.textContent = parseFloat(dataAcInverter.power).toFixed(1) + " W";
-    }
-    if (elInfoAc && dataAcInverter.voltage !== undefined && dataAcInverter.current !== undefined) {
-      elInfoAc.innerHTML = `<span style="color:#38bdf8;">${parseFloat(dataAcInverter.voltage).toFixed(1)} V</span><span style="color:#fbbf24;">${parseFloat(dataAcInverter.current).toFixed(2)} A</span>`;
-    }
-  }
-
-  if (typeof perbaruiAnimasiDiagram === "function") {
-    const fungsiDiagramAsli = perbaruiAnimasiDiagram;
-    perbaruiAnimasiDiagram = function() {
-      fungsiDiagramAsli();
-      terapkanDataAcKeDiagram();
-    };
-  }
-</script>
 <script>
   let currentViewMode = localStorage.getItem('bms_view_mode') || 'card';
 
