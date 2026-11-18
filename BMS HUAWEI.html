@@ -182,121 +182,8 @@
     .sort-indicator i {
       font-size: 10px;
     }
-
-/* === GAYA IKON BATERAI 3D MEMANJANG === */
-.battery-3d-wrapper {
-  display: flex;
-  flex-direction: row-reverse; /* Memindahkan kepala baterai ke sebelah kanan */
-  align-items: center;
-  width: 100%;
-  margin-top: 6px;
-}
-
-/* Kepala / Kutub Positif Baterai */
-.battery-3d-cap {
-  width: 8px;
-  height: 16px;
-  background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
-  border-radius: 0 3px 3px 0; /* Sudut membulat di sisi kanan */
-  border: 1px solid #334155;
-  border-left: none;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
-}
-
-    .battery-3d-body {
-      flex: 1;
-      height: 26px;
-      background: linear-gradient(180deg, #090d16 0%, #161d2d 50%, #0f172a 100%);
-      border-radius: 6px;
-      border: 1.5px solid #475569;
-      padding: 2.5px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85), inset 0 -2px 4px rgba(255, 255, 255, 0.1), 0 3px 6px rgba(0, 0, 0, 0.4);
-    }
-    .battery-3d-body::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 45%;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.02) 100%);
-      border-radius: 4px 4px 0 0;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .battery-3d-fill-soc {
-      height: 100%;
-      border-radius: 3.5px;
-      background: linear-gradient(180deg, #6ee7b7 0%, #10b981 45%, #047857 100%);
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
-      transition: width 0.5s ease;
-      position: relative;
-      z-index: 1;
-    }
-    .battery-3d-fill-soh {
-      height: 100%;
-      border-radius: 3.5px;
-      background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 45%, #0369a1 100%);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
-      transition: width 0.5s ease;
-      position: relative;
-      z-index: 1;
-    }
-    
-    /* Teks di tengah dalam baterai 3D */
-    .battery-3d-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    /* === IKON BATERAI MINI UNTUK KARTU DAFTAR UNIT (KUTUB DI KANAN) === */
-    .mini-batt-wrapper {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      margin-top: 6px;
-    }
-    .mini-batt-body {
-      flex: 1;
-      height: 14px;
-      background-color: #1f2937;
-      border: 1.5px solid #64748b;
-      border-radius: 4px;
-      padding: 1.5px;
-      overflow: hidden;
-      position: relative;
-    }
-    .mini-batt-cap {
-      width: 4px;
-      height: 8px;
-      background-color: #94a3b8;
-      border-radius: 0 2px 2px 0;
-      margin-left: 1px;
-    }
   </style>
-
-  <style>
-      @keyframes putarRodaGigi3D {
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    #settingsBtn:hover svg g,
-    #settingsBtn:active svg g {
-      animation-duration: 2.5s !important;
-    }
-  </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.right-0{right:0px}.right-2{right:0.5rem}.top-2{top:0.5rem}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-1{margin-top:0.25rem;margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mb-1{margin-bottom:0.25rem}.mr-1{margin-right:0.25rem}.mt-4{margin-top:1rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-3{height:0.75rem}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-3{width:0.75rem}.w-44{width:11rem}.w-96{width:24rem}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-7xl{max-width:80rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.bg-white\/20{background-color:rgb(255 255 255 / 0.2)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pt-3{padding-top:0.75rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-5xl{font-size:3rem;line-height:1}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61 / var(--tw-text-opacity, 1))}.text-purple-700{--tw-text-opacity:1;color:rgb(126 34 206 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.no-underline{-webkit-text-decoration-line:none;text-decoration-line:none}.opacity-50{opacity:0.5}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-white\/20:hover{background-color:rgb(255 255 255 / 0.2)}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.sm\:p-6{padding:1.5rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width: 768px){.md\:flex{display:flex}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}}@media (min-width: 1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
 <body class="min-h-screen flex flex-col dark connected" data-theme="dark">
 
 <!-- Layar Selamat Datang (Splash Screen) untuk Mengaktifkan Suara -->
@@ -306,8 +193,7 @@
             <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
         </div>
         <h1 class="text-4xl font-black mb-4 tracking-wide text-white uppercase">BMS MONITORING</h1>
-        <p class="text-lg text-gray-100 mb-10 leading-relaxed font-medium">Sistem 48V siap digunakan. Ketuk tombol di bawah untuk mengaktifkan Pemantauan dan Audio
-          Jarvis.</p>
+        <p class="text-lg text-gray-100 mb-10 leading-relaxed font-medium">Sistem 48V siap digunakan. Ketuk tombol di bawah untuk mengaktifkan Pemantauan dan Audio Jarvis.</p>
         
         <button id="btnStartApp" class="w-full bg-[#0455d1] hover:bg-[#2563eb] text-white font-bold text-xl py-4 px-8 rounded-2xl shadow-xl transform active:scale-95 transition duration-200 flex items-center justify-center gap-3">
             <i class="fas fa-play"></i> Buka Aplikasi
@@ -333,53 +219,33 @@
     <div class="flex items-center space-x-4">
 
       <div class="relative">
-                <button id="settingsBtn" class="p-1 rounded-full transition transform hover:scale-105 active:scale-95 focus:outline-none">
-          <svg class="w-10 h-10 drop-shadow-[0_0_10px_rgba(245,158,11,0.75)]" viewBox="0 0 48 48" fill="none" xmlns="http://w3.org">
-            <defs>
-              <linearGradient id="neonGold3D" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#fef08a"/>
-                <stop offset="45%" stop-color="#f59e0b"/>
-                <stop offset="100%" stop-color="#9a3412"/>
-              </linearGradient>
-              <linearGradient id="depthShadow3D" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#78350f"/>
-                <stop offset="100%" stop-color="#451a03"/>
-              </linearGradient>
-              <filter id="neonGlow3D" x="-25%" y="-25%" width="150%" height="150%">
-                <feGaussianBlur stdDeviation="1.4" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-
-            <g style="transform-origin: 24px 22.7px; animation: putarRodaGigi3D 10s linear infinite;">
-              <g transform="translate(0, 2.2)" opacity="0.85">
-                <path d="M21.4 4H26.6L27.5 8.6C28.8 9 30.1 9.5 31.2 10.2L35.3 7.7L39 11.4L36.5 15.5C37.2 16.6 37.7 17.9 38.1 19.2L42.7 20.1V25.3L38.1 26.2C37.7 27.5 37.2 28.8 36.5 29.9L39 34L35.3 37.7L31.2 35.2C30.1 35.9 28.8 36.4 27.5 36.8L26.6 41.4H21.4L20.5 36.8C19.2 36.4 17.9 35.9 16.8 35.2L12.7 37.7L9 34L11.5 29.9C10.8 28.8 10.3 27.5 9.9 26.2L5.3 25.3V20.1L9.9 19.2C10.3 17.9 10.8 16.6 11.5 15.5L9 11.4L12.7 7.7L16.8 10.2C17.9 9.5 19.2 9 20.5 8.6L21.4 4Z" stroke="url(#depthShadow3D)" stroke-width="3.2" stroke-linejoin="round"/>
-                <circle cx="24" cy="22.7" r="9.2" stroke="url(#depthShadow3D)" stroke-width="2.8"/>
-                <circle cx="24" cy="22.7" r="4.8" stroke="url(#depthShadow3D)" stroke-width="2.5"/>
-              </g>
-
-              <g filter="url(#neonGlow3D)">
-                <path d="M21.4 4H26.6L27.5 8.6C28.8 9 30.1 9.5 31.2 10.2L35.3 7.7L39 11.4L36.5 15.5C37.2 16.6 37.7 17.9 38.1 19.2L42.7 20.1V25.3L38.1 26.2C37.7 27.5 37.2 28.8 36.5 29.9L39 34L35.3 37.7L31.2 35.2C30.1 35.9 28.8 36.4 27.5 36.8L26.6 41.4H21.4L20.5 36.8C19.2 36.4 17.9 35.9 16.8 35.2L12.7 37.7L9 34L11.5 29.9C10.8 28.8 10.3 27.5 9.9 26.2L5.3 25.3V20.1L9.9 19.2C10.3 17.9 10.8 16.6 11.5 15.5L9 11.4L12.7 7.7L16.8 10.2C17.9 9.5 19.2 9 20.5 8.6L21.4 4Z" stroke="url(#neonGold3D)" stroke-width="2.6" stroke-linejoin="round"/>
-                <circle cx="24" cy="22.7" r="9.2" stroke="url(#neonGold3D)" stroke-width="2.4"/>
-                <circle cx="24" cy="22.7" r="4.8" stroke="#fef9c3" stroke-width="2"/>
-              </g>
-            </g>
-          </svg>
+        <button id="settingsBtn" class="p-2 rounded-full transition">
+          <i class="fas fa-cog text-2xl text-orange-500 hover:text-orange-600"></i>
         </button>
 
-        <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50">
-           <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚡ Sistem PLTS</a>
+       <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden">
+           <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600 ">📱 Modul Info</a>
            <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙️ Setting BMS</a>
-           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Jarvis : ON</a>
+           <a id="pollingState" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">▶️ Active</a>
+           <hr class="my-1">
+           <a id="themeToggleLink" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">☀️ Light Mode</a>
         </div>
       </div>
     </div>
   </div>
 </header>
 
+<!-- Modal Network -->
+<div id="networkModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
+    <button id="closeNetwork" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+      ✖
+    </button>
+    <h2 class="text-xl font-bold mb-4">Network Info</h2>
+    <p id="network_ip" class="mb-2">IP Address: -</p>
+    <p id="network_signal">Signal: -</p>
+  </div>
+</div>
 <!-- Modal Setting BMS -->
 <div id="bmsSettingModal" class="fixed inset-0 bg-black/60 flex items-center justify-center hidden z-50 p-4">
       <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto p-5 sm:p-8 relative">
@@ -466,17 +332,7 @@
       </div>
     </div>
 
-    <!-- 3. Kontrol Auto Load & Charge Sharing -->
-    <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
-      <div class="text-sm font-bold text-gray-700 uppercase mb-1">3. AUTO LOAD & CHARGE SHARING</div>
-      <p class="text-xs text-gray-500 mb-3">Membagi arus pengisian dan beban secara otomatis antar unit baterai agar SOC seimbang.</p>
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="sendSharingCommand('SHARING_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-base font-bold py-3 px-4 rounded-xl">AKTIFKAN (ON)</button>
-        <button onclick="sendSharingCommand('SHARING_OFF')" class="bg-rose-600 hover:bg-rose-700 text-white text-base font-bold py-3 px-4 rounded-xl">MATIKAN (OFF)</button>
-      </div>
-    </div>
-
-    <!-- 4. Mode Teknisi (Custom Register Write) -->
+    <!-- 3. Mode Teknisi (Custom Register Write) -->
     <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-gray-50 shadow-sm">
       <div class="text-sm font-bold text-gray-700 uppercase mb-2.5">3. Custom Register (Mode Teknisi)</div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -506,195 +362,66 @@
         </div>
     </div>
     
-        <!-- Summary Section dengan Ikon 3D -->
-    <div id="summarySection" class="mb-8 hidden">
-      <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
-      <div class="summary-card rounded-xl border border-gray-700/50 shadow-sm p-5">
-        <div class="grid grid-cols-3 gap-4 text-center justify-center text-lg">
-          
-          <!-- ==================== BARIS 1 (ATAS) ==================== -->
-          
-          <!-- 1. RATA RATA SOC (Baterai 3D Hijau Glossy) -->
-          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
-            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(16,185,129,0.5)]" viewBox="0 0 48 48" fill="none">
-              <defs>
-                <linearGradient id="bat3dBody" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#6ee7b7"/>
-                  <stop offset="45%" stop-color="#10b981"/>
-                  <stop offset="100%" stop-color="#065f46"/>
-                </linearGradient>
-                <linearGradient id="bat3dCap" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#f3f4f6"/>
-                  <stop offset="100%" stop-color="#9ca3af"/>
-                </linearGradient>
-              </defs>
-              <!-- Tutup Positif Baterai -->
-              <rect x="19" y="4" width="10" height="4" rx="1.5" fill="url(#bat3dCap)"/>
-              <!-- Bodi Utama 3D -->
-              <rect x="12" y="8" width="24" height="35" rx="5" fill="url(#bat3dBody)" stroke="#a7f3d0" stroke-width="1"/>
-              <!-- Kilau Kaca Samping -->
-              <rect x="14.5" y="10.5" width="4.5" height="30" rx="2.2" fill="#ffffff" fill-opacity="0.32"/>
-              <!-- Petir Energi di Tengah -->
-              <path d="M25.5 16L19.5 26H24L22.5 35L28.5 25H24L25.5 16Z" fill="#fef08a"/>
-            </svg>
-            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOC</div>
-            <div id="avg-soc" class="font-semibold text-white-1500"></div>
-          </div>
+    <!-- Summary Section -->
+      <div id="summarySection" class="mb-8 hidden">
+        <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
+            <div class="summary-card rounded-xl border border-gray-700/50 shadow-sm p-5">
+      <!-- Grid diubah menjadi grid-cols-3 agar mengunci tampilan menjadi 3 kolom sejajar (2 Baris) -->
+      <div class="grid grid-cols-3 gap-4 text-center justify-center text-lg">
+        
+        <!-- ==================== BARIS 1 (ATAS) ==================== -->
+        
+        <!-- 1. SOC -->
+        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+          <i class="fa fa-battery-three-quarters" style="color: green;"></i>
+          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOC</div>
+          <div id="avg-soc" class="font-semibold text-white-1500"></div>
+        </div>
 
-          <!-- 2. RATA RATA SOH (Hati 3D Pink/Merah Glossy) -->
-          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
-            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(244,63,94,0.5)]" viewBox="0 0 48 48" fill="none">
-              <defs>
-                <radialGradient id="heart3d" cx="35%" cy="30%" r="70%">
-                  <stop offset="0%" stop-color="#fda4af"/>
-                  <stop offset="45%" stop-color="#f43f5e"/>
-                  <stop offset="100%" stop-color="#881337"/>
-                </radialGradient>
-              </defs>
-              <path d="M24 41C24 41 7 30.2 7 17.8C7 12.1 11.4 8 16.6 8C19.8 8 22.6 9.6 24 12.1C25.4 9.6 28.2 8 31.4 8C36.6 8 41 12.1 41 17.8C41 30.2 24 41 24 41Z" fill="url(#heart3d)"/>
-              <!-- Kilau 3D pada Lekukan Atas -->
-              <ellipse cx="15.5" cy="14.5" rx="3.5" ry="2" transform="rotate(-30 15.5 14.5)" fill="#ffffff" fill-opacity="0.5"/>
-              <!-- Garis Detak Kesehatan -->
-              <path d="M13 24H18.5L21 19.5L24.5 28.5L27 23H35" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOH</div>
-            <div id="avg-soh" class="font-semibold text-white-1500"></div>
-          </div>
+        <!-- 2. SOH -->
+        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+          <i class="fa fa-heartbeat" style="color: pink;"></i>
+          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOH</div>
+          <div id="avg-soh" class="font-semibold text-white-1500"></div>
+        </div>
 
-          <!-- 3. RENTANG SUHU (Termometer 3D Oranye-Merah) -->
-          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
-            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(249,115,22,0.5)]" viewBox="0 0 48 48" fill="none">
-              <defs>
-                <linearGradient id="thermoGlass" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#e2e8f0"/>
-                  <stop offset="50%" stop-color="#94a3b8"/>
-                  <stop offset="100%" stop-color="#475569"/>
-                </linearGradient>
-                <radialGradient id="thermoMercury" cx="35%" cy="35%" r="65%">
-                  <stop offset="0%" stop-color="#fed7aa"/>
-                  <stop offset="45%" stop-color="#f97316"/>
-                  <stop offset="100%" stop-color="#9a3412"/>
-                </radialGradient>
-              </defs>
-              <!-- Tabung Kaca Luar -->
-              <path d="M20 9C20 6.79 21.79 5 24 5C26.21 5 28 6.79 28 9V26.2C30.4 27.6 32 30.1 32 33C32 37.42 28.42 41 24 41C19.58 41 16 37.42 16 33C16 30.1 17.6 27.6 20 26.2V9Z" fill="url(#thermoGlass)" stroke="#cbd5e1" stroke-width="1"/>
-              <!-- Air Raksa 3D -->
-              <circle cx="24" cy="33" r="5.5" fill="url(#thermoMercury)"/>
-              <rect x="22.2" y="13" width="3.6" height="17" rx="1.8" fill="url(#thermoMercury)"/>
-              <!-- Kilau Bola Bawah -->
-              <circle cx="22.2" cy="31.2" r="1.6" fill="#ffffff" fill-opacity="0.6"/>
-            </svg>
-            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RENTANG SUHU</div>
-            <div id="avg-temp" class="font-semibold text-white-1500">-- / -- °C</div>
-          </div>
+        <!-- 3. RENTANG SUHU -->
+        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+          <i class="fa fa-thermometer-half" style="color: #fb923c;"></i>
+          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RENTANG SUHU</div>
+          <div id="avg-temp" class="font-semibold text-white-1500">-- / -- °C</div>
+        </div>
 
-          <!-- ==================== BARIS 2 (BAWAH) ==================== -->
+        <!-- ==================== BARIS 2 (BAWAH) ==================== -->
 
-          <!-- 4. TEGANGAN RATA RATA (Petir 3D Emas Mengkilap) -->
-          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
-            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(234,179,8,0.55)]" viewBox="0 0 48 48" fill="none">
-              <defs>
-                <linearGradient id="bolt3d" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#fef9c3"/>
-                  <stop offset="40%" stop-color="#facc15"/>
-                  <stop offset="100%" stop-color="#b45309"/>
-                </linearGradient>
-              </defs>
-              <!-- Bayangan Tebal 3D di Belakang -->
-              <path d="M28.5 5L12.5 26H24.5L21.5 43L37.5 22H25.5L28.5 5Z" fill="#78350f"/>
-              <!-- Bodi Petir Emas Utama -->
-              <path d="M27 4L11 25H23L20 42L36 21H24L27 4Z" fill="url(#bolt3d)" stroke="#fef08a" stroke-width="0.8"/>
-            </svg>
-            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TEGANGAN RATA RATA</div>
-            <div id="avg-voltage" class="font-semibold text-white-1500"></div>
-          </div>
+        <!-- 4. VOLTAGE -->
+        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+          <i class="fa fa-bolt" style="color: yellow;"></i>
+          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TEGANGAN RATA RATA</div>
+          <div id="avg-voltage" class="font-semibold text-white-1500"></div>
+        </div>
 
-          <!-- 5. TOTAL ARUS (Gelombang Arus 3D Biru-Cyan) -->
-          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
-            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(56,189,248,0.5)]" viewBox="0 0 48 48" fill="none">
-              <defs>
-                <linearGradient id="curr3dBg" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#38bdf8"/>
-                  <stop offset="50%" stop-color="#0284c7"/>
-                  <stop offset="100%" stop-color="#1e3a8a"/>
-                </linearGradient>
-              </defs>
-              <!-- Lencana Kotak 3D Membulat -->
-              <rect x="6" y="7" width="36" height="34" rx="9" fill="url(#curr3dBg)" stroke="#7dd3fc" stroke-width="1"/>
-              <!-- Kilau Atas -->
-              <path d="M10 12C10 9.8 11.8 8 14 8H34C36.2 8 38 9.8 38 12V15H10V12Z" fill="#ffffff" fill-opacity="0.22"/>
-              <!-- Garis Gelombang Arus 3D -->
-              <path d="M11 25H17L20.5 14L27.5 34L31 25H37" stroke="#0c4a6e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,1.5)"/>
-              <path d="M11 25H17L20.5 14L27.5 34L31 25H37" stroke="#fef08a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL ARUS</div>
-            <div id="total-current" class="font-semibold text-white-1500"></div>
-          </div>
+        <!-- 5. CURRENT -->
+        <div class="space-y-1 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+          <i class="fa fa-wave-square" style="color: orange;"></i>
+          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL ARUS</div>
+          <div id="total-current" class="font-semibold text-white-1500"></div>
+        </div>
 
-          <!-- 6. TOTAL DAYA (Steker/Colokan Listrik 3D Merah-Oranye) -->
-          <div class="space-y-1.5 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
-            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(239,68,68,0.55)]" viewBox="0 0 48 48" fill="none">
-              <defs>
-                <linearGradient id="plug3dBody" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#fca5a5"/>
-                  <stop offset="45%" stop-color="#ef4444"/>
-                  <stop offset="100%" stop-color="#7f1d1d"/>
-                </linearGradient>
-                <linearGradient id="plugPin" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#f8fafc"/>
-                  <stop offset="100%" stop-color="#94a3b8"/>
-                </linearGradient>
-              </defs>
-              <!-- Dua Pin Colokan Logam 3D -->
-              <rect x="17" y="5" width="3.5" height="9" rx="1.5" fill="url(#plugPin)"/>
-              <rect x="27.5" y="5" width="3.5" height="9" rx="1.5" fill="url(#plugPin)"/>
-              <!-- Kepala Steker 3D -->
-              <path d="M12 14H36V23C36 29.6274 30.6274 35 24 35C17.3726 35 12 29.6274 12 23V14Z" fill="url(#plug3dBody)" stroke="#fecaca" stroke-width="1"/>
-              <!-- Kabel Bawah -->
-              <path d="M24 35V43" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
-              <!-- Simbol Petir Daya di Tengah Steker -->
-              <path d="M25 18L20.5 24.5H24L23 30.5L27.5 24H24L25 18Z" fill="#fef08a"/>
-            </svg>
-            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL DAYA</div>
-            <div id="total-power" class="font-semibold text-white-1500"></div>
-          </div>
+        <!-- 6. POWER -->
+        <div onclick="bukaModalDiagram()" title="Klik untuk melihat aliran energi PLTS" class="space-y-1 bg-white/5 hover:bg-white/15 cursor-pointer transition p-2 rounded-lg flex flex-col items-center justify-center">
+          <i class="fa-solid fa-plug-circle-bolt" style="color: red;"></i>
+          <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL DAYA</div>
+          <div id="total-power" class="font-semibold text-white-1500"></div>
         </div>
       </div>
     </div>
-    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 mt-6">
-      <h3 class="text-lg font-semibold text-light gray-850">
-        DAFTAR UNIT BATERAI <span class="text-sm sm:text-base font-normal text-slate-400">(Klik untuk detail 15 sel)</span>
-      </h3>
+  </div>
+    <h3 class="text-lg font-semibold text-light gray-850 mb-4 mt-6">
+  DAFTAR UNIT BATERAI <span class="text-lg font-semibold text-slate-400">(Klik kartu untuk detail 15 sel)</span>
+</h3>
 
-      <!-- Tombol Pengubah Tampilan Table / Card di Pojok Kanan -->
-      <div class="inline-flex bg-gray-800/90 border border-gray-700 p-1 rounded-lg shadow-sm ml-auto">
-        <button id="btnViewTable" onclick="setBatteryViewMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-gray-400 hover:text-white transition">
-          <i class="fas fa-table"></i> Tabel
-        </button>
-        <button id="btnViewCard" onclick="setBatteryViewMode('card')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-700 text-white shadow transition">
-          <i class="fas fa-th-large"></i> Kartu
-        </button>
-      </div>
-    </div>
-
-    <div id="batteryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 hidden"></div>
-
-    <!-- Wadah Tampilan Table -->
-    <div id="batteryTableContainer" class="hidden overflow-x-auto rounded-xl border border-gray-700/60 bg-gray-900/60 shadow-sm mb-6">
-      <table class="w-full text-left border-collapse text-xs sm:text-sm">
-        <thead>
-           <tr class="bg-gray-800 text-white font-bold border-b-2 border-gray-600 uppercase text-xs sm:text-sm tracking-wider">
-             <th class="py-3.5 px-3">BATTTERAI</th>
-             <th class="py-3.5 px-3">TEGANGAN</th>
-             <th class="py-3.5 px-3">ARUS</th>
-             <th class="py-3.5 px-3">DAYA</th>
-             <th class="py-3.5 px-3">CELL</th>
-             <th class="py-3.5 px-3">SUHU</th>
-            </tr>
-          </thead>
-        <tbody id="batteryTableBody" class="divide-y divide-gray-800 text-gray-200"></tbody>
-      </table>
-    </div>
+  <div id="batteryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 hidden"></div>
     
     <div id="empty-state" class="text-center py-12 bg-white rounded-xl shadow-sm">
       <div class="text-blue-500 mb-4">
@@ -740,28 +467,16 @@
       <div>
         <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-2">KAPASITAS & KESEHATAN</div>
         <div class="rounded-lg border p-3.5 space-y-3" style="background-color: #11141c; border-color: #2d3343;">
-        <!-- Ikon Baterai 3D Memanjang untuk SOC (Hijau + Teks di Dalam) -->
-          <div class="battery-3d-wrapper" title="State of Charge (SOC)">
-            <div class="battery-3d-cap"></div>
-            <div class="battery-3d-body">
-              <div id="modalSocBar" class="battery-3d-fill-soc" style="width: 0%;"></div>
-              <div class="battery-3d-text">
-                SOC: &nbsp;<span id="modalSoc">0.00%</span>&nbsp; (<span id="modalRem">0.00 Ah</span>)
-              </div>
-            </div>
+          <div class="flex justify-between items-center text-xs font-bold">
+            <span class="text-white">SOC: <span id="modalSoc">0.00%</span> (<span id="modalRem">0.00 Ah</span>)</span>
+            <span class="text-white">SOH: <span id="modalSoh">100.00%</span></span>
           </div>
-
-          <!-- Ikon Baterai 3D Memanjang untuk SOH (Biru + Teks di Dalam) -->
-          <div class="battery-3d-wrapper" title="State of Health (SOH)">
-            <div class="battery-3d-cap"></div>
-            <div class="battery-3d-body">
-              <div id="modalSohBar" class="battery-3d-fill-soh" style="width: 0%;"></div>
-              <div class="battery-3d-text">
-                SOH: &nbsp;<span id="modalSoh">100.00%</span>
-              </div>
-            </div>
+          <div class="w-full h-2 rounded-full overflow-hidden" style="background-color: #232734;">
+            <div id="modalSocBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 0%;"></div>
           </div>
-
+          <div class="w-full h-1.5 rounded-full overflow-hidden" style="background-color: #232734; margin-top: 6px;">
+            <div id="modalSohBar" class="h-full transition-all duration-300" style="width: 0%; background-color: #38bdf8;"></div>
+          </div>
           <div class="grid grid-cols-3 gap-2 pt-2 border-t text-xs" style="border-color: #232734;">
             <div>
               <div class="text-[10px] text-slate-400">Siklus (Cycles)</div>
@@ -854,7 +569,6 @@
   let timer_poll;
   let xxx;
   const cardTimers = {};
-  let acMeterData = { voltage: "0.0", current: "0.00", power: "0.0", active: false };
   
   // Fungsi untuk mengurutkan baterai berdasarkan typeBattery dan address
   function sortBatteries() {
@@ -907,130 +621,51 @@
             </div>
             <span class="text-sm font-semibold" id="status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.status || '--'}</span>
           </div>
-          <div class="mini-batt-wrapper">
-            <div class="mini-batt-body">
-              <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill bg-green-500" style="width: ${batt.soc}%"></div>
-            </div>
-            <div class="mini-batt-cap"></div>
+          <div class="progress-bar">
+            <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill" style="width: ${batt.soc}%"></div>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-5 text-sm">
           <div class="space-y-2">
-            <!-- 1. Tegangan (Petir 3D Emas) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(234,179,8,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <linearGradient id="cBolt3d" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#fef08a"/>
-                    <stop offset="50%" stop-color="#facc15"/>
-                    <stop offset="100%" stop-color="#b45309"/>
-                  </linearGradient>
-                </defs>
-                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#78350f"/>
-                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cBolt3d)"/>
-              </svg>
+              <i class="fas fa-bolt text-yellow-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Tegangan</div>
                 <div id="voltage-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.voltage} V</div>
               </div>
             </div>
-
-            <!-- 2. Selisih Sel (Bola Biru 3D dengan Garis Selisih) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(59,130,246,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cDiff3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#93c5fd"/>
-                    <stop offset="55%" stop-color="#3b82f6"/>
-                    <stop offset="100%" stop-color="#1e3a8a"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cDiff3d)"/>
-                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
-                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
-              </svg>
+              <i class="fas fa-minus-circle  text-blue-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Selisih Sel</div>
                 <div id="voltagedif-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vdif} mV</div>
               </div>
             </div>
-
-            <!-- 3. Min Cell (Bola Merah 3D Minus) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cMin3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#fca5a5"/>
-                    <stop offset="55%" stop-color="#ef4444"/>
-                    <stop offset="100%" stop-color="#7f1d1d"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cMin3d)"/>
-                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
-                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
-              </svg>
+              <i class="fas fa-minus-circle text-red-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Min Cell</div>
                 <div id="cellmin-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmin} V</div>
               </div>
             </div>
           </div>
-
           <div class="space-y-2">
-            <!-- 4. Arus (Gauge/Speedometer 3D Biru-Cyan) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(56,189,248,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cCurr3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#7dd3fc"/>
-                    <stop offset="55%" stop-color="#0284c7"/>
-                    <stop offset="100%" stop-color="#0c4a6e"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cCurr3d)"/>
-                <path d="M7 14.5C7 11.7 9.2 9.5 12 9.5C14.8 9.5 17 11.7 17 14.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M12 14.5L15 11" stroke="#fef08a" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="14.5" r="1.5" fill="#ffffff"/>
-              </svg>
+              <i class="fas fa-tachometer-alt text-blue-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Arus</div>
                 <div id="current-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.current} A</div>
               </div>
             </div>
-
-            <!-- 5. Daya (Petir 3D Merah-Oranye) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <linearGradient id="cPow3d" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#fca5a5"/>
-                    <stop offset="45%" stop-color="#ef4444"/>
-                    <stop offset="100%" stop-color="#7f1d1d"/>
-                  </linearGradient>
-                </defs>
-                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#450a0a"/>
-                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cPow3d)"/>
-              </svg>
+              <i class="fas fa-bolt text-red-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Daya</div>
                 <div id="power-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${(batt.voltage*batt.current).toFixed(1)} W</div>
               </div>
             </div>
-
-            <!-- 6. Max Cell (Bola Hijau 3D Plus) -->
             <div class="flex items-center">
-              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(34,197,94,0.6)]" viewBox="0 0 24 24" fill="none">
-                <defs>
-                  <radialGradient id="cMax3d" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#86efac"/>
-                    <stop offset="55%" stop-color="#22c55e"/>
-                    <stop offset="100%" stop-color="#14532d"/>
-                  </radialGradient>
-                </defs>
-                <circle cx="12" cy="12" r="10" fill="url(#cMax3d)"/>
-                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
-                <path d="M12 7.5V16.5M7.5 12H16.5" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
-              </svg>
+              <i class="fas fa-plus-circle text-green-500 mr-2"></i>
               <div>
                 <div class="text-gray-500">Max Cell</div>
                 <div id="cellmax-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmax} V</div>
@@ -1116,7 +751,6 @@
         client2.publish(xxx[a]+"/seting","POLL1",0);
       }
       client2.subscribe("sysMon/"+xxx[0]+"/info/#");
-      client2.subscribe("sysMon/"+xxx[0]+"/ac_meter");
       updateConnectionStatus(true);
     });
 
@@ -1139,27 +773,21 @@
       let a = message.toString().split(",");
       document.getElementById("network_ip").innerText = "IP Address: " + a[0];
       document.getElementById("network_signal").innerText = "Signal: " + a[1];
-      
+      let varpol = document.getElementById("pollingState");
+      let text_head = " 🌐 " + a[0] + " 📶"+a[1];
+      if(a[3] === "1"){
+        varpol.innerHTML= "▶️ Active";
+        pollingSts =true;
+        text_head += " ▶️ "
+      }
+      else{
+        varpol.innerHTML= "⏹️ Passive";
+        pollingSts=false;
+        text_head += " ⏹️ "
+      }
       //document.getElementById("id_monitoring").innerText =text_head;
       //document.getElementById("id_monitoring_footer").innerText =text_head;
-  } else if (topic == "sysMon/"+xxx[0]+"/ac_meter") {
-    try {
-      const ac = JSON.parse(message.toString());
-      acMeterData = {
-        voltage: ac.voltage,
-        current: ac.current,
-        power: ac.power,
-        active: true
-      };
-      const elDayaTv = document.getElementById('nilaiDayaBawahTv');
-      if (elDayaTv) {
-        elDayaTv.textContent = `${ac.power} W`;
-      }
-    } catch (e) {
-      console.error("Error parsing AC meter:", e);
-    }
-  } else {
-
+    } else {
       try {
         const raw = JSON.parse(message.toString());
         const batt = normalizeFromMqtt(raw, topic);
@@ -1598,95 +1226,108 @@ function updateModal() {
     </script>
 
 <script>
-  // 1. Kunci permanen ke Dark Mode
-  document.body.setAttribute('data-theme', 'dark');
-  document.body.classList.add('dark');
-  localStorage.setItem('theme', 'dark');
-
-  // 2. Pengaturan Menu Dropdown & Modal Info
   const btn = document.getElementById("settingsBtn");
   const menu = document.getElementById("dropdownMenu");
 
-  if (btn && menu) {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      menu.classList.toggle("hidden");
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("hidden");
+  });
+
+  window.addEventListener("click", () => {
+    menu.classList.add("hidden");
+  });
+
+  const pollingStateData = document.getElementById("pollingState");
+
+  pollingStateData.addEventListener("click",(e) => {
+    if(pollingSts === true ){
+      client.publish(id_logger+"/seting", "POLL0",0);
+      console.log("deactivate");
+    }
+    else{
+      client.publish(id_logger+"/seting", "POLL1",0);
+      console.log("activated")
+    }
+  });
+
+  const networkModal = document.getElementById("networkModal");
+  const closeNetwork = document.getElementById("closeNetwork");
+
+  networkBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    networkModal.classList.remove("hidden");
+  });
+
+  closeNetwork.addEventListener("click", () => {
+    networkModal.classList.add("hidden");
+  });
+
+  window.addEventListener("click", (e) => {
+    if (e.target === networkModal) {
+      networkModal.classList.add("hidden");
+    }
+  });
+</script>
+
+<script>
+  const themeToggleLink = document.getElementById('themeToggleLink');
+  const body = document.body;
+  const header = document.getElementById('mainHeader');
+
+  // 1. Inisialisasi objek audio dengan file mp3 Jarvis Anda
+const jarvisAudio = new Audio('./jarvis.mp3');
+
+// 2. Fungsi untuk memutar audio Jarvis
+function speakWelcome() {
+    jarvisAudio.currentTime = 0;
+    jarvisAudio.play().then(() => {
+        console.log("Audio Jarvis berhasil diputar!");
+    }).catch(error => {
+        console.log("Gagal memutar audio:", error);
     });
+}
 
-    window.addEventListener("click", () => {
-      menu.classList.add("hidden");
-    });
-  }
+// 3. Logika untuk tombol masuk dan menghilangkan Splash Screen
+document.addEventListener("DOMContentLoaded", function() {
+    const splash = document.getElementById("welcomeSplash");
+    const btnStart = document.getElementById("btnStartApp");
+    
+    if (btnStart && splash) {
+        btnStart.addEventListener("click", function() {
+            // Putar suara Jarvis dengan segera saat tombol diklik
+            speakWelcome();
+            
+            // Berikan efek transisi menghilang pada Splash Screen
+            splash.style.opacity = "0";
+            setTimeout(() => {
+                splash.remove(); // Hapus elemen splash screen dari layar setelah menghilang
+            }, 500);
+        });
+    }
+});
 
-    const networkBtn = document.getElementById("networkBtn");
+  function setTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
 
-  if (networkBtn) {
-    networkBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      menu.classList.add("hidden");
-      bukaModalDiagram();
-    });
-  }
+    themeToggleLink.innerHTML = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
 
-  // 3. Pengaturan Audio Jarvis (ON/OFF) & Splash Screen
-  const jarvisAudio = new Audio('./jarvis.mp3');
-  const jarvisToggleBtn = document.getElementById('jarvisToggleBtn');
-  let isJarvisOn = localStorage.getItem('jarvis_audio') !== 'off';
-
-  function updateJarvisButtonUI() {
-    if (!jarvisToggleBtn) return;
-    if (isJarvisOn) {
-      jarvisToggleBtn.innerHTML = '🔊 Jarvis : ON';
-      jarvisToggleBtn.classList.remove('text-red-500');
-      jarvisToggleBtn.classList.add('text-green-600');
+    if (theme === 'dark') {
+      document.body.classList.add('dark');
     } else {
-      jarvisToggleBtn.innerHTML = '🔇 Jarvis : OFF';
-      jarvisToggleBtn.classList.remove('text-green-600');
-      jarvisToggleBtn.classList.add('text-red-500');
+      document.body.classList.remove('dark');
     }
   }
 
-  updateJarvisButtonUI();
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
 
-  if (jarvisToggleBtn) {
-    jarvisToggleBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      isJarvisOn = !isJarvisOn;
-      localStorage.setItem('jarvis_audio', isJarvisOn ? 'on' : 'off');
-      updateJarvisButtonUI();
-
-      if (isJarvisOn) {
-        speakWelcome();
-      } else {
-        jarvisAudio.pause();
-        jarvisAudio.currentTime = 0;
-      }
-    });
-  }
-
-  function speakWelcome() {
-    if (!isJarvisOn) return;
-    jarvisAudio.currentTime = 0;
-    jarvisAudio.play().catch(error => {
-      console.log("Audio tidak diputar:", error);
-    });
-  }
-
-  // Jalankan langsung tanpa menunggu DOMContentLoaded agar tombol selalu responsif
-  const splash = document.getElementById("welcomeSplash");
-  const btnStart = document.getElementById("btnStartApp");
-
-  if (btnStart && splash) {
-    btnStart.addEventListener("click", function() {
-      speakWelcome();
-      splash.style.opacity = "0";
-      setTimeout(() => {
-        splash.remove();
-      }, 500);
-    });
-  }
+  themeToggleLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+  });
 </script>
 
   <script>
@@ -1775,31 +1416,6 @@ function updateModal() {
     sendBmsCommand(reg, val);
   }
 
-  // Fungsi ON/OFF Auto Load & Charge Sharing
-  function sendSharingCommand(modeCmd) {
-    const pin = document.getElementById("setSecurityPin").value.trim();
-    if (!pin) {
-      showSettingStatus(false, "Harap masukkan PIN Keamanan terlebih dahulu!");
-      return;
-    }
-
-    const activeClient = (typeof client2 !== "undefined" && client2.connected) ? client2 : client;
-    if (!activeClient || !activeClient.connected) {
-      showSettingStatus(false, "Koneksi MQTT belum terhubung!");
-      return;
-    }
-
-    const loggerTarget = id_logger.split("-");
-    const topic = loggerTarget + "/seting";
-    const payload = JSON.stringify({
-      cmd: modeCmd,
-      pin: pin
-    });
-
-    showSettingStatus(null, "⏳ Mengirim pengaturan Sharing ke ESP32...");
-    activeClient.publish(topic, payload, 0);
-  }
-
   // Mendengarkan Balasan Status dari ESP32 (sysMon/[id_logger]/status)
   setTimeout(() => {
     if (typeof id_logger !== "undefined" && id_logger !== "-") {
@@ -1818,34 +1434,41 @@ function updateModal() {
     }
   }, 3000);
 </script>
-
 <!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV -->
 <style>
+  /* 1. Lintasan DC Panel Surya -> Inverter (Horizontal) */
   @keyframes gerakDcSolar {
     0%   { left: 20.0%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { left: 32.5%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
+
+   /* 2. Lintasan AC Inverter -> Rumah */
   @keyframes gerakAcBeban {
-    0%   { left: 46.8%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 46.8%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); } /* Diubah dari 43.5% */
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    52%  { left: 57.3%; top: 39.0%; opacity: 1; }
+    52%  { left: 57.3%; top: 39.0%; opacity: 1; } /* Wajib disamakan dengan 0% */
     82%  { left: 57.3%; top: 77.5%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { left: 64.5%; top: 77.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
+
+  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Inverter -> Baterai) */
   @keyframes gerakDcBattTurun {
     0%   { left: 39.8%; top: 63.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { left: 39.8%; top: 75.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
+
+  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Baterai -> Inverter) */
   @keyframes gerakDcBattNaik {
     0%   { left: 39.8%; top: 75.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { left: 39.8%; top: 63.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
+
   .bulatan-aliran {
     position: absolute;
     width: clamp(22px, 3.0vw, 36px);
@@ -1863,54 +1486,50 @@ function updateModal() {
     pointer-events: none;
     z-index: 10;
   }
-  .bulatan-aliran.hidden { display: none !important; }
+
+  .bulatan-aliran.hidden {
+    display: none !important;
+  }
+
   .anim-solar-dc   { animation: gerakDcSolar 2.4s linear infinite; }
   .anim-ac-beban   { animation: gerakAcBeban 3.2s linear infinite; }
   .anim-batt-turun { animation: gerakDcBattTurun 2.0s linear infinite; }
   .anim-batt-naik  { animation: gerakDcBattNaik 2.0s linear infinite; }
-  .ikon-matahari-plts {
-    position: absolute;
-    left: 23.4%;
-    top: 15.8%;
-    width: 13.8%;
-    aspect-ratio: 245 / 215;
-    transform: translate(-50%, -50%);
-    filter: drop-shadow(0 0 18px rgba(253, 224, 71, 0.8)) drop-shadow(0 0 38px rgba(245, 158, 11, 0.5));
-    pointer-events: none;
-    z-index: 8;
-  }
-  .matahari-inti-3d { transform-origin: 145px 80px; animation: sinarMatahari 3.2s ease-in-out infinite; }
-  .panah-sinar-1 { animation: aliranSinar3d 1.8s ease-in-out infinite 0s; }
-  .panah-sinar-2 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.25s; }
-  .panah-sinar-3 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.5s; }
-  @keyframes sinarMatahari {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50%      { transform: scale(1.04); filter: brightness(1.12); }
-  }
-  @keyframes aliranSinar3d {
-    0%, 100% { opacity: 0.55; transform: translate(0, 0); }
-    50%      { opacity: 1; transform: translate(-3px, 2.5px); }
-  }
-  .display-va-tv {
-    position: absolute;
-    left: 91.5%;
-    top: 66.5%;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.92);
-    border: 1.5px solid #38bdf8;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
-    color: #38bdf8;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 800;
-    font-size: clamp(11px, 1.45vw, 18px);
-    line-height: 1.25;
-    text-align: center;
-    padding: 5px 14px;
-    border-radius: 6px;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 12;
-  }
+
+ /* Ikon SVG Matahari 3D Simetris + 3 Panah Sinar (Presisi Gambar No. 1) */
+.ikon-matahari-plts {
+  position: absolute;
+  left: 23.4%;
+  top: 15.8%;
+  width: 13.8%;
+  aspect-ratio: 245 / 215;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 18px rgba(253, 224, 71, 0.8)) drop-shadow(0 0 38px rgba(245, 158, 11, 0.5));
+  pointer-events: none;
+  z-index: 8;
+}
+
+.matahari-inti-3d {
+  transform-origin: 145px 80px; /* Disesuaikan dengan titik pusat matahari baru */
+  animation: sinarMatahari 3.2s ease-in-out infinite;
+}
+
+
+.panah-sinar-1 { animation: aliranSinar3d 1.8s ease-in-out infinite 0s; }
+.panah-sinar-2 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.25s; }
+.panah-sinar-3 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.5s; }
+
+@keyframes sinarMatahari {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%      { transform: scale(1.04); filter: brightness(1.12); }
+}
+
+@keyframes aliranSinar3d {
+  0%, 100% { opacity: 0.55; transform: translate(0, 0); }
+  50%      { opacity: 1; transform: translate(-3px, 2.5px); }
+}
+
+  /* Kotak Penampil Total Daya di Bawah TV dan Baterai */
   .display-daya-tv {
     position: absolute;
     left: 91.5%;
@@ -1929,35 +1548,79 @@ function updateModal() {
     pointer-events: none;
     z-index: 12;
   }
-  .display-tegangan-baterai,
-  .display-arus-baterai,
-  .display-daya-baterai {
-    position: absolute;
-    top: 85.8%;
-    width: 6.6%;
-    height: 8.2%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.90);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 800;
-    font-size: clamp(8px, 1.02vw, 13px);
-    padding: 0;
-    border-radius: 5px;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 12;
-  }
-  .display-tegangan-baterai { left: 31.95%; border: 1.5px solid #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.55); color: #38bdf8; }
-  .display-arus-baterai     { left: 39.8%;  border: 1.5px solid #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.55); color: #fbbf24; }
-  .display-daya-baterai     { left: 47.6%;  border: 1.5px solid #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.55);  color: #4ade80; }
+
+      .display-daya-baterai {
+      position: absolute;
+      left: 39.8%;
+      top: 85.5%;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+      color: #4ade80;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: clamp(13px, 1.85vw, 23px);
+      padding: 6px 16px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    /* Geser Ketiga Kotak ke Bawah agar Tutup Atas Baterai Terlihat Utuh */
+    .display-tegangan-baterai,
+    .display-arus-baterai,
+    .display-daya-baterai {
+      position: absolute;
+      top: 85.8%;   /* Diturunkan dari 84.2% agar pas di bodi bawah baterai */
+      width: 6.6%;  /* Disesuaikan sedikit agar tidak melewati garis pinggir baterai */
+      height: 8.2%; /* Disesuaikan agar bagian tutup atas dan bawah baterai rapi */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.90);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: clamp(8px, 1.02vw, 13px);
+      padding: 0;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    /* Kotak Kiri (Baterai 1): Digeser sedikit ke kanan dari 31.3% */
+    .display-tegangan-baterai {
+      left: 31.95%;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+      color: #38bdf8;
+    }
+
+    /* Kotak Tengah (Baterai 2): Tetap di tengah */
+    .display-arus-baterai {
+      left: 39.8%;
+      border: 1.5px solid #f59e0b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.55);
+      color: #fbbf24;
+    }
+
+    /* Kotak Kanan (Baterai 3): Digeser sedikit ke kiri dari 48.3% */
+    .display-daya-baterai {
+      left: 47.6%;
+      border: 1.5px solid #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.55);
+      color: #4ade80;
+    }
 </style>
 
 <!-- Modal Diagram 3D dengan Animasi Dinamis -->
 <div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
   <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
+    
+    <!-- Header Pop-up -->
     <div class="flex justify-between items-center mb-3">
       <div>
         <h3 class="text-white text-base sm:text-xl font-bold flex items-center gap-2">
@@ -1969,168 +1632,169 @@ function updateModal() {
       <button onclick="tutupModalDiagram()" class="text-gray-400 hover:text-white text-2xl font-bold px-2">✕</button>
     </div>
 
+    <!-- Kontainer Gambar & Bulatan Bergerak -->
     <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
       <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
       
-      <div id="elemenMatahari" class="ikon-matahari-plts">
-        <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
-          <defs>
-            <radialGradient id="gradSinar3D" cx="45%" cy="42%" r="55%">
-              <stop offset="0%" stop-color="#fef9c3" />
-              <stop offset="65%" stop-color="#fde047" />
-              <stop offset="100%" stop-color="#d97706" />
-            </radialGradient>
-            <radialGradient id="gradInti3D" cx="38%" cy="35%" r="60%">
-              <stop offset="0%" stop-color="#ffffff" />
-              <stop offset="55%" stop-color="#fef08a" />
-              <stop offset="90%" stop-color="#facc15" />
-              <stop offset="100%" stop-color="#ca8a04" />
-            </radialGradient>
-            <linearGradient id="gradPanah3D" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" />
-              <stop offset="50%" stop-color="#fef08a" />
-              <stop offset="100%" stop-color="#eab308" />
-            </linearGradient>
-            <filter id="shadow3D" x="-25%" y="-25%" width="150%" height="150%">
-              <feDropShadow dx="-1.5" dy="2.5" stdDeviation="2.2" flood-color="#78350f" flood-opacity="0.55" />
-            </filter>
-          </defs>
-          <g class="matahari-inti-3d" filter="url(#shadow3D)">
-            <polygon fill="url(#gradSinar3D)" points="
-              145,15  153,36  170,20  169,42  191,34  181,54  204,55  187,70
-              208,80  187,90  204,105 181,106 191,126 169,118 170,140 153,124
-              145,145 137,124 120,140 121,118 99,126  109,106 86,105  103,90
-              82,80   103,70  86,55   109,54  99,34   121,42  120,20  137,36
-            " />
-            <circle cx="145" cy="80" r="39" fill="#eab308" opacity="0.45" />
-            <circle cx="145" cy="80" r="36" fill="url(#gradInti3D)" />
-          </g>
-          <g filter="url(#shadow3D)">
-            <g class="panah-sinar-1">
-              <line x1="66" y1="92" x2="26" y2="122" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
-              <polygon points="20,127 34,125 26,114" fill="url(#gradPanah3D)" />
+      <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
+        <div id="elemenMatahari" class="ikon-matahari-plts">
+         <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
+            <defs>
+              <radialGradient id="gradSinar3D" cx="45%" cy="42%" r="55%">
+                <stop offset="0%" stop-color="#fef9c3" />
+                <stop offset="65%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#d97706" />
+              </radialGradient>
+              <radialGradient id="gradInti3D" cx="38%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="55%" stop-color="#fef08a" />
+                <stop offset="90%" stop-color="#facc15" />
+                <stop offset="100%" stop-color="#ca8a04" />
+              </radialGradient>
+              <linearGradient id="gradPanah3D" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#fef08a" />
+                <stop offset="100%" stop-color="#eab308" />
+              </linearGradient>
+              <filter id="shadow3D" x="-25%" y="-25%" width="150%" height="150%">
+                <feDropShadow dx="-1.5" dy="2.5" stdDeviation="2.2" flood-color="#78350f" flood-opacity="0.55" />
+              </filter>
+            </defs>
+
+            <!-- Matahari 3D Simetris (16 Gerigi Runcing + Bola Inti) -->
+            <g class="matahari-inti-3d" filter="url(#shadow3D)">
+              <polygon fill="url(#gradSinar3D)" points="
+                145,15  153,36  170,20  169,42  191,34  181,54  204,55  187,70
+                208,80  187,90  204,105 181,106 191,126 169,118 170,140 153,124
+                145,145 137,124 120,140 121,118 99,126  109,106 86,105  103,90
+                82,80   103,70  86,55   109,54  99,34   121,42  120,20  137,36
+              " />
+              <circle cx="145" cy="80" r="39" fill="#eab308" opacity="0.45" />
+              <circle cx="145" cy="80" r="36" fill="url(#gradInti3D)" />
             </g>
-            <g class="panah-sinar-2">
-              <line x1="78" y1="112" x2="40" y2="146" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
-              <polygon points="34,151 48,148 39,138" fill="url(#gradPanah3D)" />
+
+            <!-- 3 Panah Sinar Diagonal (Lebih Jauh dari Matahari & Melebar ke Panel Surya) -->
+            <g filter="url(#shadow3D)">
+              <!-- Panah 1 (Kiri Atas - Mengarah ke bagian atas panel surya) -->
+              <g class="panah-sinar-1">
+                <line x1="66" y1="92" x2="26" y2="122" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="20,127 34,125 26,114" fill="url(#gradPanah3D)" />
+              </g>
+
+              <!-- Panah 2 (Tengah - Mengarah ke tengah panel surya) -->
+              <g class="panah-sinar-2">
+                <line x1="78" y1="112" x2="40" y2="146" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="34,151 48,148 39,138" fill="url(#gradPanah3D)" />
+              </g>
+
+              <!-- Panah 3 (Kanan Bawah - Mengarah lebih melebar ke bawah) -->
+              <g class="panah-sinar-3">
+                <line x1="94" y1="130" x2="60" y2="168" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="55,174 68,169 58,160" fill="url(#gradPanah3D)" />
+              </g>
             </g>
-            <g class="panah-sinar-3">
-              <line x1="94" y1="130" x2="60" y2="168" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
-              <polygon points="55,174 68,169 58,160" fill="url(#gradPanah3D)" />
-            </g>
-          </g>
-        </svg>
-      </div>
+          </svg>
+        </div>
 
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
       <div class="bulatan-aliran anim-ac-beban">AC</div>
-      <div id="nilaiVaBawahTv" class="display-va-tv">0.0 V<br>0.00 A</div>
-      <div id="nilaiDayaBawahTv" class="display-daya-tv">0.0 W</div>
+      <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
       <div id="nilaiDayaBaterai" class="display-daya-baterai">0 W</div>
       <div id="nilaiTeganganBaterai" class="display-tegangan-baterai">0.00 V</div>
       <div id="nilaiArusBaterai" class="display-arus-baterai">0.00 A</div>
     </div>
+
   </div>
 </div>
 
-  <script>
-  let acMeterData = { voltage: "0.0", current: "0.00", power: "0.0", active: false };
-
-  setTimeout(function() {
-    if (typeof id_logger !== "undefined" && id_logger !== "-") {
-      const acTopic = "sysMon/" + id_logger.split("-")[0] + "/ac_meter";
-      if (typeof client2 !== "undefined") {
-        client2.subscribe(acTopic);
-        client2.on("message", function(topic, message) {
-          if (topic === acTopic) {
-            try {
-              const ac = JSON.parse(message.toString());
-              acMeterData = {
-                voltage: ac.voltage,
-                current: ac.current,
-                power: ac.power,
-                active: true
-              };
-              const elDayaTv = document.getElementById('nilaiDayaBawahTv');
-              const elVaTv   = document.getElementById('nilaiVaBawahTv');
-              if (elDayaTv) elDayaTv.textContent = ac.power + " W";
-              if (elVaTv)   elVaTv.innerHTML     = ac.voltage + " V<br>" + ac.current + " A";
-            } catch (e) {}
-          }
-        });
-      }
-    }
-  }, 3000);
-
+<script>
   function perbaruiAnimasiDiagram() {
     const teksHalaman = document.body.innerText || "";
-    const elPowerUtama = document.getElementById('total-power');
-    const elDayaTv     = document.getElementById('nilaiDayaBawahTv');
-    const elVaTv       = document.getElementById('nilaiVaBawahTv');
-    const elDayaBatt   = document.getElementById('nilaiDayaBaterai');
-    let nilaiDayaAsli  = "0 W";
+    
+      // 1. Ambil nilai Total Daya Watt
+      const elPowerUtama = document.getElementById('total-power');
+      const elDayaTv     = document.getElementById('nilaiDayaBawahTv');
+      const elDayaBatt   = document.getElementById('nilaiDayaBaterai');
+      let nilaiDayaAsli  = "0 W";
 
-    if (elPowerUtama && elPowerUtama.textContent.trim() !== "") {
-      nilaiDayaAsli = elPowerUtama.textContent.trim();
-    } else {
-      const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
-      if (cocokDaya && cocokDaya[1]) nilaiDayaAsli = cocokDaya[1].trim();
-    }
+      if (elPowerUtama && elPowerUtama.textContent.trim() !== "") {
+        nilaiDayaAsli = elPowerUtama.textContent.trim();
+      } else {
+        const cocokDaya = teksHalaman.match(/TOTAL DAYA[\s\S]{0,60}?(-?\d+(?:\.\d+)?\s*W)/i);
+        if (cocokDaya && cocokDaya[1]) {
+          nilaiDayaAsli = cocokDaya[1].trim();
+        }
+      }
 
-    const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
-    const elArusBatt     = document.getElementById('nilaiArusBaterai');
-    const cocokTegangan  = teksHalaman.match(/(?:TEGANGAN|VOLTAGE|TOTAL\s*V)[\s\S]{0,40}?(\d+(?:\.\d+)?\s*V)/i) || teksHalaman.match(/\b(4\d\.\d+|5\d\.\d+)\s*V\b/i);
-    const cocokArus      = teksHalaman.match(/(?:TOTAL\s*ARUS|ARUS|CURRENT)[\s\S]{0,40}?([+-]?\d+(?:\.\d+)?\s*A)/i) || teksHalaman.match(/([+-]?\d+\.\d+)\s*A\b/i);
+      // 2. Ambil nilai Tegangan Baterai (Kiri) dan Total Arus Positif/Negatif (Kanan)
+      const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
+      const elArusBatt     = document.getElementById('nilaiArusBaterai');
 
-    if (elTeganganBatt && cocokTegangan && cocokTegangan[1]) elTeganganBatt.textContent = cocokTegangan[1].trim();
-    if (elArusBatt && cocokArus && cocokArus[1]) elArusBatt.textContent = cocokArus[1].replace(/^\+/, '').trim();
+      const cocokTegangan = teksHalaman.match(/(?:TEGANGAN|VOLTAGE|TOTAL\s*V)[\s\S]{0,40}?(\d+(?:\.\d+)?\s*V)/i) 
+                         || teksHalaman.match(/\b(4\d\.\d+|5\d\.\d+)\s*V\b/i);
+      const cocokArus     = teksHalaman.match(/(?:TOTAL\s*ARUS|ARUS|CURRENT)[\s\S]{0,40}?([+-]?\d+(?:\.\d+)?\s*A)/i) 
+                         || teksHalaman.match(/([+-]?\d+\.\d+)\s*A\b/i);
 
-    const teksDayaAc = acMeterData.active ? (acMeterData.power + " W") : "0.0 W";
-    if (elDayaTv) elDayaTv.textContent = teksDayaAc;
-    if (elVaTv && acMeterData.active) elVaTv.innerHTML = acMeterData.voltage + " V<br>" + acMeterData.current + " A";
+      if (elTeganganBatt && cocokTegangan && cocokTegangan[1]) {
+        elTeganganBatt.textContent = cocokTegangan[1].trim();
+      }
+      if (elArusBatt && cocokArus && cocokArus[1]) {
+        // Menghilangkan tanda '+' jika ada agar tampil rapi seperti "16.20 A" atau "-14.12 A"
+        elArusBatt.textContent = cocokArus[1].replace(/^\+/, '').trim();
+      }
 
-    const matchStatus    = teksHalaman.match(/\b(Charging|Discharging|Standby|Full)\b/i);
-    const statusPertama  = matchStatus ? matchStatus[0] : "";
-    const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
-    const modeCharge     = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
-    const modeStandby    = /^(standby|full)$/i.test(statusPertama) && !cekDayaNegatif;
+      // 3. Deteksi status Charging, Standby, Full, atau Discharging
+      const matchStatus    = teksHalaman.match(/\b(Charging|Discharging|Standby|Full)\b/i);
+      const statusPertama  = matchStatus ? matchStatus[0] : "";
+      const cekDayaNegatif = /TOTAL DAYA[\s\S]{0,60}-\d+/i.test(teksHalaman);
+      const modeCharge     = /^charging$/i.test(statusPertama) && !cekDayaNegatif;
+      const modeStandby    = /^(standby|full)$/i.test(statusPertama) && !cekDayaNegatif;
 
-    const elMatahari = document.getElementById('elemenMatahari');
-    const elDcSolar  = document.getElementById('bulatanDcSolar');
-    const elDcBatt   = document.getElementById('bulatanDcBaterai');
-    const elBadge    = document.getElementById('badgeStatusDiagram');
-    const elSub      = document.getElementById('subjudulDiagram');
+      const elMatahari = document.getElementById('elemenMatahari');
+      const elDcSolar  = document.getElementById('bulatanDcSolar');
+      const elDcBatt   = document.getElementById('bulatanDcBaterai');
+      const elBadge    = document.getElementById('badgeStatusDiagram');
+      const elSub      = document.getElementById('subjudulDiagram');
 
-    if (modeCharge) {
-      elMatahari.classList.remove('hidden');
-      elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.add('anim-batt-turun');
-      if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli;
-      elBadge.textContent = "🟢 CHARGING";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
-      elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
-    } else if (modeStandby) {
-      elMatahari.classList.remove('hidden');
-      elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.remove('anim-batt-turun');
-      if (elDayaBatt) elDayaBatt.textContent = "0 W";
-      elBadge.textContent = "🔵 STANDBY";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-      elSub.textContent = "Baterai penuh (Standby). Panel surya menyuplai langsung beban rumah (AC).";
-    } else {
-      elMatahari.classList.add('hidden');
-      elDcSolar.classList.add('hidden');
-      elDcBatt.classList.remove('anim-batt-turun');
-      elDcBatt.classList.add('anim-batt-naik');
-      if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli;
-      elBadge.textContent = "🟠 DISCHARGING";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
-      elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik) untuk beban rumah (AC).";
-    }
-  }
+      if (modeCharge) {
+        elMatahari.classList.remove('hidden');
+        elDcSolar.classList.remove('hidden');
+        elDcBatt.classList.remove('anim-batt-naik');
+        elDcBatt.classList.add('anim-batt-turun');
+
+        if (elDayaTv) elDayaTv.textContent = "0 W";
+        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Terbaca saat Charging
+
+        elBadge.textContent = "🟢 CHARGING";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
+        elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban rumah (AC).";
+      } else if (modeStandby) {
+        elMatahari.classList.remove('hidden');
+        elDcSolar.classList.remove('hidden');
+        elDcBatt.classList.remove('anim-batt-naik');
+        elDcBatt.classList.remove('anim-batt-turun');
+
+        if (elDayaTv) elDayaTv.textContent = "0 W";
+        if (elDayaBatt) elDayaBatt.textContent = "0 W"; // Nol saat Standby / Full
+
+        elBadge.textContent = "🔵 STANDBY";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+        elSub.textContent = "Baterai penuh (Standby). Panel surya menyuplai langsung beban rumah (AC).";
+      } else {
+        elMatahari.classList.add('hidden');
+        elDcSolar.classList.add('hidden');
+        elDcBatt.classList.remove('anim-batt-turun');
+        elDcBatt.classList.add('anim-batt-naik');
+
+        if (elDayaTv) elDayaTv.textContent = nilaiDayaAsli;   // Terbaca saat Discharging
+        if (elDayaBatt) elDayaBatt.textContent = nilaiDayaAsli; // Tetap terbaca saat Discharging
+
+        elBadge.textContent = "🟠 DISCHARGING";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
+        elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik) untuk beban rumah (AC).";
+      }
+   }
 
   function bukaModalDiagram() {
     perbaruiAnimasiDiagram();
@@ -2141,7 +1805,7 @@ function updateModal() {
     document.getElementById('modalDiagramPlts').classList.add('hidden');
   }
 
-  setInterval(function() {
+  setInterval(() => {
     const modal = document.getElementById('modalDiagramPlts');
     if (modal && !modal.classList.contains('hidden')) {
       perbaruiAnimasiDiagram();
