@@ -1906,8 +1906,12 @@ function updateModal() {
   color: #38bdf8;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 800;
-  font-size: clamp(16px, 2.3vw, 29px); /* Ukuran teks */
-  padding: 6px 18px;                   /* Mengunci lebar dan tinggi kotak */
+  font-size: clamp(16px, 2.3vw, 29px); /* Ukuran teks diperkecil */
+  width: 170px;                        /* Mengunci lebar kotak */
+  height: 46px;                        /* Mengunci tinggi kotak */
+  display: flex;                       /* Menjaga teks tetap di tengah */
+  align-items: center;
+  justify-content: center;
   border-radius: 6px;
   white-space: nowrap;
   pointer-events: none;
