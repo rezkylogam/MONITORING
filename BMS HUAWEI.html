@@ -1720,24 +1720,22 @@ function updateModal() {
 </script>
 
 <script>
-
   function switchBmsTab(tabId) {
-  document.querySelectorAll('.bms-tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.bms-tab-btn').forEach(btn => {
-    btn.classList.remove('bg-blue-600', 'text-white');
-    btn.classList.add('bg-gray-100', 'text-gray-600');
-  });
+    document.querySelectorAll('.bms-tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.bms-tab-btn').forEach(btn => {
+      btn.classList.remove('bg-blue-600', 'text-white');
+      btn.classList.add('bg-gray-100', 'text-gray-600');
+    });
 
-  const activeTab = document.getElementById(tabId);
-  const activeBtn = document.getElementById('btn-' + tabId);
-  if (activeTab) activeTab.classList.remove('hidden');
-  if (activeBtn) {
-    activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
-    activeBtn.classList.add('bg-blue-600', 'text-white');
+    const activeTab = document.getElementById(tabId);
+    const activeBtn = document.getElementById('btn-' + tabId);
+    if (activeTab) activeTab.classList.remove('hidden');
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+      activeBtn.classList.add('bg-blue-600', 'text-white');
+    }
   }
-}
 
-  // Buka & Tutup Modal Setting BMS
   const bmsSettingBtn = document.getElementById("bmsSettingBtn");
   const bmsSettingModal = document.getElementById("bmsSettingModal");
   const closeBmsSetting = document.getElementById("closeBmsSetting");
@@ -1755,7 +1753,6 @@ function updateModal() {
     });
   }
 
-  // Menampilkan Notifikasi Status
   function showSettingStatus(isOk, text) {
     const box = document.getElementById("settingFeedbackBox");
     if (!box) return;
@@ -1770,84 +1767,85 @@ function updateModal() {
     box.textContent = text;
   }
 
-  // Fungsi Utama Mengirim Perintah Write Register via MQTT
-  function sendBmsCommand(regAddr, val) {
+  function publishSettingPayload(payloadObj) {
     const pin = document.getElementById("setSecurityPin").value.trim();
-    const targetAddr = parseInt(document.getElementById("setTargetAddr").value);
-
     if (!pin) {
       showSettingStatus(false, "Harap masukkan PIN Keamanan terlebih dahulu!");
-      return;
+      return false;
     }
 
     const activeClient = (typeof client2 !== "undefined" && client2.connected) ? client2 : client;
     if (!activeClient || !activeClient.connected) {
       showSettingStatus(false, "Koneksi MQTT belum terhubung!");
-      return;
+      return false;
     }
 
+    payloadObj.pin = pin;
     const loggerTarget = id_logger.split("-")[0];
     const topic = loggerTarget + "/seting";
-    const payload = JSON.stringify({
+
+    showSettingStatus(null, "⏳ Mengirim perintah ke ESP32...");
+    activeClient.publish(topic, JSON.stringify(payloadObj), 0);
+    return true;
+  }
+
+  function sendBmsCommand(regAddr, val) {
+    const targetAddr = parseInt(document.getElementById("setTargetAddr").value);
+    publishSettingPayload({
       cmd: "WRITE_REG",
-      pin: pin,
       addr: targetAddr,
       reg: parseInt(regAddr),
       val: parseInt(val)
     });
-
-    showSettingStatus(null, "⏳ Mengirim perintah ke ESP32...");
-    activeClient.publish(topic, payload, 0);
   }
 
-  // Fungsi Khusus Konversi Ampere ke Skala Register (x10)
-  function sendCurrentLimit(regAddr, inputId) {
-    const rawAmp = parseFloat(document.getElementById(inputId).value);
-    if (isNaN(rawAmp) || rawAmp <= 0) {
-      showSettingStatus(false, "Masukkan nilai Ampere yang valid (misal: 15.0)");
+  function sendScaledCommand(regAddr, inputId, scale, minVal, maxVal) {
+    const rawVal = parseFloat(document.getElementById(inputId).value);
+    if (isNaN(rawVal) || rawVal < minVal || rawVal > maxVal) {
+      showSettingStatus(false, "Masukkan nilai valid antara " + minVal + " hingga " + maxVal + "!");
       return;
     }
-    const scaledVal = Math.round(rawAmp * 10);
+    const scaledVal = Math.round(rawVal * scale);
     sendBmsCommand(regAddr, scaledVal);
   }
 
-  // Fungsi Custom Register Mode Teknisi
-  function sendCustomRegister() {
-    const reg = parseInt(document.getElementById("customRegAddr").value);
-    const val = parseInt(document.getElementById("customRegVal").value);
-    if (isNaN(reg) || isNaN(val)) {
-      showSettingStatus(false, "Isi nomor register dan nilainya dengan benar!");
-      return;
+  function sendSharingCommand(cmdType) {
+    if (publishSettingPayload({ cmd: cmdType })) {
+      const badge = document.getElementById("sharingStatusBadge");
+      if (badge) {
+        if (cmdType === "SHARING_ON") {
+          badge.textContent = "STATUS: AKTIF";
+          badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-600 text-white";
+        } else {
+          badge.textContent = "STATUS: NONAKTIF";
+          badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-rose-600 text-white";
+        }
+      }
     }
-    sendBmsCommand(reg, val);
   }
 
-  // Fungsi ON/OFF Auto Load & Charge Sharing
-  function sendSharingCommand(modeCmd) {
-    const pin = document.getElementById("setSecurityPin").value.trim();
-    if (!pin) {
-      showSettingStatus(false, "Harap masukkan PIN Keamanan terlebih dahulu!");
+  function saveSharingParams() {
+    const maxChg = parseInt(document.getElementById("shareMaxChg").value);
+    const maxDchg = parseInt(document.getElementById("shareMaxDchg").value);
+    if (isNaN(maxChg) || isNaN(maxDchg) || maxChg < 5 || maxDchg < 5 || maxChg > 105 || maxDchg > 105) {
+      showSettingStatus(false, "Nilai batas sharing harus antara 5A hingga 105A!");
       return;
     }
-
-    const activeClient = (typeof client2 !== "undefined" && client2.connected) ? client2 : client;
-    if (!activeClient || !activeClient.connected) {
-      showSettingStatus(false, "Koneksi MQTT belum terhubung!");
-      return;
-    }
-
-    const loggerTarget = id_logger.split("-");
-    const topic = loggerTarget + "/seting";
-    const payload = JSON.stringify({
-      cmd: modeCmd,
-      pin: pin
+    publishSettingPayload({
+      cmd: "SHARING_CFG",
+      maxChg: maxChg,
+      maxDchg: maxDchg
     });
-
-    showSettingStatus(null, "⏳ Mengirim pengaturan Sharing ke ESP32...");
-    activeClient.publish(topic, payload, 0);
   }
 
-  // Mendengarkan Balasan Status dari ESP32 (sysMon/[id_logger]/status)
+  function unlockAntiTheft() {
+    const targetAddr = parseInt(document.getElementById("setTargetAddr").value);
+    publishSettingPayload({
+      cmd: "UNLOCK_ANTITHEFT",
+      addr: targetAddr
+    });
+  }
+
   setTimeout(() => {
     if (typeof id_logger !== "undefined" && id_logger !== "-") {
       const statusTopic = "sysMon/" + id_logger.split("-")[0] + "/status";
@@ -1857,7 +1855,7 @@ function updateModal() {
           if (topic === statusTopic) {
             try {
               const res = JSON.parse(message.toString());
-              showSettingStatus(res.ok, (res.ok ? "✅ " : "❌ ") + res.msg.replace(/\s*\(Reg\s*\d+\)/gi, ""));
+              showSettingStatus(res.ok, (res.ok ? "✅ " : "❌ ") + res.msg);
             } catch (e) {}
           }
         });
@@ -1865,6 +1863,7 @@ function updateModal() {
     }
   }, 3000);
 </script>
+
 <!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV -->
 <style>
   /* 1. Lintasan DC Panel Surya -> Inverter (Horizontal) */
