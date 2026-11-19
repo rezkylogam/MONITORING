@@ -453,21 +453,23 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-        <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Charge Manual (Reg 4109)</div>
-          <div class="grid grid-cols-2 gap-2.5">
-            <input type="number" id="valReg4109" placeholder="15.0 (A)" step="0.1" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
-            <button onclick="sendScaledCommand(4109, 'valReg4109', 10, 1, 100)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-3 rounded-xl">Set Charge</button>
+        <!-- Batas Arus Charge Manual (Reg 4109 / 0x100D) -->
+          <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
+            <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Charge Manual</div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="number" id="valReg4109" placeholder="15.0 (A)" step="1" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
+              <button onclick="sendScaledCommand(4109, 'valReg4109', 1, 5, 100)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl">OK</button>
+            </div>
           </div>
-        </div>
 
-        <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Discharge Manual (Reg 4123)</div>
-          <div class="grid grid-cols-2 gap-2.5">
-            <input type="number" id="valReg4123" placeholder="15.0 (A)" step="0.1" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
-            <button onclick="sendScaledCommand(4123, 'valReg4123', 10, 1, 100)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-3 rounded-xl">Set Discharge</button>
-          </div>
-        </div>
+          <!-- Batas Arus Discharge Manual -->
+          <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
+            <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Discharge Manual</div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <input type="number" id="valReg4107" placeholder="30.0 (A)" step="1" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
+                <button onclick="sendScaledCommand(4107, 'valReg4107', 1, 5, 100)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl">Set Discharge</button>
+              </div>
+         </div>
       </div>
 
       <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-sm">
@@ -509,14 +511,14 @@
         <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm space-y-3">
           <div class="text-xs font-bold text-blue-700 uppercase">Proteksi Tegangan Atas (Pack OVP)</div>
           <div>
-            <label class="block text-xs text-gray-600 mb-1">Pack OVP Cutoff (53.0 - 56.5 V) [Reg 4100]</label>
+            <label class="block text-xs text-gray-600 mb-1">Pack OVP Cutoff (53.0 - 56.5 V)</label>
             <div class="flex gap-2">
               <input type="number" id="valPackOvp" placeholder="55.50" step="0.05" class="w-full p-2 border border-gray-300 rounded-xl text-sm">
               <button onclick="sendScaledCommand(4100, 'valPackOvp', 100, 53.0, 56.5)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 rounded-xl">Simpan</button>
             </div>
           </div>
           <div>
-            <label class="block text-xs text-gray-600 mb-1">Pack OVP Recovery (51.0 - 55.0 V) [Reg 4101]</label>
+            <label class="block text-xs text-gray-600 mb-1">Pack OVP Recovery (51.0 - 55.0 V)</label>
             <div class="flex gap-2">
               <input type="number" id="valPackOvpRec" placeholder="53.50" step="0.05" class="w-full p-2 border border-gray-300 rounded-xl text-sm">
               <button onclick="sendScaledCommand(4101, 'valPackOvpRec', 100, 51.0, 55.0)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 rounded-xl">Simpan</button>
@@ -545,7 +547,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="text-xs font-bold text-gray-700 uppercase mb-1.5">Batas Suhu Tinggi Charge (35 - 60 °C) [Reg 4130]</div>
+          <div class="text-xs font-bold text-gray-700 uppercase mb-1.5">Batas Suhu Tinggi Charge (35 - 60 °C)</div>
           <div class="flex gap-2">
             <input type="number" id="valChargeTemp" placeholder="50.0" step="0.5" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
             <button onclick="sendScaledCommand(4130, 'valChargeTemp', 10, 35, 60)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 rounded-xl">Simpan</button>
@@ -553,7 +555,7 @@
         </div>
 
         <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="text-xs font-bold text-gray-700 uppercase mb-1.5">Batas Suhu Tinggi Discharge (40 - 65 °C) [Reg 4134]</div>
+          <div class="text-xs font-bold text-gray-700 uppercase mb-1.5">Batas Suhu Tinggi Discharge (40 - 65 °C)</div>
           <div class="flex gap-2">
             <input type="number" id="valDischargeTemp" placeholder="55.0" step="0.5" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
             <button onclick="sendScaledCommand(4134, 'valDischargeTemp', 10, 40, 65)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 rounded-xl">Simpan</button>
@@ -569,7 +571,7 @@
           <p class="text-[11px] text-gray-600 mb-2.5">Matikan sensor gerak/kemiringan agar baterai tidak terkunci saat rak digeser.</p>
           <div class="grid grid-cols-2 gap-2.5">
             <button onclick="unlockAntiTheft()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-2.5 px-3 rounded-xl">Buka Kunci & Matikan</button>
-            <button onclick="sendBmsCommand(4378, 1)" class="bg-gray-700 hover:bg-gray-800 text-white text-xs sm:text-sm font-bold py-2.5 px-3 rounded-xl">Aktifkan Gyro (1)</button>
+            <button onclick="sendBmsCommand(4376, 1)" class="bg-gray-700 hover:bg-gray-800 text-white text-xs sm:text-sm font-bold py-2.5 px-3 rounded-xl">Aktifkan Gyro (1)</button>
           </div>
         </div>
 
@@ -584,7 +586,7 @@
       </div>
 
       <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div class="text-xs font-bold text-gray-700 uppercase mb-1">🔋 Kalibrasi Kapasitas / SOC (Reg 4380)</div>
+        <div class="text-xs font-bold text-gray-700 uppercase mb-1">🔋 Kalibrasi Kapasitas / SOC</div>
         <p class="text-[11px] text-gray-600 mb-2.5">Gunakan fitur ini hanya ketika tegangan baterai sudah benar-benar penuh (54.5V - 55.5V).</p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <button onclick="calibrateSocFull()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-2.5 px-3 rounded-xl">Kalibrasi Penuh (100%)</button>
