@@ -466,7 +466,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Charge Manual (Reg 4109)</div>
+          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Charge Manual</div>
           <div class="grid grid-cols-2 gap-2.5">
             <input type="number" id="valReg4109" placeholder="15.0 (A)" step="0.5" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
             <button type="button" onclick="sendScaledCommand(4109, 'valReg4109', 10, 1, 105)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl">Set Charge</button>
@@ -474,7 +474,7 @@
         </div>
 
         <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Discharge Manual (Reg 4107)</div>
+          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Discharge Manual</div>
           <div class="grid grid-cols-2 gap-2.5">
             <input type="number" id="valReg4107" placeholder="30.0 (A)" step="0.5" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
             <button type="button" onclick="sendScaledCommand(4107, 'valReg4107', 10, 1, 105)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl">Set Discharge</button>
@@ -532,7 +532,7 @@
     <div id="tabKeamanan" class="bms-tab-content hidden space-y-4">
       <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 shadow-sm">
         <div class="text-xs font-bold text-emerald-800 uppercase mb-1">🔓 Nonaktifkan Kunci Anti-Theft & Disable Gyroscope (Khusus B1)</div>
-        <p class="text-xs text-gray-600 mb-3">Membuka penguncian Anti-Theft (Reg 4378 = 0) dan menonaktifkan sensor gerak/kemiringan Gyroscope (Reg 4376 = 0) agar baterai aman saat rak digeser.</p>
+        <p class="text-xs text-gray-600 mb-3">Membuka penguncian Anti-Theft dan menonaktifkan sensor gerak/kemiringan Gyroscope agar baterai aman saat rak digeser.</p>
         <button type="button" onclick="unlockAntiTheft()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl shadow-sm">Buka Kunci Anti-Theft & Disable Gyroscope</button>
       </div>
     </div>
