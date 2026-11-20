@@ -2651,33 +2651,51 @@ function updateModal() {
   }
 
   async function onSelectBgMedia(event) {
-    const file = event.target.files;
+    const file = event.target.files && event.target.files[0];
     if (!file) return;
+
     const statusEl = document.getElementById("bg-status-msg");
     if (file.size > 30 * 1024 * 1024) {
       statusEl.style.color = "#fb923c";
       statusEl.innerText = "⚠️ Maksimal ukuran file 30 MB.";
       return;
     }
+
     const key = "bg_" + (currentActiveLogger || "DEFAULT");
     const dim = document.getElementById("bg-dim-slider").value || 60;
-    const db = await openBgDatabase();
-    db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).put({ blob: file, mime: file.type, dim: dim }, key);
-    renderCustomBackground(file, file.type, dim);
-    statusEl.style.color = "#00e676";
-    statusEl.innerText = "✅ Background berhasil disimpan!";
+
+    try {
+      const db = await openBgDatabase();
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      tx.objectStore(BG_STORE_NAME).put({ blob: file, mime: file.type, dim: dim }, key);
+
+      renderCustomBackground(file, file.type, dim);
+      statusEl.style.color = "#00e676";
+      statusEl.innerText = "✅ Background berhasil diganti!";
+    } catch (e) {
+      statusEl.style.color = "#ef4444";
+      statusEl.innerText = "❌ Gagal mengganti background.";
+    }
     event.target.value = "";
   }
 
   function renderCustomBackground(blob, mimeType, dimPercent) {
     if (currentBgObjectUrl) URL.revokeObjectURL(currentBgObjectUrl);
     currentBgObjectUrl = URL.createObjectURL(blob);
+
+    const layerEl = document.getElementById("dynamic-bg-layer");
     const imgEl = document.getElementById("custom-bg-img");
     const vidEl = document.getElementById("custom-bg-vid");
     const ovlEl = document.getElementById("custom-bg-overlay");
-    document.body.style.background = "transparent";
+
+    document.querySelectorAll("body > video").forEach(v => { v.style.display = "none"; });
+    document.body.style.setProperty("background-color", "transparent", "important");
+    document.body.style.setProperty("background-image", "none", "important");
+
+    if (layerEl) layerEl.style.zIndex = "-5";
     ovlEl.style.display = "block";
     ovlEl.style.background = `rgba(10, 14, 23, ${(dimPercent / 100).toFixed(2)})`;
+
     if (mimeType && mimeType.startsWith("video/")) {
       imgEl.style.display = "none";
       vidEl.src = currentBgObjectUrl;
@@ -2691,26 +2709,23 @@ function updateModal() {
     }
   }
 
-  async function updateBgDimmer(val) {
-    document.getElementById("bg-dim-val").innerText = val + "%";
-    document.getElementById("custom-bg-overlay").style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
-    const key = "bg_" + (currentActiveLogger || "DEFAULT");
-    const db = await openBgDatabase();
-    const store = db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME);
-    const req = store.get(key);
-    req.onsuccess = () => { if (req.result) { req.result.dim = val; store.put(req.result, key); } };
-  }
-
   async function resetLoggerBackground() {
     const key = "bg_" + (currentActiveLogger || "DEFAULT");
     const db = await openBgDatabase();
     db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).delete(key);
+
     document.getElementById("custom-bg-vid").pause();
     document.getElementById("custom-bg-vid").style.display = "none";
     document.getElementById("custom-bg-img").style.display = "none";
     document.getElementById("custom-bg-overlay").style.display = "none";
-    document.body.style.background = "";
-    document.getElementById("bg-status-msg").innerText = "🔄 Dikembalikan ke background asli.";
+
+    document.querySelectorAll("body > video").forEach(v => { v.style.display = "block"; });
+    document.body.style.removeProperty("background-color");
+    document.body.style.removeProperty("background-image");
+
+    const statusEl = document.getElementById("bg-status-msg");
+    statusEl.style.color = "#38bdf8";
+    statusEl.innerText = "🔄 Dikembalikan ke background asli.";
   }
 
   async function loadSavedLoggerBackground() {
