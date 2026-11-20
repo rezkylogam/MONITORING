@@ -295,7 +295,71 @@
     #settingsBtn:active svg g {
       animation-duration: 2.5s !important;
     }
-  </style>
+    
+</style>
+<!-- Font Digital 7-Segment & Gaya 3D Neon Tabel -->
+<link href="https://cdnfonts.com" rel="stylesheet">
+<style>
+  .digital-3d-val {
+    font-family: 'Digital-7 Mono', 'Courier New', monospace;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: inline-block;
+    line-height: 1.1;
+  }
+  @media (max-width: 640px) {
+    .digital-3d-val {
+      font-size: 1.25rem;
+    }
+  }
+  .digital-3d-unit {
+    font-size: 0.72em;
+    margin-left: 2px;
+    opacity: 0.92;
+  }
+  /* Warna Cyan 3D untuk Tegangan */
+  .neon-cyan-3d {
+    color: #38bdf8;
+    text-shadow:
+      0 1px 0 #0284c7,
+      0 2px 0 #0369a1,
+      0 3px 2px rgba(0, 0, 0, 0.9),
+      0 0 10px rgba(56, 189, 248, 0.85),
+      0 0 20px rgba(14, 165, 233, 0.55);
+  }
+  /* Warna Hijau 3D untuk Arus */
+  .neon-green-3d {
+    color: #00e676;
+    text-shadow:
+      0 1px 0 #00b248,
+      0 2px 0 #00701a,
+      0 3px 2px rgba(0, 0, 0, 0.9),
+      0 0 10px rgba(0, 230, 118, 0.85),
+      0 0 20px rgba(0, 200, 83, 0.55);
+  }
+  /* Warna Emas 3D untuk Daya */
+  .neon-amber-3d {
+    color: #fbbf24;
+    text-shadow:
+      0 1px 0 #d97706,
+      0 2px 0 #b45309,
+      0 3px 2px rgba(0, 0, 0, 0.9),
+      0 0 10px rgba(251, 191, 36, 0.85),
+      0 0 20px rgba(245, 158, 11, 0.55);
+  }
+  /* Warna Oranye-Merah 3D untuk Suhu */
+  .neon-orange-3d {
+    color: #fb7185;
+    text-shadow:
+      0 1px 0 #e11d48,
+      0 2px 0 #9f1239,
+      0 3px 2px rgba(0, 0, 0, 0.9),
+      0 0 10px rgba(251, 113, 133, 0.85),
+      0 0 20px rgba(244, 63, 94, 0.55);
+  }
+</style>
+
 <style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
 <body class="min-h-screen flex flex-col dark connected" data-theme="dark">
 <!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER -->
@@ -743,7 +807,7 @@
       <table class="w-full text-left border-collapse text-xs sm:text-sm">
         <thead>
            <tr class="bg-gray-800 text-white font-bold border-b-2 border-gray-600 uppercase text-xs sm:text-sm tracking-wider">
-             <th class="py-3 pl-10 pr-3">BATERAI</th>
+             <th class="py-3 pl-17 pr-3">BATERAI</th>
              <th class="py-3.5 px-3">TEGANGAN</th>
              <th class="py-3.5 px-3">ARUS</th>
              <th class="py-3.5 px-3">DAYA</th>
@@ -2378,10 +2442,10 @@ function updateModal() {
             <div class="text-[11px] text-gray-400 leading-tight">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
           </div>
         </td>
-        <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
-        <td class="py-3 px-3 font-medium">${batt.current} A</td>
-        <td class="py-3 px-3 font-medium">${powerVal} W</td>
-        <td class="py-3 px-3">${batt.temp || '--'}</td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-cyan-3d">${batt.voltage}<span class="digital-3d-unit">V</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-green-3d">${batt.current}<span class="digital-3d-unit">A</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-amber-3d">${powerVal}<span class="digital-3d-unit">W</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-orange-3d">${batt.temp || '--'}</span></td>
       `;
       tbody.appendChild(tr);
     });
