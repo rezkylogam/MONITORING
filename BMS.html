@@ -2344,12 +2344,12 @@ function updateModal() {
       };
 
       tr.innerHTML = `
-        <td class="py-3 px-3 whitespace-nowrap">
-          <div class="flex items-center gap-3">
-            <!-- Ikon Baterai Horizontal 3D + Nilai SOC -->
+                <td class="py-3 px-3 whitespace-nowrap">
+          <div class="flex flex-col items-start gap-1.5">
+            <!-- 1. Paling Atas: Ikon Baterai Horizontal 3D + Nilai SOC -->
             <div class="flex flex-row-reverse items-center shrink-0">
-            <!-- Kutub Positif 3D di Kanan -->
-            <div class="w-1.5 h-3.5 rounded-r-sm bg-gradient-to-b from-gray-200 via-gray-400 to-gray-600 shadow-sm border-y border-r border-gray-300/60"></div>
+              <!-- Kutub Positif 3D di Kanan -->
+              <div class="w-1.5 h-3.5 rounded-r-sm bg-gradient-to-b from-gray-200 via-gray-400 to-gray-600 shadow-sm border-y border-r border-gray-300/60"></div>
               
               <!-- Bodi Baterai 3D -->
               <div class="relative w-16 h-7 rounded-md bg-gradient-to-b from-gray-800 via-gray-900 to-black border border-gray-600/80 p-0.5 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),0_2px_5px_rgba(0,0,0,0.5)]">
@@ -2372,18 +2372,18 @@ function updateModal() {
               </div>
             </div>
 
-            <!-- Nama Unit & Info Diff / Cycles di Bawahnya -->
-            <div>
-              <div class="font-bold text-white text-xs sm:text-sm leading-tight">${batt.typeBattery} #${batt.addr}</div>
-              <div class="text-[11px] text-gray-400 mt-0.5">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
-            </div>
+            <!-- 2. Tengah: Nama Unit (HUAWEI #214) di Bawah Ikon Baterai -->
+            <div class="font-bold text-white text-xs sm:text-sm leading-tight">${batt.typeBattery} #${batt.addr}</div>
+
+            <!-- 3. Paling Bawah: Info Diff & Cycles di Bawah Nama Unit -->
+            <div class="text-[11px] text-gray-400 leading-tight">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
           </div>
         </td>
         <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
         <td class="py-3 px-3 font-medium">${batt.current} A</td>
         <td class="py-3 px-3 font-medium">${powerVal} W</td>
         <td class="py-3 px-3 whitespace-nowrap">${batt.cell_vmin}V / ${batt.cell_vmax}V</td>
-        <td class="py-3 px-3">${batt.temp_max || batt.temp || '--'}°C</td>
+        <td class="py-3 px-3">${batt.temp || '--'}</td>
       `;
       tbody.appendChild(tr);
     });
