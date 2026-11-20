@@ -747,7 +747,6 @@
              <th class="py-3.5 px-3">TEGANGAN</th>
              <th class="py-3.5 px-3">ARUS</th>
              <th class="py-3.5 px-3">DAYA</th>
-             <th class="py-3.5 px-3">CELL</th>
              <th class="py-3.5 px-3">SUHU</th>
             </tr>
           </thead>
@@ -2382,7 +2381,6 @@ function updateModal() {
         <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
         <td class="py-3 px-3 font-medium">${batt.current} A</td>
         <td class="py-3 px-3 font-medium">${powerVal} W</td>
-        <td class="py-3 px-3 whitespace-nowrap">${batt.cell_vmin}V / ${batt.cell_vmax}V</td>
         <td class="py-3 px-3">${batt.temp || '--'}</td>
       `;
       tbody.appendChild(tr);
