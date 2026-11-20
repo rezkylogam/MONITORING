@@ -295,7 +295,99 @@
     #settingsBtn:active svg g {
       animation-duration: 2.5s !important;
     }
-  </style>
+    
+</style>
+<!-- Font Digital 7-Segment & Efek 3D Neon Persis Gambar 2 -->
+<style>
+  @font-face {
+    font-family: 'DSEG7Classic';
+    src: url('https://jsdelivr.net') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  .digital-3d-val {
+    font-family: 'DSEG7Classic', 'Digital-7 Mono', monospace;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1;
+    position: relative;
+    padding: 2px 1px;
+  }
+
+  @media (max-width: 768px) {
+    .digital-3d-val {
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+  }
+
+  .digital-3d-unit {
+    font-family: 'DSEG7Classic', sans-serif;
+    font-size: 0.68em;
+    margin-left: 4px;
+    font-weight: 700;
+  }
+
+  /* 1. TEGANGAN: Biru Cyan Neon 3D */
+  .neon-cyan-3d {
+    color: #38e8ff;
+    text-shadow:
+      0 2px 0 #0284c7,
+      0 4px 0 #0369a1,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(56, 232, 255, 0.9),
+      0 0 26px rgba(14, 165, 233, 0.75);
+  }
+
+  /* 2. ARUS: Hijau Emerald Neon 3D */
+  .neon-green-3d {
+    color: #10ff70;
+    text-shadow:
+      0 2px 0 #059669,
+      0 4px 0 #065f46,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(16, 255, 112, 0.9),
+      0 0 26px rgba(16, 185, 129, 0.75);
+  }
+
+  /* 3. DAYA: Kuning Emas Neon 3D */
+  .neon-amber-3d {
+    color: #ffd026;
+    text-shadow:
+      0 2px 0 #d97706,
+      0 4px 0 #92400e,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(255, 208, 38, 0.9),
+      0 0 26px rgba(245, 158, 11, 0.75);
+  }
+
+  /* 4. SUHU: Oranye-Merah Bara Neon 3D */
+  .neon-orange-3d {
+    color: #ff5722;
+    text-shadow:
+      0 2px 0 #c2410c,
+      0 4px 0 #7c2d12,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(255, 87, 34, 0.9),
+      0 0 26px rgba(234, 88, 12, 0.75);
+  }
+
+  /* Efek Menyala Hijau Neon di Semua Sisi Ikon Baterai 3D saat Data MQTT Masuk */
+  .batt-icon-pulse-green {
+    border-color: #00ff88 !important;
+    box-shadow:
+      0 0 10px rgba(0, 255, 136, 0.95),
+      0 0 22px rgba(16, 185, 129, 0.85),
+      inset 0 0 8px rgba(0, 255, 136, 0.65) !important;
+    transform: scale(1.03);
+    transition: all 0.12s ease-out;
+  }
+</style>
+
 <style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
 <body class="min-h-screen flex flex-col dark connected" data-theme="dark">
 <!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER -->
@@ -743,11 +835,11 @@
       <table class="w-full text-left border-collapse text-xs sm:text-sm">
         <thead>
            <tr class="bg-gray-800 text-white font-bold border-b-2 border-gray-600 uppercase text-xs sm:text-sm tracking-wider">
-             <th class="py-3 pl-10 pr-3">BATERAI</th>
-             <th class="py-3.5 px-3">TEGANGAN</th>
-             <th class="py-3.5 px-3">ARUS</th>
-             <th class="py-3.5 px-3">DAYA</th>
-             <th class="py-3.5 px-3">SUHU</th>
+             <th class="py-3 pl-12 pr-3">BATERAI</th>
+             <th class="py-3 px-3">TEGANGAN</th>
+             <th class="py-3 pl-9 pr-3">ARUS</th>
+             <th class="py-3 pl-12 pr-3">DAYA</th>
+             <th class="py-3 pl-14 pr-3">SUHU</th>
             </tr>
           </thead>
         <tbody id="batteryTableBody" class="divide-y divide-gray-800 text-gray-200"></tbody>
@@ -1368,8 +1460,22 @@ if (cyclesElem) {
     }
 
     const led = document.getElementById(`led-card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
-    led.classList.add("active");
-    setTimeout(() => led.classList.remove("active"), 250);
+    if (led) {
+      led.classList.add("active");
+      setTimeout(() => led.classList.remove("active"), 250);
+    }
+
+    // Nyalakan seluruh sisi ikon baterai 3D di Table selama 280ms saat data unit ini masuk
+    window.battLastBlink = window.battLastBlink || {};
+    window.battLastBlink[batt.addr] = Date.now();
+    const tblIcon = document.getElementById(`tbl-batt-icon-${batt.addr}`);
+    if (tblIcon) {
+      tblIcon.classList.add("batt-icon-pulse-green");
+      setTimeout(() => {
+        const el = document.getElementById(`tbl-batt-icon-${batt.addr}`);
+        if (el) el.classList.remove("batt-icon-pulse-green");
+      }, 280);
+    }
 
     // Reset timeout
     if (cardTimers[cardId]) {
@@ -2334,13 +2440,22 @@ function updateModal() {
       const socColor = socVal > 50 ? 'text-emerald-400' : (socVal > 20 ? 'text-amber-400' : 'text-red-400');
       const powerVal = (parseFloat(batt.voltage) * parseFloat(batt.current)).toFixed(1);
 
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-white/5 cursor-pointer transition';
-      tr.onclick = () => {
-        if (typeof openCellModal === 'function') {
-          openCellModal(batt.loggerId, batt.typeBattery, batt.addr);
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-white/10 active:bg-white/15 cursor-pointer transition select-none';
+    tr.dataset.loggerId = batt.loggerId;
+    tr.dataset.typeBattery = batt.typeBattery;
+    tr.dataset.addr = String(batt.addr);
+
+    const tbodyEl = document.getElementById('batteryTableBody');
+    if (tbodyEl && !tbodyEl.dataset.clickReady) {
+      tbodyEl.dataset.clickReady = 'true';
+      tbodyEl.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (row && row.dataset.addr && typeof openModal === 'function') {
+          openModal(row.dataset.loggerId, Number(row.dataset.addr), row.dataset.typeBattery);
         }
-      };
+      });
+    }
 
       tr.innerHTML = `
         <td class="py-3 px-3 whitespace-nowrap">
@@ -2351,7 +2466,7 @@ function updateModal() {
               <div class="w-1.5 h-3.5 rounded-r-sm bg-gradient-to-b from-gray-200 via-gray-400 to-gray-600 shadow-sm border-y border-r border-gray-300/60"></div>
               
               <!-- Bodi Baterai 3D -->
-              <div class="relative w-16 h-7 rounded-md bg-gradient-to-b from-gray-800 via-gray-900 to-black border border-gray-600/80 p-0.5 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),0_2px_5px_rgba(0,0,0,0.5)]">
+              <div id="tbl-batt-icon-${batt.addr}" class="relative w-[132px] h-7 rounded-md bg-gradient-to-b from-gray-800 via-gray-900 to-black border border-gray-600/80 p-0.5 overflow-hidden transition-all duration-200 ${(window.battLastBlink && (Date.now() - window.battLastBlink[batt.addr] < 320)) ? 'batt-icon-pulse-green' : 'shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),0_2px_5px_rgba(0,0,0,0.5)]'}">
                 <!-- Bar Isi 3D Otomatis Sesuai Persen SOC -->
                 <div class="h-full rounded-[4px] transition-all duration-500 ${
                   socVal > 50
@@ -2378,10 +2493,10 @@ function updateModal() {
             <div class="text-[11px] text-gray-400 leading-tight">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
           </div>
         </td>
-        <td class="py-3 px-3 font-medium">${batt.voltage} V</td>
-        <td class="py-3 px-3 font-medium">${batt.current} A</td>
-        <td class="py-3 px-3 font-medium">${powerVal} W</td>
-        <td class="py-3 px-3">${batt.temp || '--'}</td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-cyan-3d">${batt.voltage}<span class="digital-3d-unit">V</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-green-3d">${batt.current}<span class="digital-3d-unit">A</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-amber-3d">${powerVal}<span class="digital-3d-unit">W</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-orange-3d">${(batt.temp || '--').replace(/°C/g, '<span class="digital-3d-unit">°C</span>')}</span></td>
       `;
       tbody.appendChild(tr);
     });
