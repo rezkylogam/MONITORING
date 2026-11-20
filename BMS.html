@@ -2419,18 +2419,15 @@ function updateModal() {
     tr.className = 'hover:bg-white/10 active:bg-white/15 cursor-pointer transition select-none';
     tr.dataset.loggerId = batt.loggerId;
     tr.dataset.typeBattery = batt.typeBattery;
-    tr.dataset.addr = batt.addr;
+    tr.dataset.addr = String(batt.addr);
 
-    if (tr.parentElement && !tr.parentElement.dataset.delegatedClick) {
-      tr.parentElement.dataset.delegatedClick = 'true';
-    }
     const tbodyEl = document.getElementById('batteryTableBody');
     if (tbodyEl && !tbodyEl.dataset.clickReady) {
       tbodyEl.dataset.clickReady = 'true';
       tbodyEl.addEventListener('click', (e) => {
         const row = e.target.closest('tr');
-        if (row && row.dataset.addr && typeof openCellModal === 'function') {
-          openCellModal(row.dataset.loggerId, row.dataset.typeBattery, row.dataset.addr);
+        if (row && row.dataset.addr && typeof openModal === 'function') {
+          openModal(row.dataset.loggerId, Number(row.dataset.addr), row.dataset.typeBattery);
         }
       });
     }
