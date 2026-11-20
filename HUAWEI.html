@@ -376,14 +376,14 @@
           </svg>
         </button>
 
-        <div id="dropdownMenu" class="absolute right-0 mt-2 w-52 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50 overflow-hidden">
-           <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚡ Sistem PLTS</a>
-           <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Jarvis : ON</a>
-           <a id="bgSettingBtn" href="#" onclick="event.preventDefault(); toggleBgPanel();" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-purple-600">🖼️ Ganti Background</a>
+        <div id="dropdownMenu" class="absolute right-0 mt-3 w-72 sm:w-80 bg-white text-gray-800 rounded-2xl shadow-2xl hidden z-50 overflow-hidden border border-gray-200">
+           <a id="networkBtn" href="#" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-blue-600">⚡ Sistem PLTS</a>
+           <a id="jarvisToggleBtn" href="#" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-green-600">🔊 Audio Jarvis : ON</a>
+           <a id="bgSettingBtn" href="#" onclick="event.preventDefault(); toggleBgPanel();" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-purple-600">🖼️ Ganti Background</a>
            <hr class="my-1 border-gray-200">
-           <a id="modulInfoBtn" href="#" onclick="event.preventDefault(); openModulInfoModal();" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-gray-700">📡 Modul Info</a>
-           <a id="serverStatusBtn" href="#" onclick="event.preventDefault(); openServerStatusModal();" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-emerald-600">🌐 Server (<span id="srv-online-count">0</span>/4)</a>
-           <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙ Setting BMS</a>
+           <a id="modulInfoBtn" href="#" onclick="event.preventDefault(); openModulInfoModal();" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-gray-700">📡 Modul Info</a>
+           <a id="serverStatusBtn" href="#" onclick="event.preventDefault(); openServerStatusModal();" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-emerald-600">🌐 Server (<span id="srv-online-count">0</span>/4)</a>
+           <a id="bmsSettingBtn" href="#" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-blue-600">⚙ Setting BMS</a>
         </div>
       </div>
     </div>
@@ -448,7 +448,7 @@
       <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-sm">
         <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
           <div>
-            <div class="text-sm font-bold text-gray-800 uppercase">⚖️ Auto Load & Charge Sharing (ESP32)</div>
+            <div class="text-sm font-bold text-gray-800 uppercase">⚖️ Auto Load & Charge Sharing</div>
             <p class="text-xs text-gray-600">Membagi arus pengisian dan beban otomatis berdasarkan SOC × SOH antar baterai.</p>
           </div>
           <span id="sharingStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-600 text-white">STATUS: AKTIF</span>
@@ -541,7 +541,7 @@
     <!-- TAB 3: NONAKTIFKAN KUNCI ANTI-THEFT & DISABLE GYROSCOPE -->
     <div id="tabKeamanan" class="bms-tab-content hidden space-y-4">
       <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 shadow-sm">
-        <div class="text-xs font-bold text-emerald-800 uppercase mb-1">🔓 Nonaktifkan Kunci Anti-Theft & Disable Gyroscope (Khusus B1)</div>
+        <div class="text-xs font-bold text-emerald-800 uppercase mb-1">🔓 Nonaktifkan Kunci Anti-Theft & Disable Gyroscope</div>
         <p class="text-xs text-gray-600 mb-3">Membuka penguncian Anti-Theft dan menonaktifkan sensor gerak/kemiringan Gyroscope agar baterai aman saat rak digeser.</p>
         <button type="button" onclick="unlockAntiTheft()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl shadow-sm">Buka Kunci Anti-Theft & Disable Gyroscope</button>
       </div>
@@ -1664,11 +1664,11 @@ function updateModal() {
   function updateJarvisButtonUI() {
     if (!jarvisToggleBtn) return;
     if (isJarvisOn) {
-      jarvisToggleBtn.innerHTML = '🔊 Jarvis : ON';
+      jarvisToggleBtn.innerHTML = '🔊 Audio Jarvis : ON';
       jarvisToggleBtn.classList.remove('text-red-500');
       jarvisToggleBtn.classList.add('text-green-600');
     } else {
-      jarvisToggleBtn.innerHTML = '🔇 Jarvis : OFF';
+      jarvisToggleBtn.innerHTML = '🔇 Audio Jarvis : OFF';
       jarvisToggleBtn.classList.remove('text-green-600');
       jarvisToggleBtn.classList.add('text-red-500');
     }
@@ -2184,7 +2184,7 @@ function updateModal() {
 
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
-      <div class="bulatan-aliran anim-ac-beban">AC</div>
+      <div class="bulatan-aliran anim-ac-beban">DC</div>
       <div id="nilaiInfoDcBawahTv" class="display-info-dc">
       <span style="color:#38bdf8;">0.00 V</span>
       <span style="color:#fbbf24;">0.00 A</span>
@@ -2402,90 +2402,90 @@ function updateModal() {
   setBatteryViewMode(currentViewMode);
 </script>
 
-<!-- 1. MODAL MODUL INFO -->
+<!-- 1. MODAL MODUL INFO (EKSTRA BESAR) -->
 <div id="modulInfoModal" onclick="if(event.target===this) this.style.display='none'" 
-     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
-  <div style="background:#161922; border:1px solid #334155; border-radius:14px; padding:20px; width:340px; max-width:92vw; color:#f8fafc; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <span style="font-size:16px; font-weight:bold; color:#38bdf8;">📡 Device Modul Info</span>
-      <span onclick="document.getElementById('modulInfoModal').style.display='none'" style="cursor:pointer; font-size:22px; color:#94a3b8; line-height:1;">&times;</span>
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
+  <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;">
+      <span style="font-size:25px; font-weight:800; color:#38bdf8;">📡 Device Modul Info</span>
+      <span onclick="document.getElementById('modulInfoModal').style.display='none'" style="cursor:pointer; font-size:34px; color:#94a3b8; line-height:1;">&times;</span>
     </div>
-    <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; margin-bottom:16px;">
-      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+    <div style="display:flex; flex-direction:column; gap:14px; font-size:19px; margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
         <span style="color:#94a3b8;">ID Logger:</span>
-        <strong id="info-modal-logger" style="color:#00e676;">--</strong>
+        <strong id="info-modal-logger" style="color:#00e676; font-size:20px;">--</strong>
       </div>
-      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
-        <span style="color:#94a3b8;">IP Address Lokal:</span>
-        <strong id="info-modal-ip" style="color:#ffffff;">--</strong>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">IP Address:</span>
+        <strong id="info-modal-ip" style="color:#ffffff; font-size:20px;">--</strong>
       </div>
-      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
         <span style="color:#94a3b8;">Sinyal Wi-Fi:</span>
-        <strong id="info-modal-rssi" style="color:#38bdf8;">--</strong>
+        <strong id="info-modal-rssi" style="color:#38bdf8; font-size:20px;">--</strong>
       </div>
-      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
         <span style="color:#94a3b8;">Status Polling:</span>
-        <strong id="info-modal-poll" style="color:#00e676;">Aktif</strong>
+        <strong id="info-modal-poll" style="color:#00e676; font-size:20px;">Aktif</strong>
       </div>
     </div>
     <button type="button" onclick="document.getElementById('modulInfoModal').style.display='none'" 
-            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Tutup</button>
+            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:16px; border-radius:14px; font-size:20px; font-weight:800; cursor:pointer;">Tutup</button>
   </div>
 </div>
 
-<!-- 2. MODAL STATUS 4 SERVER & GANTI ID LOGGER -->
+<!-- 2. MODAL STATUS 4 SERVER & GANTI ID LOGGER (EKSTRA BESAR) -->
 <div id="serverStatusModal" onclick="if(event.target===this) this.style.display='none'" 
-     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
-  <div style="background:#161922; border:1px solid #334155; border-radius:14px; padding:20px; width:350px; max-width:92vw; color:#f8fafc; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="font-size:16px; font-weight:bold; color:#00e676;">🌐 Status Server</span>
-      <span onclick="document.getElementById('serverStatusModal').style.display='none'" style="cursor:pointer; font-size:22px; color:#94a3b8; line-height:1;">&times;</span>
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
+  <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span style="font-size:25px; font-weight:800; color:#00e676;">🌐 Status Server</span>
+      <span onclick="document.getElementById('serverStatusModal').style.display='none'" style="cursor:pointer; font-size:34px; color:#94a3b8; line-height:1;">&times;</span>
     </div>
-    <div id="srv-summary-text" style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Memeriksa koneksi ke 4 server...</div>
-    <div id="srv-list-box" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;"></div>
+    <div id="srv-summary-text" style="font-size:18px; color:#94a3b8; margin-bottom:18px;">Memeriksa koneksi ke 4 server...</div>
+    <div id="srv-list-box" style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;"></div>
 
-    <div style="background:#1e222d; border:1px solid #2d3343; border-radius:8px; padding:10px; margin-bottom:14px; font-size:12px;">
-      <div style="color:#94a3b8; margin-bottom:4px;">ID Logger Unit Ini:</div>
-      <div style="display:flex; gap:6px;">
-        <input type="text" id="modal-logger-input" maxlength="10" placeholder="Masukkan 10 digit ID..." 
-               style="flex:1; background:#0f1117; color:#00e676; border:1px solid #334155; padding:6px 8px; border-radius:6px; font-weight:bold;" />
+    <div style="background:#1e222d; border:1px solid #2d3343; border-radius:14px; padding:16px; margin-bottom:20px; font-size:18px;">
+      <div style="color:#94a3b8; margin-bottom:10px; font-weight:700;">Lihat ID Logger Unit Ini</div>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="modal-logger-input" maxlength="10" readonly onclick="bukaTampilanIdLogger()" placeholder="Klik Untuk Melihat" 
+               style="flex:1; min-width:0; background:#0f1117; color:#38bdf8; border:1.5px solid #334155; padding:12px 14px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer;" />
         <button type="button" onclick="gantiLoggerDariModal()" 
-                style="background:#00e676; color:#0f172a; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;">Simpan</button>
+                style="background:#00e676; color:#0f172a; border:none; padding:12px 20px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer; flex-shrink:0;">Simpan</button>
       </div>
     </div>
     <button type="button" onclick="document.getElementById('serverStatusModal').style.display='none'" 
-            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Tutup</button>
+            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:16px; border-radius:14px; font-size:20px; font-weight:800; cursor:pointer;">Tutup</button>
   </div>
 </div>
 
-<!-- 3. MODAL GANTI BACKGROUND (GAMBAR / VIDEO PENDEK) -->
+<!-- 3. MODAL GANTI BACKGROUND (EKSTRA BESAR) -->
 <div id="bgCustomModal" onclick="if(event.target===this) this.style.display='none'" 
-     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
-  <div style="background:#161922; border:1px solid #334155; border-radius:14px; padding:20px; width:350px; max-width:92vw; color:#f8fafc; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <span style="font-size:16px; font-weight:bold; color:#c084fc;">🖼️ Ganti Background</span>
-      <span onclick="document.getElementById('bgCustomModal').style.display='none'" style="cursor:pointer; font-size:22px; color:#94a3b8; line-height:1;">&times;</span>
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
+  <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span style="font-size:25px; font-weight:800; color:#c084fc;">🖼️ Ganti Background</span>
+      <span onclick="document.getElementById('bgCustomModal').style.display='none'" style="cursor:pointer; font-size:34px; color:#94a3b8; line-height:1;">&times;</span>
     </div>
-    <div style="font-size:12px; color:#94a3b8; margin-bottom:12px;">
-      Tersimpan khusus di browser Anda untuk ID: <strong id="bg-active-logger-lbl" style="color:#38bdf8;">--</strong>
+    <div style="font-size:18px; color:#94a3b8; margin-bottom:20px; line-height:1.45;">
+      Tersimpan khusus di browser Anda untuk ID: <strong id="bg-active-logger-lbl" style="color:#38bdf8; font-size:19px;">--</strong>
     </div>
     <input type="file" id="bg-media-picker" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" style="display:none;" onchange="onSelectBgMedia(event)" />
-    <div style="display:flex; gap:8px; margin-bottom:14px;">
+    <div style="display:flex; gap:12px; margin-bottom:22px;">
       <button type="button" onclick="document.getElementById('bg-media-picker').click()" 
-              style="flex:1; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer;">📁 Pilih Gambar / Video</button>
+              style="flex:1; background:#2563eb; color:#fff; border:none; padding:16px 14px; border-radius:14px; font-size:18px; font-weight:800; cursor:pointer;">📁 Pilih Gambar / Video</button>
       <button type="button" onclick="resetLoggerBackground()" 
-              style="background:#334155; color:#f87171; border:1px solid #475569; padding:10px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer;">🔄 Reset</button>
+              style="background:#334155; color:#f87171; border:1.5px solid #475569; padding:16px 18px; border-radius:14px; font-size:18px; font-weight:800; cursor:pointer;">🔄 Reset</button>
     </div>
-    <div style="margin-bottom:14px;">
-      <div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; margin-bottom:4px;">
+    <div style="margin-bottom:22px;">
+      <div style="display:flex; justify-content:space-between; font-size:18px; color:#cbd5e1; margin-bottom:10px;">
         <span>Tingkat Redup Latar</span>
-        <span id="bg-dim-val" style="font-weight:bold; color:#00e676;">60%</span>
+        <span id="bg-dim-val" style="font-weight:800; color:#00e676; font-size:20px;">60%</span>
       </div>
-      <input type="range" id="bg-dim-slider" min="15" max="85" value="60" oninput="updateBgDimmer(this.value)" style="width:100%; accent-color:#00e676; cursor:pointer;" />
+      <input type="range" id="bg-dim-slider" min="15" max="85" value="60" oninput="updateBgDimmer(this.value)" style="width:100%; height:12px; accent-color:#00e676; cursor:pointer;" />
     </div>
-    <div id="bg-status-msg" style="font-size:12px; color:#00e676; margin-bottom:10px;"></div>
+    <div id="bg-status-msg" style="font-size:17px; color:#00e676; margin-bottom:14px; font-weight:600;"></div>
     <button type="button" onclick="document.getElementById('bgCustomModal').style.display='none'" 
-            style="width:100%; background:#334155; color:#ffffff; border:none; padding:9px; border-radius:8px; font-weight:bold; cursor:pointer;">Tutup</button>
+            style="width:100%; background:#334155; color:#ffffff; border:none; padding:16px; border-radius:14px; font-size:19px; font-weight:800; cursor:pointer;">Tutup</button>
   </div>
 </div>
 
@@ -2518,29 +2518,61 @@ function updateModal() {
     if (dd) dd.classList.add("hidden");
   }
 
+  // Fungsi pembantu untuk menyensor ID menjadi 25XXXXXXXX
+  function formatSensorLoggerId(id) {
+    if (!id) return "--";
+    if (id.length <= 2) return id;
+    return id.substring(0, 2) + "X".repeat(id.length - 2);
+  }
+
+  // Gambar No. 2: Device Modul Info tampilkan 25XXXXXXXX
   function openModulInfoModal() {
     closeGearDropdown();
     const el = document.getElementById("info-modal-logger");
-    if (el) el.innerText = currentActiveLogger || "--";
+    if (el) el.innerText = formatSensorLoggerId(currentActiveLogger);
     document.getElementById("modulInfoModal").style.display = "flex";
   }
 
+  // Gambar No. 3: Status Server reset ke "Klik Untuk Melihat" setiap kali dibuka
   function openServerStatusModal() {
     closeGearDropdown();
-    document.getElementById("modal-logger-input").value = currentActiveLogger;
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl) {
+      inputEl.value = "";
+      inputEl.readOnly = true;
+      inputEl.style.color = "#38bdf8";
+      inputEl.placeholder = "Klik Untuk Melihat";
+    }
     renderServerModalList();
     document.getElementById("serverStatusModal").style.display = "flex";
   }
 
+  // Fungsi saat kotak "Klik Untuk Melihat" diklik
+  function bukaTampilanIdLogger() {
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl && inputEl.readOnly) {
+      inputEl.readOnly = false;
+      inputEl.value = currentActiveLogger || "";
+      inputEl.style.color = "#00e676";
+      inputEl.placeholder = "Masukkan 10 digit ID...";
+    }
+  }
+
+  // Gambar No. 1: Ganti Background tampilkan 25XXXXXXXX
   function toggleBgPanel() {
     closeGearDropdown();
     const lbl = document.getElementById("bg-active-logger-lbl");
-    if (lbl) lbl.innerText = currentActiveLogger || "DEFAULT";
+    if (lbl) lbl.innerText = currentActiveLogger ? formatSensorLoggerId(currentActiveLogger) : "DEFAULT";
     document.getElementById("bgCustomModal").style.display = "flex";
   }
 
   function gantiLoggerDariModal() {
-    const newId = document.getElementById("modal-logger-input").value.trim();
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl && inputEl.readOnly) {
+      alert("Klik kolom 'Klik Untuk Melihat' terlebih dahulu untuk melihat atau mengubah ID Logger.");
+      return;
+    }
+    const newId = inputEl.value.trim();
     if (newId.length < 6) {
       alert("Masukkan 10 digit ID Logger yang tertera pada modul!");
       return;
@@ -2556,9 +2588,9 @@ function updateModal() {
       const isOnline = serverOnlineMap[srv.id];
       if (isOnline) onlineCount++;
       html += `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#1e222d; border:1px solid #2d3343; padding:10px 12px; border-radius:8px; font-size:13px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#1e222d; border:1px solid #2d3343; padding:16px 18px; border-radius:14px; font-size:19px;">
           <span><strong style="color:#38bdf8;">${srv.id}.</strong> ${srv.name}</span>
-          <span style="color:${isOnline ? '#00e676' : '#ef4444'}; font-weight:bold;">
+          <span style="color:${isOnline ? '#00e676' : '#ef4444'}; font-weight:800; font-size:19px;">
             ● ${isOnline ? 'Online' : 'Offline'}
           </span>
         </div>`;
@@ -2617,10 +2649,10 @@ function updateModal() {
 
         if (topic.endsWith("/info")) {
           const p = msgStr.split(",");
-          if (p.length >= 4) {
-            if (document.getElementById("info-modal-ip")) document.getElementById("info-modal-ip").innerText = p;
-            if (document.getElementById("info-modal-rssi")) document.getElementById("info-modal-rssi").innerText = p;
-            if (document.getElementById("info-modal-poll")) document.getElementById("info-modal-poll").innerText = (p === "1") ? "Aktif (ON)" : "Berhenti (OFF)";
+          if (p.length >= 3) {
+            if (document.getElementById("info-modal-ip")) document.getElementById("info-modal-ip").innerText = p[0];
+            if (document.getElementById("info-modal-rssi")) document.getElementById("info-modal-rssi").innerText = p[1];
+            if (document.getElementById("info-modal-poll")) document.getElementById("info-modal-poll").innerText = (p[2] === "1") ? "Aktif (ON)" : "Berhenti (OFF)";
           }
         }
 
