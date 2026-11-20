@@ -743,7 +743,7 @@
       <table class="w-full text-left border-collapse text-xs sm:text-sm">
         <thead>
            <tr class="bg-gray-800 text-white font-bold border-b-2 border-gray-600 uppercase text-xs sm:text-sm tracking-wider">
-             <th class="py-3.5 px-3">BATTTERAI</th>
+             <th class="py-3.5 px-3">BATERAI</th>
              <th class="py-3.5 px-3">TEGANGAN</th>
              <th class="py-3.5 px-3">ARUS</th>
              <th class="py-3.5 px-3">DAYA</th>
@@ -2344,7 +2344,7 @@ function updateModal() {
       };
 
       tr.innerHTML = `
-                <td class="py-3 px-3 whitespace-nowrap">
+        <td class="py-3 px-3 whitespace-nowrap">
           <div class="flex flex-col items-start gap-1.5">
             <!-- 1. Paling Atas: Ikon Baterai Horizontal 3D + Nilai SOC -->
             <div class="flex flex-row-reverse items-center shrink-0">
@@ -2373,7 +2373,7 @@ function updateModal() {
             </div>
 
             <!-- 2. Tengah: Nama Unit (HUAWEI #214) di Bawah Ikon Baterai -->
-            <div class="font-bold text-white text-xs sm:text-sm leading-tight">${batt.typeBattery} #${batt.addr}</div>
+            <div class="font-bold text-white text-xs sm:text-sm leading-tight">${batt.typeBattery} B1 2025 #${batt.addr}</div>
 
             <!-- 3. Paling Bawah: Info Diff & Cycles di Bawah Nama Unit -->
             <div class="text-[11px] text-gray-400 leading-tight">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
