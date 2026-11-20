@@ -298,6 +298,12 @@
   </style>
 <style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
 <body class="min-h-screen flex flex-col dark connected" data-theme="dark">
+<!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER -->
+<div id="dynamic-bg-layer" style="position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;">
+  <img id="custom-bg-img" alt="" style="display:none; width:100%; height:100%; object-fit:cover;" />
+  <video id="custom-bg-vid" autoplay loop muted playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+  <div id="custom-bg-overlay" style="display:none; position:absolute; inset:0; background:rgba(10, 14, 23, 0.60); backdrop-filter:blur(2px);"></div>
+</div>
 
 <!-- Layar Selamat Datang (Splash Screen) untuk Mengaktifkan Suara -->
 <div id="welcomeSplash" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#1f2937] text-white transition-opacity duration-500">
@@ -323,12 +329,12 @@
 <header id="mainHeader" class="bg-gradient-to-r text-white shadow-lg w-full relative">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
     <div class="flex items-center">
-                        <div class="mr-3 flex items-center justify-center w-8 h-8">
-                    <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
-                </div>
+      <div class="mr-3 flex items-center justify-center w-8 h-8">
+        <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
+          </div>
 
-            <h1 class="text-2xl font-bold">HUAWEI BMS MONITORING By Rezky Logam</h1>
-        </div>
+          <h1 class="text-2xl font-bold">HUAWEI BMS MONITORING By Rezky Logam</h1>
+      </div>
 
     <div class="flex items-center space-x-4">
 
@@ -370,10 +376,14 @@
           </svg>
         </button>
 
-        <div id="dropdownMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50">
+        <div id="dropdownMenu" class="absolute right-0 mt-2 w-52 bg-white text-gray-800 rounded-lg shadow-lg hidden z-50 overflow-hidden">
            <a id="networkBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚡ Sistem PLTS</a>
-           <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙️ Setting BMS</a>
+           <a id="bmsSettingBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-blue-600">⚙ Setting BMS</a>
            <a id="jarvisToggleBtn" href="#" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-green-600">🔊 Jarvis : ON</a>
+           <hr class="my-1 border-gray-200">
+           <a id="modulInfoBtn" href="#" onclick="event.preventDefault(); openModulInfoModal();" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-gray-700">📡 Modul Info</a>
+           <a id="serverStatusBtn" href="#" onclick="event.preventDefault(); openServerStatusModal();" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-emerald-600">🌐 Server (<span id="srv-online-count">0</span>/4)</a>
+           <a id="bgSettingBtn" href="#" onclick="event.preventDefault(); toggleBgPanel();" class="block px-4 py-2 hover:bg-gray-100 font-semibold text-purple-600">🖼️ Ganti Background</a>
         </div>
       </div>
     </div>
@@ -1119,67 +1129,47 @@
     updateConnectionCount();
   }
   
-  function startMQTT(){
-    client = mqtt.connect("wss://public.cloud.shiftr.io", {
-      username: "public",
-      password: "public"
-    });
-    
-    client.on("connect", () => {
-      console.log("Connected to MQTT");
-      xxx = id_logger.split("-");
-      for(var a=0; a<xxx.length;a++){
-        client.subscribe("sysMon/"+xxx[a]+"/AutoPoll/#");
-        console.log("Subscribed topic: ", xxx[a]);
-        client.publish(xxx[a]+"/seting","POLL1",0);
-      }
-      client.subscribe("sysMon/"+xxx[0]+"/info/#");
-      updateConnectionStatus(true);
-    });
-
-    client.on("message", (topic, message) => {
-      handleJSON(topic,message);
-    });
-    
-    client.on("close", () => {
-      updateConnectionStatus(false);
-    });
-    
-    client.on("error", (error) => {
-      console.error("MQTT Error:", error);
-      updateConnectionStatus(false);
-    });
-
-    client2 = mqtt.connect("wss://broker.emqx.io:8084/mqtt", {
-      username: "emqx",
-      password: "emqx"
-    });
-    
-    client2.on("connect", () => {
-      console.log("Connected to MQTT 2");
-      xxx = id_logger.split("-");
-      for(var a=0; a<xxx.length;a++){
-        client2.subscribe("sysMon/"+xxx[a]+"/AutoPoll/#");
-        console.log("Subscribed topic: ", xxx[a]);
-        client2.publish(xxx[a]+"/seting","POLL1",0);
-      }
-      client2.subscribe("sysMon/"+xxx[0]+"/info/#");
-      updateConnectionStatus(true);
-    });
-
-    client2.on("message", (topic, message) => {
-      handleJSON(topic,message);
-    });
-    
-    client2.on("close", () => {
-      updateConnectionStatus(false);
-    });
-    
-    client2.on("error", (error) => {
-      console.error("MQTT Error:", error);
-      updateConnectionStatus(false);
-    });
+  function startMQTT() {
+  const activeId = getTargetLoggerId();
+  if (activeId) {
+    id_logger = activeId;
+    xxx = id_logger.split("-");
   }
+
+  window.handleLegacyMqttMessage = function(topic, message) {
+    if (typeof updateConnectionStatus === "function") {
+      updateConnectionStatus(true);
+    }
+    if (typeof handleJSON === "function") {
+      handleJSON(topic, message);
+    }
+  };
+
+  const virtualClient = {
+    connected: true,
+    publish: function(topic, payload) {
+      if (typeof multiMqttClients !== "undefined") {
+        multiMqttClients.forEach(c => {
+          if (c && c.connected) {
+            c.publish(topic, payload);
+          }
+        });
+      }
+    },
+    subscribe: function(topic) {
+      if (typeof multiMqttClients !== "undefined") {
+        multiMqttClients.forEach(c => {
+          if (c && c.connected) {
+            c.subscribe(topic);
+          }
+        });
+      }
+    }
+  };
+
+  client = virtualClient;
+  client2 = virtualClient;
+}
 
   function handleJSON(topic, message){
     if(topic == "sysMon/"+xxx[0]+"/info/" || topic == "sysMon/"+xxx[0]+"/info" ){
@@ -2384,4 +2374,338 @@ function updateModal() {
   setBatteryViewMode(currentViewMode);
 </script>
 
+<!-- 1. MODAL MODUL INFO -->
+<div id="modulInfoModal" onclick="if(event.target===this) this.style.display='none'" 
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:#161922; border:1px solid #334155; border-radius:14px; padding:20px; width:340px; max-width:92vw; color:#f8fafc; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <span style="font-size:16px; font-weight:bold; color:#38bdf8;">📡 Device Modul Info</span>
+      <span onclick="document.getElementById('modulInfoModal').style.display='none'" style="cursor:pointer; font-size:22px; color:#94a3b8; line-height:1;">&times;</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">ID Logger:</span>
+        <strong id="info-modal-logger" style="color:#00e676;">--</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">IP Address Lokal:</span>
+        <strong id="info-modal-ip" style="color:#ffffff;">--</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">Sinyal Wi-Fi:</span>
+        <strong id="info-modal-rssi" style="color:#38bdf8;">--</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; background:#1e222d; padding:10px 12px; border-radius:8px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">Status Polling:</span>
+        <strong id="info-modal-poll" style="color:#00e676;">Aktif</strong>
+      </div>
+    </div>
+    <button type="button" onclick="document.getElementById('modulInfoModal').style.display='none'" 
+            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Tutup</button>
+  </div>
+</div>
+
+<!-- 2. MODAL STATUS 4 SERVER & GANTI ID LOGGER -->
+<div id="serverStatusModal" onclick="if(event.target===this) this.style.display='none'" 
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:#161922; border:1px solid #334155; border-radius:14px; padding:20px; width:350px; max-width:92vw; color:#f8fafc; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="font-size:16px; font-weight:bold; color:#00e676;">🌐 Status Server</span>
+      <span onclick="document.getElementById('serverStatusModal').style.display='none'" style="cursor:pointer; font-size:22px; color:#94a3b8; line-height:1;">&times;</span>
+    </div>
+    <div id="srv-summary-text" style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Memeriksa koneksi ke 4 server...</div>
+    <div id="srv-list-box" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;"></div>
+
+    <div style="background:#1e222d; border:1px solid #2d3343; border-radius:8px; padding:10px; margin-bottom:14px; font-size:12px;">
+      <div style="color:#94a3b8; margin-bottom:4px;">ID Logger Unit Ini:</div>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="modal-logger-input" maxlength="10" placeholder="Masukkan 10 digit ID..." 
+               style="flex:1; background:#0f1117; color:#00e676; border:1px solid #334155; padding:6px 8px; border-radius:6px; font-weight:bold;" />
+        <button type="button" onclick="gantiLoggerDariModal()" 
+                style="background:#00e676; color:#0f172a; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;">Simpan</button>
+      </div>
+    </div>
+    <button type="button" onclick="document.getElementById('serverStatusModal').style.display='none'" 
+            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Tutup</button>
+  </div>
+</div>
+
+<!-- 3. MODAL GANTI BACKGROUND (GAMBAR / VIDEO PENDEK) -->
+<div id="bgCustomModal" onclick="if(event.target===this) this.style.display='none'" 
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:#161922; border:1px solid #334155; border-radius:14px; padding:20px; width:350px; max-width:92vw; color:#f8fafc; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <span style="font-size:16px; font-weight:bold; color:#c084fc;">🖼️ Ganti Background</span>
+      <span onclick="document.getElementById('bgCustomModal').style.display='none'" style="cursor:pointer; font-size:22px; color:#94a3b8; line-height:1;">&times;</span>
+    </div>
+    <div style="font-size:12px; color:#94a3b8; margin-bottom:12px;">
+      Tersimpan khusus di browser Anda untuk ID: <strong id="bg-active-logger-lbl" style="color:#38bdf8;">--</strong>
+    </div>
+    <input type="file" id="bg-media-picker" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" style="display:none;" onchange="onSelectBgMedia(event)" />
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <button type="button" onclick="document.getElementById('bg-media-picker').click()" 
+              style="flex:1; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer;">📁 Pilih Gambar / Video</button>
+      <button type="button" onclick="resetLoggerBackground()" 
+              style="background:#334155; color:#f87171; border:1px solid #475569; padding:10px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer;">🔄 Reset</button>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; color:#cbd5e1; margin-bottom:4px;">
+        <span>Tingkat Redup Latar</span>
+        <span id="bg-dim-val" style="font-weight:bold; color:#00e676;">60%</span>
+      </div>
+      <input type="range" id="bg-dim-slider" min="15" max="85" value="60" oninput="updateBgDimmer(this.value)" style="width:100%; accent-color:#00e676; cursor:pointer;" />
+    </div>
+    <div id="bg-status-msg" style="font-size:12px; color:#00e676; margin-bottom:10px;"></div>
+    <button type="button" onclick="document.getElementById('bgCustomModal').style.display='none'" 
+            style="width:100%; background:#334155; color:#ffffff; border:none; padding:9px; border-radius:8px; font-weight:bold; cursor:pointer;">Tutup</button>
+  </div>
+</div>
+
+<script>
+  const FOUR_SERVERS = [
+    { id: 1, name: "Server 1", url: "wss://broker.emqx.io:8084/mqtt",         user: "emqx", pass: "emqx" },
+    { id: 2, name: "Server 2", url: "wss://://hivemq.com",      user: "",     pass: "" },
+    { id: 3, name: "Server 3", url: "wss://test.mosquitto.org:8081/mqtt",     user: "",     pass: "" },
+    { id: 4, name: "Server 4", url: "wss://mqtt.eclipseprojects.io:443/mqtt", user: "",     pass: "" }
+  ];
+
+  let multiMqttClients = [];
+  let serverOnlineMap = { 1: false, 2: false, 3: false, 4: false };
+  let msgDedupeCache = {};
+  let currentActiveLogger = "";
+
+  function getTargetLoggerId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const idFromUrl = urlParams.get("id");
+    if (idFromUrl && idFromUrl.trim().length >= 6) {
+      const cleanId = idFromUrl.trim();
+      localStorage.setItem("rezky_bms_logger_id", cleanId);
+      return cleanId;
+    }
+    return localStorage.getItem("rezky_bms_logger_id") || "";
+  }
+
+  function closeGearDropdown() {
+    const dd = document.getElementById("dropdownMenu");
+    if (dd) dd.classList.add("hidden");
+  }
+
+  function openModulInfoModal() {
+    closeGearDropdown();
+    const el = document.getElementById("info-modal-logger");
+    if (el) el.innerText = currentActiveLogger || "--";
+    document.getElementById("modulInfoModal").style.display = "flex";
+  }
+
+  function openServerStatusModal() {
+    closeGearDropdown();
+    document.getElementById("modal-logger-input").value = currentActiveLogger;
+    renderServerModalList();
+    document.getElementById("serverStatusModal").style.display = "flex";
+  }
+
+  function toggleBgPanel() {
+    closeGearDropdown();
+    const lbl = document.getElementById("bg-active-logger-lbl");
+    if (lbl) lbl.innerText = currentActiveLogger || "DEFAULT";
+    document.getElementById("bgCustomModal").style.display = "flex";
+  }
+
+  function gantiLoggerDariModal() {
+    const newId = document.getElementById("modal-logger-input").value.trim();
+    if (newId.length < 6) {
+      alert("Masukkan 10 digit ID Logger yang tertera pada modul!");
+      return;
+    }
+    localStorage.setItem("rezky_bms_logger_id", newId);
+    window.location.href = window.location.pathname + "?id=" + encodeURIComponent(newId);
+  }
+
+  function renderServerModalList() {
+    let onlineCount = 0;
+    let html = "";
+    FOUR_SERVERS.forEach(srv => {
+      const isOnline = serverOnlineMap[srv.id];
+      if (isOnline) onlineCount++;
+      html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#1e222d; border:1px solid #2d3343; padding:10px 12px; border-radius:8px; font-size:13px;">
+          <span><strong style="color:#38bdf8;">${srv.id}.</strong> ${srv.name}</span>
+          <span style="color:${isOnline ? '#00e676' : '#ef4444'}; font-weight:bold;">
+            ● ${isOnline ? 'Online' : 'Offline'}
+          </span>
+        </div>`;
+    });
+
+    const badge = document.getElementById("srv-online-count");
+    const summary = document.getElementById("srv-summary-text");
+    const box = document.getElementById("srv-list-box");
+
+    if (badge) badge.innerText = onlineCount;
+    if (summary) {
+      summary.innerText = onlineCount === 4
+        ? "Semua server terhubung."
+        : `${onlineCount} dari 4 server terhubung (Failover aktif).`;
+    }
+    if (box) box.innerHTML = html;
+  }
+
+  function initFourServerConnection(loggerId) {
+    currentActiveLogger = loggerId;
+    multiMqttClients.forEach(c => { try { c.end(true); } catch (e) {} });
+    multiMqttClients = [];
+    serverOnlineMap = { 1: false, 2: false, 3: false, 4: false };
+    renderServerModalList();
+
+    if (!loggerId) {
+      openServerStatusModal();
+      return;
+    }
+
+    FOUR_SERVERS.forEach(srv => {
+      const randomClientId = `WebRezky_${loggerId.slice(-4)}_S${srv.id}_${Math.random().toString(16).substring(2, 10)}`;
+      const opts = { clientId: randomClientId, clean: true, reconnectPeriod: 4000, connectTimeout: 8000 };
+      if (srv.user) { opts.username = srv.user; opts.password = srv.pass; }
+
+      const client = mqtt.connect(srv.url, opts);
+
+      client.on("connect", () => {
+        serverOnlineMap[srv.id] = true;
+        renderServerModalList();
+        client.subscribe(`sysMon/${loggerId}/AutoPoll/+`);
+        client.subscribe(`sysMon/${loggerId}/info`);
+        client.subscribe(`sysMon/${loggerId}/status`);
+        client.publish(`${loggerId}/seting`, "POLL1");
+      });
+
+      client.on("close", () => { serverOnlineMap[srv.id] = false; renderServerModalList(); });
+      client.on("error", () => { serverOnlineMap[srv.id] = false; renderServerModalList(); });
+
+      client.on("message", (topic, payload) => {
+        const msgStr = payload.toString();
+        const now = Date.now();
+        const key = topic + "_" + msgStr.length;
+        if (msgDedupeCache[key] && (now - msgDedupeCache[key] < 350)) return;
+        msgDedupeCache[key] = now;
+
+        if (topic.endsWith("/info")) {
+          const p = msgStr.split(",");
+          if (p.length >= 4) {
+            if (document.getElementById("info-modal-ip")) document.getElementById("info-modal-ip").innerText = p;
+            if (document.getElementById("info-modal-rssi")) document.getElementById("info-modal-rssi").innerText = p;
+            if (document.getElementById("info-modal-poll")) document.getElementById("info-modal-poll").innerText = (p === "1") ? "Aktif (ON)" : "Berhenti (OFF)";
+          }
+        }
+
+        if (typeof window.handleLegacyMqttMessage === "function") {
+          window.handleLegacyMqttMessage(topic, payload);
+        }
+      });
+
+      multiMqttClients.push(client);
+    });
+  }
+
+    const BG_DB_NAME = "RezkyBMS_CustomBG_DB";
+  const BG_STORE_NAME = "loggerBackgrounds";
+  let currentBgObjectUrl = null;
+
+  function openBgDatabase() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(BG_DB_NAME, 1);
+      req.onupgradeneeded = (e) => {
+        if (!e.target.result.objectStoreNames.contains(BG_STORE_NAME)) {
+          e.target.result.createObjectStore(BG_STORE_NAME);
+        }
+      };
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  async function onSelectBgMedia(event) {
+    const file = event.target.files;
+    if (!file) return;
+    const statusEl = document.getElementById("bg-status-msg");
+    if (file.size > 30 * 1024 * 1024) {
+      statusEl.style.color = "#fb923c";
+      statusEl.innerText = "⚠️ Maksimal ukuran file 30 MB.";
+      return;
+    }
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    const dim = document.getElementById("bg-dim-slider").value || 60;
+    const db = await openBgDatabase();
+    db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).put({ blob: file, mime: file.type, dim: dim }, key);
+    renderCustomBackground(file, file.type, dim);
+    statusEl.style.color = "#00e676";
+    statusEl.innerText = "✅ Background berhasil disimpan!";
+    event.target.value = "";
+  }
+
+  function renderCustomBackground(blob, mimeType, dimPercent) {
+    if (currentBgObjectUrl) URL.revokeObjectURL(currentBgObjectUrl);
+    currentBgObjectUrl = URL.createObjectURL(blob);
+    const imgEl = document.getElementById("custom-bg-img");
+    const vidEl = document.getElementById("custom-bg-vid");
+    const ovlEl = document.getElementById("custom-bg-overlay");
+    document.body.style.background = "transparent";
+    ovlEl.style.display = "block";
+    ovlEl.style.background = `rgba(10, 14, 23, ${(dimPercent / 100).toFixed(2)})`;
+    if (mimeType && mimeType.startsWith("video/")) {
+      imgEl.style.display = "none";
+      vidEl.src = currentBgObjectUrl;
+      vidEl.style.display = "block";
+      vidEl.play().catch(() => {});
+    } else {
+      vidEl.pause();
+      vidEl.style.display = "none";
+      imgEl.src = currentBgObjectUrl;
+      imgEl.style.display = "block";
+    }
+  }
+
+  async function updateBgDimmer(val) {
+    document.getElementById("bg-dim-val").innerText = val + "%";
+    document.getElementById("custom-bg-overlay").style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    const db = await openBgDatabase();
+    const store = db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME);
+    const req = store.get(key);
+    req.onsuccess = () => { if (req.result) { req.result.dim = val; store.put(req.result, key); } };
+  }
+
+  async function resetLoggerBackground() {
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    const db = await openBgDatabase();
+    db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).delete(key);
+    document.getElementById("custom-bg-vid").pause();
+    document.getElementById("custom-bg-vid").style.display = "none";
+    document.getElementById("custom-bg-img").style.display = "none";
+    document.getElementById("custom-bg-overlay").style.display = "none";
+    document.body.style.background = "";
+    document.getElementById("bg-status-msg").innerText = "🔄 Dikembalikan ke background asli.";
+  }
+
+  async function loadSavedLoggerBackground() {
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    try {
+      const db = await openBgDatabase();
+      const req = db.transaction(BG_STORE_NAME, "readonly").objectStore(BG_STORE_NAME).get(key);
+      req.onsuccess = () => {
+        if (req.result && req.result.blob) {
+          const dim = req.result.dim || 60;
+          document.getElementById("bg-dim-slider").value = dim;
+          document.getElementById("bg-dim-val").innerText = dim + "%";
+          renderCustomBackground(req.result.blob, req.result.mime, dim);
+        }
+      };
+    } catch (e) {}
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const idAktif = getTargetLoggerId();
+    initFourServerConnection(idAktif);
+    loadSavedLoggerBackground();
+  });
+</script>
+  
 </body></html>
