@@ -2415,13 +2415,25 @@ function updateModal() {
       const socColor = socVal > 50 ? 'text-emerald-400' : (socVal > 20 ? 'text-amber-400' : 'text-red-400');
       const powerVal = (parseFloat(batt.voltage) * parseFloat(batt.current)).toFixed(1);
 
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-white/5 cursor-pointer transition';
-      tr.onclick = () => {
-        if (typeof openCellModal === 'function') {
-          openCellModal(batt.loggerId, batt.typeBattery, batt.addr);
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-white/10 active:bg-white/15 cursor-pointer transition select-none';
+    tr.dataset.loggerId = batt.loggerId;
+    tr.dataset.typeBattery = batt.typeBattery;
+    tr.dataset.addr = batt.addr;
+
+    if (tr.parentElement && !tr.parentElement.dataset.delegatedClick) {
+      tr.parentElement.dataset.delegatedClick = 'true';
+    }
+    const tbodyEl = document.getElementById('batteryTableBody');
+    if (tbodyEl && !tbodyEl.dataset.clickReady) {
+      tbodyEl.dataset.clickReady = 'true';
+      tbodyEl.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (row && row.dataset.addr && typeof openCellModal === 'function') {
+          openCellModal(row.dataset.loggerId, row.dataset.typeBattery, row.dataset.addr);
         }
-      };
+      });
+    }
 
       tr.innerHTML = `
         <td class="py-3 px-3 whitespace-nowrap">
