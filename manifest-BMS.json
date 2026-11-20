@@ -1,7 +1,7 @@
 {
   "name": "HUAWEI BMS MONITORING By Rezky Logam",
-  "short_name": "BMS Monitor",
-  "start_url": "./BMS%20HUAWEI.html",
+  "short_name": "BMS MONITORING",
+  "start_url": "./BMS.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#121212",
