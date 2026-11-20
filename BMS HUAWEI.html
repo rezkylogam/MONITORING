@@ -1179,7 +1179,15 @@
       
       //document.getElementById("id_monitoring").innerText =text_head;
       //document.getElementById("id_monitoring_footer").innerText =text_head;
+   } else if (topic.endsWith("/status")) {
+      try {
+        const res = JSON.parse(message.toString());
+        if (typeof showSettingStatus === "function") {
+          showSettingStatus(res.ok, (res.ok ? "✅ " : "❌ ") + res.msg);
+        }
+      } catch (e) {}
     } else {
+
       try {
         const raw = JSON.parse(message.toString());
         const batt = normalizeFromMqtt(raw, topic);
@@ -1757,25 +1765,45 @@ function updateModal() {
     box.textContent = text;
   }
 
-  function publishSettingPayload(payloadObj) {
+    function publishSettingPayload(payloadObj) {
     const pin = document.getElementById("setSecurityPin").value.trim();
     if (!pin) {
       showSettingStatus(false, "Harap masukkan PIN Keamanan terlebih dahulu!");
       return false;
     }
 
-    const activeClient = (typeof client2 !== "undefined" && client2.connected) ? client2 : client;
-    if (!activeClient || !activeClient.connected) {
-      showSettingStatus(false, "Koneksi MQTT belum terhubung!");
+    const loggerTarget = (typeof currentActiveLogger !== "undefined" && currentActiveLogger)
+      ? currentActiveLogger
+      : id_logger.split("-")[0];
+
+    if (!loggerTarget || loggerTarget === "-") {
+      showSettingStatus(false, "❌ ID Logger belum diatur!");
       return false;
     }
 
     payloadObj.pin = pin;
-    const loggerTarget = id_logger.split("-")[0];
     const topic = loggerTarget + "/seting";
+    const payloadStr = JSON.stringify(payloadObj);
+    let terkirim = false;
+
+    if (typeof multiMqttClients !== "undefined" && multiMqttClients.length > 0) {
+      multiMqttClients.forEach(c => {
+        if (c && c.connected) {
+          c.publish(topic, payloadStr);
+          terkirim = true;
+        }
+      });
+    } else if (typeof client !== "undefined" && client && client.connected) {
+      client.publish(topic, payloadStr);
+      terkirim = true;
+    }
+
+    if (!terkirim) {
+      showSettingStatus(false, "Koneksi MQTT belum terhubung ke server!");
+      return false;
+    }
 
     showSettingStatus(null, "⏳ Mengirim perintah ke ESP32...");
-    activeClient.publish(topic, JSON.stringify(payloadObj), 0);
     return true;
   }
 
