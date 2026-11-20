@@ -1664,11 +1664,11 @@ function updateModal() {
   function updateJarvisButtonUI() {
     if (!jarvisToggleBtn) return;
     if (isJarvisOn) {
-      jarvisToggleBtn.innerHTML = '🔊 Jarvis : ON';
+      jarvisToggleBtn.innerHTML = '🔊 Audio Jarvis : ON';
       jarvisToggleBtn.classList.remove('text-red-500');
       jarvisToggleBtn.classList.add('text-green-600');
     } else {
-      jarvisToggleBtn.innerHTML = '🔇 Jarvis : OFF';
+      jarvisToggleBtn.innerHTML = '🔇 Audio Jarvis : OFF';
       jarvisToggleBtn.classList.remove('text-green-600');
       jarvisToggleBtn.classList.add('text-red-500');
     }
@@ -2445,12 +2445,12 @@ function updateModal() {
     <div id="srv-list-box" style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;"></div>
 
     <div style="background:#1e222d; border:1px solid #2d3343; border-radius:14px; padding:16px; margin-bottom:20px; font-size:18px;">
-      <div style="color:#94a3b8; margin-bottom:10px; font-weight:700;">ID Logger Unit Ini:</div>
+      <div style="color:#94a3b8; margin-bottom:10px; font-weight:700;">Lihat ID Logger Unit Ini</div>
       <div style="display:flex; gap:10px;">
-        <input type="text" id="modal-logger-input" maxlength="10" placeholder="Masukkan 10 digit ID..." 
-               style="flex:1; min-width:0; background:#0f1117; color:#00e676; border:1.5px solid #334155; padding:12px 14px; border-radius:12px; font-size:19px; font-weight:800;" />
+        <input type="text" id="modal-logger-input" maxlength="10" readonly onclick="bukaTampilanIdLogger()" placeholder="Klik Untuk Melihat" 
+               style="flex:1; min-width:0; background:#0f1117; color:#38bdf8; border:1.5px solid #334155; padding:12px 14px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer;" />
         <button type="button" onclick="gantiLoggerDariModal()" 
-                style="background:#00e676; color:#0f172a; border:none; padding:12px 20px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer; shrink:0;">Simpan</button>
+                style="background:#00e676; color:#0f172a; border:none; padding:12px 20px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer; flex-shrink:0;">Simpan</button>
       </div>
     </div>
     <button type="button" onclick="document.getElementById('serverStatusModal').style.display='none'" 
@@ -2518,29 +2518,61 @@ function updateModal() {
     if (dd) dd.classList.add("hidden");
   }
 
+  // Fungsi pembantu untuk menyensor ID menjadi 25XXXXXXXX
+  function formatSensorLoggerId(id) {
+    if (!id) return "--";
+    if (id.length <= 2) return id;
+    return id.substring(0, 2) + "X".repeat(id.length - 2);
+  }
+
+  // Gambar No. 2: Device Modul Info tampilkan 25XXXXXXXX
   function openModulInfoModal() {
     closeGearDropdown();
     const el = document.getElementById("info-modal-logger");
-    if (el) el.innerText = currentActiveLogger || "--";
+    if (el) el.innerText = formatSensorLoggerId(currentActiveLogger);
     document.getElementById("modulInfoModal").style.display = "flex";
   }
 
+  // Gambar No. 3: Status Server reset ke "Klik Untuk Melihat" setiap kali dibuka
   function openServerStatusModal() {
     closeGearDropdown();
-    document.getElementById("modal-logger-input").value = currentActiveLogger;
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl) {
+      inputEl.value = "";
+      inputEl.readOnly = true;
+      inputEl.style.color = "#38bdf8";
+      inputEl.placeholder = "Klik Untuk Melihat";
+    }
     renderServerModalList();
     document.getElementById("serverStatusModal").style.display = "flex";
   }
 
+  // Fungsi saat kotak "Klik Untuk Melihat" diklik
+  function bukaTampilanIdLogger() {
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl && inputEl.readOnly) {
+      inputEl.readOnly = false;
+      inputEl.value = currentActiveLogger || "";
+      inputEl.style.color = "#00e676";
+      inputEl.placeholder = "Masukkan 10 digit ID...";
+    }
+  }
+
+  // Gambar No. 1: Ganti Background tampilkan 25XXXXXXXX
   function toggleBgPanel() {
     closeGearDropdown();
     const lbl = document.getElementById("bg-active-logger-lbl");
-    if (lbl) lbl.innerText = currentActiveLogger || "DEFAULT";
+    if (lbl) lbl.innerText = currentActiveLogger ? formatSensorLoggerId(currentActiveLogger) : "DEFAULT";
     document.getElementById("bgCustomModal").style.display = "flex";
   }
 
   function gantiLoggerDariModal() {
-    const newId = document.getElementById("modal-logger-input").value.trim();
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl && inputEl.readOnly) {
+      alert("Klik kolom 'Klik Untuk Melihat' terlebih dahulu untuk melihat atau mengubah ID Logger.");
+      return;
+    }
+    const newId = inputEl.value.trim();
     if (newId.length < 6) {
       alert("Masukkan 10 digit ID Logger yang tertera pada modul!");
       return;
