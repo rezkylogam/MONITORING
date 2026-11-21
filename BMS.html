@@ -79,42 +79,126 @@
   #batteryTableContainer td .font-bold { font-size: 1.25rem !important; }
   #batteryTableContainer td .text-\[11px\] { font-size: 0.9rem !important; }
 
-  /* 4. Pop-up Detail 15 Sel (Lebar Ideal 75% Layar Monitor) */
+  /* 4. Pop-up Detail 15 Sel (Diperluas Atas-Bawah & Teks/Ikon Diperbesar) */
   #batteryModal > div {
     max-width: 75vw !important;
     width: 75vw !important;
+    max-height: 92vh !important;
   }
-  #batteryModal h2 { font-size: 1.6rem !important; }
+  #batteryModal > div > div:first-child {
+    padding: 20px 28px !important;
+  }
+  #batteryModal h2 {
+    font-size: 1.85rem !important;
+  }
+  #batteryModal #led-modal {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  #batteryModal #closeModal {
+    font-size: 1.75rem !important;
+  }
+  #batteryModal > div > div:nth-child(2) {
+    padding: 26px 28px !important;
+    gap: 22px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
   #batteryModal .text-\[10px\],
-  #batteryModal .text-\[11px\] { font-size: 0.95rem !important; }
-  #batteryModal .text-xs { font-size: 1.2rem !important; }
-  #batteryModal .battery-3d-body { height: 36px !important; }
-  #batteryModal .battery-3d-text { font-size: 16px !important; }
-
-  /* 5. Pop-up Aliran Energi PLTS (Lebar Ideal 78% Layar Monitor) */
-  #modalDiagramPlts > div {
-    max-width: 78vw !important;
-    width: 78vw !important;
+  #batteryModal .text-\[11px\] {
+    font-size: 1rem !important;
+    margin-bottom: 6px !important;
   }
-  #modalDiagramPlts h3 { font-size: 1.6rem !important; }
-  #modalDiagramPlts p,
-  #modalDiagramPlts .text-xs { font-size: 1.05rem !important; }
+  #batteryModal .text-xs {
+    font-size: 1.3rem !important;
+  }
+  #batteryModal .battery-3d-body {
+    height: 44px !important;
+  }
+  #batteryModal .battery-3d-cap {
+    height: 24px !important;
+    width: 11px !important;
+  }
+  #batteryModal .battery-3d-text {
+    font-size: 18px !important;
+  }
+  #batteryModal #modalCells {
+    gap: 14px !important;
+  }
+  #batteryModal #modalCells > div {
+    padding: 14px 10px !important;
+  }
 
-  /* 6. Pop-up Background, Modul Info, Status Server & Setting BMS - Gambar 1 s/d 4 (Lebar 95%) */
+  /* 5. Pop-up Aliran Energi PLTS (Lebar 95% & Tinggi Disesuaikan Layar) */
+  #modalDiagramPlts > div {
+    max-width: 95vw !important;
+    width: 95vw !important;
+    padding: 22px 28px !important;
+  }
+  #modalDiagramPlts h3 {
+    font-size: 1.85rem !important;
+  }
+  #modalDiagramPlts #badgeStatusDiagram {
+    font-size: 0.95rem !important;
+    padding: 4px 12px !important;
+  }
+  #modalDiagramPlts p,
+  #modalDiagramPlts .text-xs {
+    font-size: 1.15rem !important;
+  }
+  #modalDiagramPlts img[src="diagram-plts-3d.jpg"] {
+    max-height: 76vh !important;
+    width: 100% !important;
+    object-fit: contain !important;
+  }
+
+  /* 6. Background, Modul Info, Server & Setting BMS (Lebar 75% & Tinggi Lega) */
   #bgCustomModal > div,
   #modulInfoModal > div,
   #serverStatusModal > div,
   #bmsSettingModal > div {
-    max-width: 95vw !important;
-    width: 95vw !important;
-    padding: 28px !important;
+    max-width: 75vw !important;
+    width: 75vw !important;
+    padding: 34px 38px !important;
+  }
+
+  /* Judul Header Pop-up 1 s/d 3 */
+  #bgCustomModal > div > div:first-child span:first-child,
+  #modulInfoModal > div > div:first-child span:first-child,
+  #serverStatusModal > div > div:first-child span:first-child {
+    font-size: 1.75rem !important;
+  }
+
+  /* Baris Isi & Jarak Atas-Bawah Pop-up 1 s/d 3 */
+  #modulInfoModal > div > div:nth-child(2) {
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+  }
+  #modulInfoModal > div > div:nth-child(2) > div,
+  #serverStatusModal #srv-list-box > div {
+    padding: 16px 20px !important;
+    font-size: 1.25rem !important;
+  }
+  #serverStatusModal #srv-list-box {
+    gap: 14px !important;
+    margin-bottom: 20px !important;
   }
   #bgCustomModal span, #bgCustomModal button,
   #modulInfoModal span, #modulInfoModal strong, #modulInfoModal button,
   #serverStatusModal span, #serverStatusModal div, #serverStatusModal input, #serverStatusModal button {
-    font-size: 1.15rem !important;
+    font-size: 1.25rem !important;
   }
-  #bmsSettingModal h2 { font-size: 1.6rem !important; }
+  #bgCustomModal button,
+  #modulInfoModal button,
+  #serverStatusModal button {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  /* Pengaturan BMS Online */
+  #bmsSettingModal h2 {
+    font-size: 1.85rem !important;
+  }
   #bmsSettingModal p,
   #bmsSettingModal label,
   #bmsSettingModal input,
@@ -122,7 +206,14 @@
   #bmsSettingModal button,
   #bmsSettingModal .text-xs,
   #bmsSettingModal .text-sm {
-    font-size: 1.1rem !important;
+    font-size: 1.2rem !important;
+  }
+  #bmsSettingModal input,
+  #bmsSettingModal select {
+    padding: 12px 14px !important;
+  }
+  #bmsSettingModal .space-y-4 > div {
+    padding: 22px !important;
   }
 }
     
