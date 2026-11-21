@@ -76,13 +76,15 @@
   /* Ubah susunan tiap kotak ringkasan menjadi: Ikon di Kiri, Label & Angka di Kanan */
   #summarySection .summary-card > .grid > div {
     display: grid !important;
-    grid-template-columns: auto 1fr !important;
+    grid-template-columns: auto auto !important;
     grid-template-rows: auto auto !important;
+    justify-content: center !important;
+    align-content: center !important;
     column-gap: 1.25rem !important;
     row-gap: 0.2rem !important;
     align-items: center !important;
     text-align: left !important;
-    padding: 1.25rem 1.75rem !important;
+    padding: 1.25rem 1.5rem !important;
   }
   #summarySection .summary-card > .grid > div > svg {
     grid-row: 1 / span 2 !important;
