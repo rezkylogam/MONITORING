@@ -3,27 +3,7 @@
 <head>
   <link rel="manifest" href="MANIFEST-BMS.json">
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
-  <style>
-    /* 1. Kunci skala teks agar iPhone & Android menampilkan ukuran font yang sama persis */
-    html, body {
-      -webkit-text-size-adjust: 100% !important;
-      text-size-adjust: 100% !important;
-      overflow-x: hidden;
-      width: 100%;
-    }
-
-    /* 2. Pastikan gambar/video background tidak ter-zoom pecah di iPhone */
-    body {
-      background-attachment: scroll !important;
-    }
-
-    /* 3. Jaga agar tulisan di kotak Ringkasan Sistem Total tidak turun baris berantakan di layar ramping */
-    #avg-soc, #avg-soh, #avg-temp, #avg-voltage, #total-current, #total-power {
-      font-size: clamp(0.95rem, 3.8vw, 1.25rem);
-      white-space: nowrap;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BMS HUAWEI MONITORING</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -665,16 +645,16 @@
 <!-- Main content -->
 <main class="flex-1 p-4 sm:p-6 w-full">
   <div class="max-w-7xl mx-auto">
-    <div class="mb-6 flex flex-wrap justify-between items-start gap-2">
-      <h2 class="text-xl font-semibold text-white">BATERAI SISTEM 48V DC</h2>
+    <div class="mb-6 flex justify-between items-start">
+      <h2 class="text-xl font-semibold text-white-900">BATERAI SISTEM 48V DC</h2>
       
-      <!-- Kelompok Kanan: Jumlah Baterai & Jam Real-time -->
-      <div class="flex flex-col sm:items-end gap-1">
-        <div class="text-base sm:text-lg text-emerald-400 font-semibold">
-          <span id="total-batteries">6</span> Baterai Terkoneksi
+          <!-- Kelompok Kanan: Jumlah Baterai (Atas) & Jam Real-time (Bawah) -->
+        <div class="flex flex-col items-end gap-1">
+            <div class="text-lg text-white-100">
+                <span id="total-batteries">6</span> Baterai Terkoneksi
+            </div>
+            <div id="realtime-clock" class="text-lg font-semibold text-gray-300"></div>
         </div>
-        <div id="realtime-clock" class="text-base sm:text-lg font-semibold text-gray-300"></div>
-      </div>
     </div>
     
         <!-- Summary Section dengan Ikon 3D -->
