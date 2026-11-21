@@ -214,17 +214,41 @@
   #modalDiagramPlts > div {
     max-width: 95vw !important;
     width: 95vw !important;
-    padding: 22px 28px !important;
+    padding: 24px 30px !important;
   }
-  #modalDiagramPlts h3 { font-size: 2.1rem !important; }
-  #modalDiagramPlts #badgeStatusDiagram { font-size: 1.15rem !important; padding: 6px 15px !important; }
-  #modalDiagramPlts p,
-  #modalDiagramPlts .text-xs { font-size: 1.35rem !important; }
-  #modalDiagramPlts button { font-size: 2.1rem !important; }
-  #modalDiagramPlts img[src="diagram-plts-3d.jpg"] {
-    max-height: 75vh !important;
-    width: 100% !important;
-    object-fit: contain !important;
+  #modalDiagramPlts h3 {
+    font-size: 2.15rem !important;
+  }
+  #modalDiagramPlts #badgeStatusDiagram {
+    font-size: 1.1rem !important;
+    padding: 5px 14px !important;
+  }
+  #modalDiagramPlts > div > div:first-child p,
+  #modalDiagramPlts > div > div:first-child .text-xs,
+  #modalDiagramPlts > div > div:first-child .text-\[11px\] {
+    font-size: 1.3rem !important;
+    line-height: 1.75rem !important;
+  }
+  #modalDiagramPlts button {
+    font-size: 2.2rem !important;
+  }
+
+  /* Perbesar Semua Angka Tegangan, Arus & Daya di Dalam Gambar Diagram PLTS */
+  #modalDiagramPlts .relative span,
+  #modalDiagramPlts .relative div[class*="text-"],
+  #modalDiagramPlts [id*="diag-"] {
+    font-size: 1.35rem !important;
+    line-height: 1.65rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* Khusus Kotak Daya Besar di Bawah TV (-641.65 W / -711.17 W) */
+  #modalDiagramPlts [id*="watt"],
+  #modalDiagramPlts [id*="power"],
+  #modalDiagramPlts [id*="daya"] {
+    font-size: 2.1rem !important;
+    line-height: 2.4rem !important;
+    font-weight: 800 !important;
   }
 
   /* 6. Gambar No. 3, 4, 5: Pop-up Background, Modul Info & Status Server */
