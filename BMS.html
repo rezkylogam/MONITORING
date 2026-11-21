@@ -2633,7 +2633,7 @@ function updateModal() {
 
     // 4. Deteksi status Charging, Standby, atau Discharging berdasarkan nilai arus DC
     const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
-    const modeCharge     = true;
+    const modeCharge     = nilaiArusAngka > 0.1;
     const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
 
     const elMatahari = document.getElementById('elemenMatahari');
