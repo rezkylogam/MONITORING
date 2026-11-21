@@ -5,14 +5,13 @@
   <meta charset="UTF-8">
   <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-  // Deteksi khusus perangkat iPhone / iOS
-  if (/iPhone|iPod/i.test(navigator.userAgent)) {
-  document.documentElement.classList.add('is-iphone');
-    document.getElementById('viewportMeta').setAttribute(
-      'content',
-      'width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no'
-    );
-  }
+    if (/iPhone|iPod/i.test(navigator.userAgent)) {
+      document.documentElement.classList.add('is-iphone');
+      document.getElementById('viewportMeta').setAttribute(
+        'content',
+        'width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no'
+      );
+    }
   </script>
   <title>BMS HUAWEI MONITORING</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -55,114 +54,41 @@
     text-size-adjust: 100% !important;
 }
     
-/* Perbesar Teks, Angka & Ikon Kartu Khusus Layar Laptop / PC */
+/* Perlebar & Perbesar Tampilan Khusus Laptop / PC */
 @media (min-width: 1024px) {
-  /* 1. Judul Unit (HUAWEI B1 2025 #214) */
-  #batteryGrid .battery-card h3 {
-    font-size: 1.35rem !important;
-    line-height: 1.75rem !important;
-  }
-  #batteryGrid .battery-card h3 span {
-    font-size: 1.15rem !important;
-  }
+  /* 1. Kartu Baterai */
+  #batteryGrid .battery-card h3 { font-size: 1.35rem !important; line-height: 1.75rem !important; }
+  #batteryGrid .battery-card h3 span { font-size: 1.15rem !important; }
+  #batteryGrid .battery-card .mb-4 span { font-size: 1.05rem !important; }
+  #batteryGrid .mini-batt-body { height: 18px !important; }
+  #batteryGrid .mini-batt-cap { height: 10px !important; width: 5px !important; }
+  #batteryGrid .battery-card .grid .text-gray-500 { font-size: 0.95rem !important; }
+  #batteryGrid .battery-card .grid .font-semibold { font-size: 1.2rem !important; }
+  #batteryGrid .battery-card svg { width: 1.65rem !important; height: 1.65rem !important; margin-right: 0.75rem !important; }
+  #batteryGrid .battery-card .border-t span { font-size: 1rem !important; }
 
-  /* 2. Teks SOC & Status (Charging / Discharging) */
-  #batteryGrid .battery-card .mb-4 span {
-    font-size: 1.05rem !important;
-  }
-  #batteryGrid .mini-batt-body {
-    height: 18px !important;
-  }
-  #batteryGrid .mini-batt-cap {
-    height: 10px !important;
-    width: 5px !important;
-  }
+  /* 2. Ringkasan Sistem Total */
+  #summarySection h3 { font-size: 1.35rem !important; }
+  #summarySection .summary-card svg { width: 2.35rem !important; height: 2.35rem !important; margin-bottom: 0.25rem !important; }
+  #summarySection .summary-card .text-xs { font-size: 0.95rem !important; }
+  #summarySection .summary-card .font-semibold { font-size: 1.55rem !important; line-height: 2rem !important; }
 
-  /* 3. Label (Tegangan, Arus, Selisih Sel, Daya, Min/Max Cell) & Angkanya */
-  #batteryGrid .battery-card .grid .text-gray-500 {
-    font-size: 0.95rem !important;
-  }
-  #batteryGrid .battery-card .grid .font-semibold {
-    font-size: 1.2rem !important;
-  }
+  /* 3. Mode Tampilan Table (ID Sesuai File Asli) */
+  #batteryTableContainer th { font-size: 0.95rem !important; padding: 1rem !important; }
+  #batteryTableContainer td { font-size: 1.15rem !important; padding: 1.1rem !important; }
+  #batteryTableContainer td .font-bold { font-size: 1.25rem !important; }
+  #batteryTableContainer td .text-\[11px\] { font-size: 0.9rem !important; }
 
-  /* 4. Ukuran Ikon 3D di Dalam Kartu */
-  #batteryGrid .battery-card svg {
-    width: 1.65rem !important;
-    height: 1.65rem !important;
-    margin-right: 0.75rem !important;
-  }
+  /* 4. Pop-up Detail 15 Sel (ID Sesuai File Asli) */
+  #batteryModal > div { max-width: 900px !important; width: 90% !important; }
+  #batteryModal h2 { font-size: 1.4rem !important; }
+  #batteryModal .text-\[10px\], #batteryModal .text-\[11px\] { font-size: 0.85rem !important; }
+  #batteryModal .text-xs { font-size: 1.05rem !important; }
 
-  /* 5. Bagian Bawah Kartu (Suhu & Siklus / Cycles) */
-  #batteryGrid .battery-card .border-t span {
-    font-size: 1rem !important;
-  }
-}
-
-  /* 6. Ringkasan Sistem Total (Kotak 6 Parameter Atas) */
-  #summarySection h3 {
-    font-size: 1.35rem !important;
-  }
-  #summarySection .summary-card svg {
-    width: 2.35rem !important;
-    height: 2.35rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-  #summarySection .summary-card .text-xs {
-    font-size: 0.95rem !important;
-  }
-  #summarySection .summary-card .font-semibold {
-    font-size: 1.55rem !important;
-    line-height: 2rem !important;
-  }
-  /* 7. Mode Tampilan Table (Daftar Unit Baterai) */
-  #batteryTable th {
-    font-size: 0.95rem !important;
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-  }
-  #batteryTable td {
-    font-size: 1.15rem !important;
-    padding-top: 1.1rem !important;
-    padding-bottom: 1.1rem !important;
-  }
-  #batteryTable td .font-semibold,
-  #batteryTable td .font-bold {
-    font-size: 1.25rem !important;
-  }
-  #batteryTable td .text-xs {
-    font-size: 0.9rem !important;
-  }
-
-  /* 8. Pop-up Detail 15 Sel (Diperlebar & Diperbesar) */
-  #detailModal > div {
-    max-width: 900px !important;
-    width: 90% !important;
-  }
-  #detailModal h3 {
-    font-size: 1.4rem !important;
-  }
-  #detailModal .text-xs {
-    font-size: 0.9rem !important;
-  }
-  #detailModal .text-sm,
-  #detailModal .font-semibold,
-  #detailModal .font-bold {
-    font-size: 1.1rem !important;
-  }
-
-  /* 9. Pop-up Aliran Energi Sistem PLTS (Diperbesar) */
-  #powerFlowModal > div {
-    max-width: 920px !important;
-    width: 90% !important;
-  }
-  #powerFlowModal h3 {
-    font-size: 1.4rem !important;
-  }
-  #powerFlowModal p,
-  #powerFlowModal .text-xs {
-    font-size: 0.95rem !important;
-  }
+  /* 5. Pop-up Aliran Energi PLTS (ID Sesuai File Asli) */
+  #modalDiagramPlts > div { max-width: 920px !important; width: 90% !important; }
+  #modalDiagramPlts h3 { font-size: 1.4rem !important; }
+  #modalDiagramPlts p, #modalDiagramPlts .text-xs { font-size: 0.95rem !important; }
 }
     
     body[data-theme="dark"] {
