@@ -57,6 +57,41 @@
 /* =====================================================================
    TAMPILAN EXTRA BESAR, TEGAS & IKON KIRI KHUSUS LAPTOP / PC
    ===================================================================== */
+    
+/* Susunan Khusus HP Android & iPhone (Ukuran Teks Tetap) */
+@media (max-width: 1023px) {
+  #summarySection .summary-card > .grid > div {
+    display: grid !important;
+    grid-template-columns: auto auto !important;
+    grid-template-rows: auto auto !important;
+    justify-content: center !important;
+    align-content: center !important;
+    column-gap: 0.5rem !important;
+    row-gap: 0.1rem !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 0.65rem 0.5rem !important;
+  }
+  #summarySection .summary-card > .grid > div > svg {
+    grid-row: 1 / span 2 !important;
+    grid-column: 1 !important;
+    margin: 0 !important;
+  }
+  #summarySection .summary-card > .grid > div > .text-xs {
+    grid-row: 1 !important;
+    grid-column: 2 !important;
+    margin: 0 !important;
+    align-self: end !important;
+  }
+  #summarySection .summary-card > .grid > div > .font-semibold {
+    grid-row: 2 !important;
+    grid-column: 2 !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+}
+    
+/* Susunan Khusus LAPTOP / PC */
 @media (min-width: 1024px) {
   /* 0. Header, Judul Utama & Footer */
   header h1 { font-size: 1.95rem !important; }
