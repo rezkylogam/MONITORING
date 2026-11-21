@@ -3,7 +3,17 @@
 <head>
   <link rel="manifest" href="MANIFEST-BMS.json">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no">
+  <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  // Deteksi khusus perangkat iPhone / iOS
+  if (/iPhone|iPod/i.test(navigator.userAgent)) {
+  document.documentElement.classList.add('is-iphone');
+    document.getElementById('viewportMeta').setAttribute(
+      'content',
+      'width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no'
+    );
+  }
+  </script>
   <title>BMS HUAWEI MONITORING</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -36,14 +46,12 @@
     transition: background-color 0.3s, color 0.3s;
 }
 
-    html, body {
+  html.is-iphone, html.is-iphone body {
     min-width: 760px !important;
     width: 760px !important;
     margin: 0 auto !important;
     overflow-x: hidden !important;
     -webkit-text-size-adjust: 100% !important;
-    -moz-text-size-adjust: 100% !important;
-    -ms-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
 }
 
@@ -2909,13 +2917,15 @@ function updateModal() {
 </script>
 
 <script>
-  document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function (event) {
-    const now = (new Date()).getTime();
-    if (now - lastTouchEnd <= 300) { event.preventDefault(); }
-    lastTouchEnd = now;
-  }, false);
+  if (/iPhone|iPod/i.test(navigator.userAgent)) {
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) { event.preventDefault(); }
+      lastTouchEnd = now;
+    }, false);
+  }
 </script>
   
 </body></html>
