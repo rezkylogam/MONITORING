@@ -54,151 +54,140 @@
     text-size-adjust: 100% !important;
 }
     
-/* Perlebar & Perbesar Tampilan Khusus Laptop / PC */
+/* =====================================================================
+   TAMPILAN BESAR & TEGAS KHUSUS LAPTOP / KOMPUTER (TIDAK BERLAKU DI HP)
+   ===================================================================== */
 @media (min-width: 1024px) {
-  /* 1. Kartu Baterai */
-  #batteryGrid .battery-card h3 { font-size: 1.35rem !important; line-height: 1.75rem !important; }
-  #batteryGrid .battery-card h3 span { font-size: 1.15rem !important; }
-  #batteryGrid .battery-card .mb-4 span { font-size: 1.05rem !important; }
-  #batteryGrid .mini-batt-body { height: 18px !important; }
-  #batteryGrid .mini-batt-cap { height: 10px !important; width: 5px !important; }
-  #batteryGrid .battery-card .grid .text-gray-500 { font-size: 0.95rem !important; }
-  #batteryGrid .battery-card .grid .font-semibold { font-size: 1.2rem !important; }
-  #batteryGrid .battery-card svg { width: 1.65rem !important; height: 1.65rem !important; margin-right: 0.75rem !important; }
-  #batteryGrid .battery-card .border-t span { font-size: 1rem !important; }
+  /* 0. Header, Judul Utama & Footer */
+  header h1 { font-size: 1.85rem !important; }
+  header img[alt="Huawei"] { width: 2.5rem !important; height: 2.5rem !important; }
+  #settingsBtn svg { width: 3.1rem !important; height: 3.1rem !important; }
+  #dropdownMenu { width: 16rem !important; }
+  #dropdownMenu a { font-size: 1.15rem !important; padding: 0.75rem 1.1rem !important; }
+  main h2 { font-size: 1.65rem !important; }
+  #total-batteries, #realtime-clock, main .text-lg { font-size: 1.35rem !important; }
+  footer .text-xl { font-size: 1.35rem !important; }
 
-  /* 2. Ringkasan Sistem Total */
-  #summarySection h3 { font-size: 1.35rem !important; }
-  #summarySection .summary-card svg { width: 2.35rem !important; height: 2.35rem !important; margin-bottom: 0.25rem !important; }
-  #summarySection .summary-card .text-xs { font-size: 0.95rem !important; }
-  #summarySection .summary-card .font-semibold { font-size: 1.55rem !important; line-height: 2rem !important; }
+  /* 1. Ringkasan Sistem Total (6 Kotak Atas) */
+  #summarySection h3 { font-size: 1.55rem !important; margin-bottom: 1rem !important; }
+  #summarySection .summary-card { padding: 1.5rem !important; }
+  #summarySection .summary-card svg {
+    width: 3rem !important;
+    height: 3rem !important;
+    margin-bottom: 0.4rem !important;
+  }
+  #summarySection .summary-card .text-xs { font-size: 1.1rem !important; }
+  #summarySection .summary-card .font-semibold {
+    font-size: 1.95rem !important;
+    line-height: 2.3rem !important;
+  }
 
-  /* 3. Mode Tampilan Table (ID Sesuai File Asli) */
-  #batteryTableContainer th { font-size: 0.95rem !important; padding: 1rem !important; }
-  #batteryTableContainer td { font-size: 1.15rem !important; padding: 1.1rem !important; }
-  #batteryTableContainer td .font-bold { font-size: 1.25rem !important; }
-  #batteryTableContainer td .text-\[11px\] { font-size: 0.9rem !important; }
+  /* 2. Daftar Unit Baterai - Mode Card (3 Kolom) */
+  main h3.text-lg { font-size: 1.55rem !important; }
+  main h3 span { font-size: 1.15rem !important; }
+  #btnViewTable, #btnViewCard { font-size: 1.05rem !important; padding: 0.5rem 1rem !important; }
 
-  /* 4. Pop-up Detail 15 Sel (Diperluas Atas-Bawah & Teks/Ikon Diperbesar) */
+  #batteryGrid .battery-card { padding: 1.5rem !important; }
+  #batteryGrid .battery-card h3 { font-size: 1.55rem !important; line-height: 2rem !important; }
+  #batteryGrid .battery-card h3 span { font-size: 1.3rem !important; }
+  #batteryGrid .led { width: 15px !important; height: 15px !important; }
+  #batteryGrid .battery-card .mb-4 span { font-size: 1.2rem !important; }
+  #batteryGrid .mini-batt-body { height: 22px !important; }
+  #batteryGrid .mini-batt-cap { height: 12px !important; width: 6px !important; }
+  #batteryGrid .battery-card .grid .text-gray-500 { font-size: 1.05rem !important; }
+  #batteryGrid .battery-card .grid .font-semibold { font-size: 1.4rem !important; }
+  #batteryGrid .battery-card svg {
+    width: 2rem !important;
+    height: 2rem !important;
+    margin-right: 0.85rem !important;
+  }
+  #batteryGrid .battery-card .border-t span { font-size: 1.15rem !important; }
+
+  /* 3. Daftar Unit Baterai - Mode Table */
+  #batteryTableContainer th { font-size: 1.1rem !important; padding: 1.15rem 1rem !important; }
+  #batteryTableContainer td { font-size: 1.35rem !important; padding: 1.2rem 1rem !important; }
+  #batteryTableContainer td .font-bold { font-size: 1.4rem !important; }
+  #batteryTableContainer td .text-\[11px\] { font-size: 1rem !important; }
+  #batteryTableContainer td .w-16 { width: 5.5rem !important; height: 2.25rem !important; }
+  #batteryTableContainer td .text-\[11px\].font-bold { font-size: 0.95rem !important; }
+
+  /* 4. Pop-up Detail 15 Sel */
   #batteryModal > div {
-    max-width: 75vw !important;
-    width: 75vw !important;
+    max-width: 78vw !important;
+    width: 78vw !important;
     max-height: 92vh !important;
   }
-  #batteryModal > div > div:first-child {
-    padding: 20px 28px !important;
-  }
-  #batteryModal h2 {
-    font-size: 1.85rem !important;
-  }
-  #batteryModal #led-modal {
-    width: 14px !important;
-    height: 14px !important;
-  }
-  #batteryModal #closeModal {
-    font-size: 1.75rem !important;
-  }
+  #batteryModal > div > div:first-child { padding: 20px 28px !important; }
+  #batteryModal h2 { font-size: 2rem !important; }
+  #batteryModal #led-modal { width: 16px !important; height: 16px !important; }
+  #batteryModal #closeModal { font-size: 2rem !important; }
   #batteryModal > div > div:nth-child(2) {
-    padding: 26px 28px !important;
-    gap: 22px !important;
+    padding: 24px 28px !important;
+    gap: 20px !important;
     display: flex !important;
     flex-direction: column !important;
   }
   #batteryModal .text-\[10px\],
-  #batteryModal .text-\[11px\] {
-    font-size: 1rem !important;
-    margin-bottom: 6px !important;
-  }
-  #batteryModal .text-xs {
-    font-size: 1.3rem !important;
-  }
-  #batteryModal .battery-3d-body {
-    height: 44px !important;
-  }
-  #batteryModal .battery-3d-cap {
-    height: 24px !important;
-    width: 11px !important;
-  }
-  #batteryModal .battery-3d-text {
-    font-size: 18px !important;
-  }
-  #batteryModal #modalCells {
-    gap: 14px !important;
-  }
-  #batteryModal #modalCells > div {
-    padding: 14px 10px !important;
-  }
+  #batteryModal .text-\[11px\] { font-size: 1.1rem !important; margin-bottom: 6px !important; }
+  #batteryModal .text-xs { font-size: 1.45rem !important; }
+  #batteryModal .battery-3d-body { height: 48px !important; }
+  #batteryModal .battery-3d-cap { height: 26px !important; width: 12px !important; }
+  #batteryModal .battery-3d-text { font-size: 20px !important; }
+  #batteryModal #modalCells { gap: 14px !important; }
+  #batteryModal #modalCells > div { padding: 14px 10px !important; }
 
-  /* 5. Pop-up Aliran Energi PLTS (Lebar 95% & Tinggi Disesuaikan Layar) */
+  /* 5. Pop-up Aliran Energi PLTS */
   #modalDiagramPlts > div {
     max-width: 95vw !important;
     width: 95vw !important;
     padding: 22px 28px !important;
   }
-  #modalDiagramPlts h3 {
-    font-size: 1.85rem !important;
-  }
-  #modalDiagramPlts #badgeStatusDiagram {
-    font-size: 0.95rem !important;
-    padding: 4px 12px !important;
-  }
+  #modalDiagramPlts h3 { font-size: 2rem !important; }
+  #modalDiagramPlts #badgeStatusDiagram { font-size: 1.05rem !important; padding: 5px 14px !important; }
   #modalDiagramPlts p,
-  #modalDiagramPlts .text-xs {
-    font-size: 1.15rem !important;
-  }
+  #modalDiagramPlts .text-xs { font-size: 1.25rem !important; }
+  #modalDiagramPlts button { font-size: 2rem !important; }
   #modalDiagramPlts img[src="diagram-plts-3d.jpg"] {
-    max-height: 76vh !important;
+    max-height: 75vh !important;
     width: 100% !important;
     object-fit: contain !important;
   }
 
-  /* 6. Background, Modul Info, Server & Setting BMS (Lebar 75% & Tinggi Lega) */
+  /* 6. Pop-up Background, Modul Info, Server & Setting BMS */
   #bgCustomModal > div,
   #modulInfoModal > div,
   #serverStatusModal > div,
   #bmsSettingModal > div {
     max-width: 75vw !important;
     width: 75vw !important;
-    padding: 34px 38px !important;
+    padding: 36px 40px !important;
   }
-
-  /* Judul Header Pop-up 1 s/d 3 */
   #bgCustomModal > div > div:first-child span:first-child,
   #modulInfoModal > div > div:first-child span:first-child,
   #serverStatusModal > div > div:first-child span:first-child {
-    font-size: 1.75rem !important;
+    font-size: 1.95rem !important;
   }
-
-  /* Baris Isi & Jarak Atas-Bawah Pop-up 1 s/d 3 */
-  #modulInfoModal > div > div:nth-child(2) {
-    gap: 16px !important;
-    margin-bottom: 24px !important;
-  }
+  #modulInfoModal > div > div:nth-child(2) { gap: 16px !important; margin-bottom: 24px !important; }
   #modulInfoModal > div > div:nth-child(2) > div,
   #serverStatusModal #srv-list-box > div {
-    padding: 16px 20px !important;
-    font-size: 1.25rem !important;
+    padding: 18px 22px !important;
+    font-size: 1.4rem !important;
   }
-  #serverStatusModal #srv-list-box {
-    gap: 14px !important;
-    margin-bottom: 20px !important;
-  }
+  #serverStatusModal #srv-list-box { gap: 14px !important; margin-bottom: 22px !important; }
   #bgCustomModal span, #bgCustomModal button,
   #modulInfoModal span, #modulInfoModal strong, #modulInfoModal button,
   #serverStatusModal span, #serverStatusModal div, #serverStatusModal input, #serverStatusModal button {
-    font-size: 1.25rem !important;
+    font-size: 1.35rem !important;
   }
   #bgCustomModal button,
   #modulInfoModal button,
   #serverStatusModal button {
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
   }
 
-  /* Pengaturan BMS Online */
-  #bmsSettingModal h2 {
-    font-size: 1.85rem !important;
-  }
+  /* Pengaturan BMS Online (Gambar No. 8 s/d 10) */
+  #bmsSettingModal h2 { font-size: 2rem !important; }
   #bmsSettingModal p,
   #bmsSettingModal label,
   #bmsSettingModal input,
@@ -206,14 +195,14 @@
   #bmsSettingModal button,
   #bmsSettingModal .text-xs,
   #bmsSettingModal .text-sm {
-    font-size: 1.2rem !important;
+    font-size: 1.3rem !important;
   }
   #bmsSettingModal input,
   #bmsSettingModal select {
-    padding: 12px 14px !important;
+    padding: 14px 16px !important;
   }
   #bmsSettingModal .space-y-4 > div {
-    padding: 22px !important;
+    padding: 24px !important;
   }
 }
     
