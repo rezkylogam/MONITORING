@@ -3,7 +3,7 @@
 <head>
   <link rel="manifest" href="MANIFEST-BMS.json">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no">
   <title>BMS HUAWEI MONITORING</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -35,6 +35,18 @@
     color: var(--dark);
     transition: background-color 0.3s, color 0.3s;
 }
+
+    html, body {
+    min-width: 760px !important;
+    width: 760px !important;
+    margin: 0 auto !important;
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+
     
     body[data-theme="dark"] {
     --card-bg: rgba(17, 24, 39, 0.45);     /* Kotak Ringkasan dibuat transparan 45% */
@@ -828,7 +840,7 @@
       </div>
     </div>
 
-    <div id="batteryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 hidden"></div>
+   <div id="batteryGrid" class="grid grid-cols-2 gap-5 hidden"></div>
 
     <!-- Wadah Tampilan Table -->
     <div id="batteryTableContainer" class="hidden overflow-x-auto rounded-xl border border-gray-700/60 bg-gray-900/60 shadow-sm mb-6">
@@ -2894,6 +2906,16 @@ function updateModal() {
     initFourServerConnection(idAktif);
     loadSavedLoggerBackground();
   });
+</script>
+
+<script>
+  document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) { event.preventDefault(); }
+    lastTouchEnd = now;
+  }, false);
 </script>
   
 </body></html>
