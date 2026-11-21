@@ -34,16 +34,18 @@
       --icon-current: #3b82f6;
     }
     
-    body {
+    /* Pisahkan layer video latar ke GPU tersendiri */
+  #dynamic-bg-layer, #custom-bg-vid, body > video {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  body {
     font-family: 'Inter', sans-serif;
     background-color: transparent;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     color: var(--dark);
-    transition: background-color 0.3s, color 0.3s;
-}
+  }
 
   html.is-iphone, html.is-iphone body {
     min-width: 760px !important;
@@ -359,6 +361,7 @@
     backdrop-filter: blur(4px);          /* Pelindung angka agar tidak silau */
     -webkit-backdrop-filter: blur(4px);  /* Dukungan browser Safari/Apple */
     transform: translateZ(0);            /* Kunci di GPU HP agar tidak lag */
+    contain: layout style;
    }
 
 
@@ -474,6 +477,7 @@
       backdrop-filter: blur(4px);          /* Pelindung angka ringkasan agar tidak silau */
       -webkit-backdrop-filter: blur(4px);  /* Dukungan browser Safari/Apple */
       transform: translateZ(0);            /* Kunci di GPU HP agar tidak lag */
+      contain: layout style;
     }
 
     
@@ -2810,20 +2814,17 @@ function updateModal() {
     });
   }
 
-  // Perbarui isi tabel otomatis setiap 1 detik saat mode Table aktif
   setInterval(() => {
-    if (currentViewMode === 'table') {
-      const cardContainer = document.getElementById('batteryGrid');
-      if (cardContainer) cardContainer.classList.add('hidden');
+    if (currentViewMode === 'table' && typeof batteries !== 'undefined' && batteries.length > 0) {
       renderBatteryTable();
     }
-  }, 1000);
+  }, 1500);
 
   // Jalankan mode awal
   setBatteryViewMode(currentViewMode);
 </script>
 
-<!-- 1. MODAL MODUL INFO (EKSTRA BESAR) -->
+<!-- 1. MODAL MODUL INFO -->
 <div id="modulInfoModal" onclick="if(event.target===this) this.style.display='none'" 
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
   <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
