@@ -3207,38 +3207,52 @@ function updateModal() {
 
 <style>
 @media (min-width: 1024px) {
-  /* 1. Perlebar Pop-up Diagram PLTS agar Seukuran Penuh Seperti Gambar No. 2 */
-  #modalDiagramPlts > div {
-    max-width: 97vw !important;
-    width: 97vw !important;
-    padding: 18px 26px !important;
+  /* 1. Perlebar Pop-up & Perbesar Header Seperti Gambar No. 2 */
+  #modalDiagramPlts {
+    padding: 0.75rem !important;
   }
-  #modalDiagramPlts h3 { font-size: 2.3rem !important; }
+  #modalDiagramPlts > div {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    padding: 18px 28px !important;
+  }
+  #modalDiagramPlts h3 {
+    font-size: 2.35rem !important;
+    line-height: 2.75rem !important;
+  }
   #modalDiagramPlts #badgeStatusDiagram {
     font-size: 1.15rem !important;
     padding: 6px 16px !important;
   }
-  #modalDiagramPlts > div > div:first-child p,
-  #modalDiagramPlts > div > div:first-child .text-xs {
+  #modalDiagramPlts #subjudulDiagram {
+    font-size: 1.45rem !important;
+    line-height: 2rem !important;
+    margin-top: 4px !important;
+  }
+  #modalDiagramPlts .font-mono,
+  #modalDiagramPlts #network_ip,
+  #modalDiagramPlts #network_signal {
     font-size: 1.35rem !important;
-    line-height: 1.85rem !important;
+    margin-top: 6px !important;
   }
   #modalDiagramPlts > div > div:first-child button {
-    font-size: 2.5rem !important;
+    font-size: 2.6rem !important;
   }
 
   /* 2. Perbesar Ikon Matahari & 3 Panah Sinar */
   #modalDiagramPlts .ikon-matahari-plts {
-    width: 21% !important;
+    width: 20.5% !important;
     left: 22.8% !important;
     top: 17.5% !important;
   }
 
   /* 3. Perbesar Semua Bulatan DC & AC di Jalur Pipa (Sama Persis Gambar No. 2) */
   #modalDiagramPlts .bulatan-aliran {
-    width: 58px !important;
-    height: 58px !important;
-    font-size: 21px !important;
+    width: 3.4vw !important;
+    height: 3.4vw !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.25vw !important;
     font-weight: 900 !important;
     border-width: 3px !important;
   }
@@ -3247,7 +3261,7 @@ function updateModal() {
   #modalDiagramPlts .display-tegangan-baterai,
   #modalDiagramPlts .display-arus-baterai,
   #modalDiagramPlts .display-daya-baterai {
-    font-size: 1.45rem !important;
+    font-size: 1.28vw !important;
     font-weight: 800 !important;
     border-width: 2px !important;
     border-radius: 7px !important;
@@ -3255,19 +3269,19 @@ function updateModal() {
 
   /* 5. Perbesar Angka di Dalam Layar TV Kanan (49.70 V / -14.31 A) */
   #modalDiagramPlts .display-info-dc {
-    font-size: 2.35rem !important;
+    font-size: 2.1vw !important;
     line-height: 1.25 !important;
     border-width: 2px !important;
     border-radius: 6px !important;
   }
 
-  /* 6. Perbesar & Posisikan Kotak Daya Besar di Bawah TV (-711.17 W) Presisi Seperti Gambar No. 2 */
+  /* 6. Perbesar & Posisikan Kotak Daya Besar di Bawah TV (-711.17 W) Pas di Meja TV */
   #modalDiagramPlts .display-daya-tv {
-    left: 87.3% !important;
+    left: 88.2% !important;
     top: 79.8% !important;
-    width: 15.2% !important;
-    height: 10.6% !important;
-    font-size: 2.75rem !important;
+    width: 19.6% !important;
+    height: 11.2% !important;
+    font-size: 2.45vw !important;
     font-weight: 800 !important;
     border-width: 2.5px !important;
     border-radius: 8px !important;
