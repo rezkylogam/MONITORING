@@ -54,7 +54,50 @@
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
 }
+    
+/* Perbesar Teks, Angka & Ikon Kartu Khusus Layar Laptop / PC */
+@media (min-width: 1024px) {
+  /* 1. Judul Unit (HUAWEI B1 2025 #214) */
+  #batteryGrid .battery-card h3 {
+    font-size: 1.35rem !important;
+    line-height: 1.75rem !important;
+  }
+  #batteryGrid .battery-card h3 span {
+    font-size: 1.15rem !important;
+  }
 
+  /* 2. Teks SOC & Status (Charging / Discharging) */
+  #batteryGrid .battery-card .mb-4 span {
+    font-size: 1.05rem !important;
+  }
+  #batteryGrid .mini-batt-body {
+    height: 18px !important;
+  }
+  #batteryGrid .mini-batt-cap {
+    height: 10px !important;
+    width: 5px !important;
+  }
+
+  /* 3. Label (Tegangan, Arus, Selisih Sel, Daya, Min/Max Cell) & Angkanya */
+  #batteryGrid .battery-card .grid .text-gray-500 {
+    font-size: 0.95rem !important;
+  }
+  #batteryGrid .battery-card .grid .font-semibold {
+    font-size: 1.2rem !important;
+  }
+
+  /* 4. Ukuran Ikon 3D di Dalam Kartu */
+  #batteryGrid .battery-card svg {
+    width: 1.65rem !important;
+    height: 1.65rem !important;
+    margin-right: 0.75rem !important;
+  }
+
+  /* 5. Bagian Bawah Kartu (Suhu & Siklus / Cycles) */
+  #batteryGrid .battery-card .border-t span {
+    font-size: 1rem !important;
+  }
+}
     
     body[data-theme="dark"] {
     --card-bg: rgba(17, 24, 39, 0.45);     /* Kotak Ringkasan dibuat transparan 45% */
