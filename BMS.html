@@ -1677,7 +1677,7 @@
   let currentLoggerId = null;
   let currentTypeBattery = null;
 
-  function updateConnectionCount() {
+    function updateConnectionCount() {
     document.getElementById('total-batteries').textContent = batteries.length.toString();
     const tableContainer = document.getElementById('batteryTableContainer');
     
@@ -2717,7 +2717,7 @@ function updateModal() {
 <script>
   let currentViewMode = localStorage.getItem('bms_view_mode') || 'card';
 
-  function setBatteryViewMode(mode) {
+    function setBatteryViewMode(mode) {
     currentViewMode = mode;
     localStorage.setItem('bms_view_mode', mode);
 
@@ -3324,6 +3324,27 @@ function updateModal() {
     const statusEl = document.getElementById("bg-status-msg");
     statusEl.style.color = "#38bdf8";
     statusEl.innerText = "🔄 Dikembalikan ke background asli.";
+  }
+  
+  async function updateBgDimmer(val) {
+    const dimVal = document.getElementById("bg-dim-val");
+    if (dimVal) dimVal.innerText = val + "%";
+    const ovlEl = document.getElementById("custom-bg-overlay");
+    if (ovlEl && ovlEl.style.display !== "none") {
+      ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
+    }
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    try {
+      const db = await openBgDatabase();
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      const store = tx.objectStore(BG_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => {
+        if (req.result && req.result.blob) {
+          store.put({ blob: req.result.blob, mime: req.result.mime, dim: val }, key);
+        }
+      };
+    } catch (e) {}
   }
 
   async function loadSavedLoggerBackground() {
