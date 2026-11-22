@@ -275,30 +275,38 @@
     border-radius: 8px !important;
   }
 
-    /* 5F. Sejajarkan & Perbesar Angka "Hasil Pendapatan Hari Ini" (Khusus Laptop / PC) */
+      /* 5F. Perbesar Teks & Angka "Hasil Pendapatan Hari Ini" (Khusus Laptop / PC) */
   #modalDiagramPlts > div > div:first-child {
-    align-items: stretch !important; /* Menyamakan tinggi kolom kiri & kanan */
+    align-items: stretch !important;
   }
   #modalDiagramPlts > div > div:first-child > div:last-child {
     display: flex !important;
     align-items: stretch !important;
-    gap: 14px !important;
+    gap: 16px !important;
   }
   #modalDiagramPlts > div > div:first-child > div:last-child > div {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
-    padding: 8px 20px !important;
+    padding: 10px 24px !important;
   }
-  #modalDiagramPlts > div > div:first-child > div:last-child > div > :first-child {
-    font-size: 1.35rem !important; /* Disamakan dengan teks "Baterai menyuplai daya ke inverter" */
+  /* Target teks "Hasil Pendapatan Hari Ini" */
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:first-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > span:first-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > p:first-child {
+    font-size: 1.35rem !important;
     line-height: 1.65rem !important;
+    font-weight: 600 !important;
   }
-  #modalDiagramPlts > div > div:first-child > div:last-child > div > :last-child,
-  #modalDiagramPlts > div > div:first-child > div:last-child > div > :last-child * {
-    font-size: 2.35rem !important; /* Ukuran angka "0,000 kWh" */
+  /* Target angka "0,005 kWh" dan satuan kWh di dalamnya */
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:last-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:last-child span,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > span:last-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > p:last-child {
+    font-size: 2.35rem !important;
     line-height: 2.6rem !important;
-    margin-top: 2px !important;
+    font-weight: 800 !important;
+    margin-top: 4px !important;
   }
 
   /* 6. Gambar No. 3, 4, 5: Pop-up Background, Modul Info & Status Server */
