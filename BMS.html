@@ -1679,15 +1679,25 @@
 
   function updateConnectionCount() {
     document.getElementById('total-batteries').textContent = batteries.length.toString();
+    const tableContainer = document.getElementById('batteryTableContainer');
     
     if (batteries.length === 0) {
       grid.classList.add('hidden');
+      if (tableContainer) tableContainer.classList.add('hidden');
       emptyState.classList.remove('hidden');
       summarySection.classList.add('hidden');
     } else {
-      grid.classList.remove('hidden');
       emptyState.classList.add('hidden');
       summarySection.classList.remove('hidden');
+
+      if (typeof currentViewMode !== 'undefined' && currentViewMode === 'table') {
+        grid.classList.add('hidden');
+        if (tableContainer) tableContainer.classList.remove('hidden');
+        if (typeof renderBatteryTable === 'function') renderBatteryTable();
+      } else {
+        grid.classList.remove('hidden');
+        if (tableContainer) tableContainer.classList.add('hidden');
+      }
     }
   }
   
@@ -2718,7 +2728,9 @@ function updateModal() {
 
     if (mode === 'table') {
       if (cardContainer) cardContainer.classList.add('hidden');
-      if (tableContainer) tableContainer.classList.remove('hidden');
+      if (tableContainer && typeof batteries !== 'undefined' && batteries.length > 0) {
+        tableContainer.classList.remove('hidden');
+      }
 
       btnTable.classList.add('bg-gray-700', 'text-white', 'shadow');
       btnTable.classList.remove('text-gray-400');
@@ -2728,7 +2740,7 @@ function updateModal() {
       renderBatteryTable();
     } else {
       if (tableContainer) tableContainer.classList.add('hidden');
-      if (cardContainer && typeof batteries !== 'undefined' && Object.keys(batteries).length > 0) {
+      if (cardContainer && typeof batteries !== 'undefined' && batteries.length > 0) {
         cardContainer.classList.remove('hidden');
       }
 
