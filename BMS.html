@@ -2543,11 +2543,15 @@ function updateModal() {
         </div>
       </div>
 
-      <div class="flex items-stretch gap-3 shrink-0">
-       <div class="bg-slate-800/95 border border-emerald-500/50 rounded-lg px-4 py-1.5 flex flex-col justify-center text-right shadow-md shrink-0">
-        <div class="text-xs font-mono font-semibold text-white tracking-tight">Hasil Pendapatan Hari Ini</div>
-         <div id="produksiChargeKwh" style="font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15;" class="font-extrabold text-emerald-400 font-mono tracking-tight mt-0.5">0,000 kWh</div>
-        </div>
+      <style>
+    @media (min-width: 768px) {
+      #labelPendapatanPlts { font-size: 16px !important; }
+      #produksiChargeKwh { font-size: 38px !important; }
+    }
+      </style>
+      <div class="bg-slate-800/95 border border-emerald-500/50 rounded-lg px-5 py-2 flex flex-col justify-center text-right shadow-md shrink-0">
+        <div id="labelPendapatanPlts" class="text-xs font-mono font-semibold text-white tracking-tight">Hasil Pendapatan Hari Ini</div>
+        <div id="produksiChargeKwh" style="font-size: 20px; line-height: 1.15;" class="font-extrabold text-emerald-400 font-mono tracking-tight mt-0.5">0,000 kWh</div>
       </div>
     </div>
 
