@@ -465,20 +465,45 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Indikator LED 3D Glossy pada Setiap Kartu Baterai */
     .led {
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       margin-left: 6px;
-      background: #ccc;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      position: relative;
+      background: radial-gradient(circle at 35% 30%, #64748b 0%, #334155 55%, #0f172a 100%);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 
+        inset 0 2px 3px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.8),
+        0 2px 4px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
     }
-    
+
+    .led::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      width: 4.5px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.65);
+      transform: rotate(-25deg);
+      pointer-events: none;
+    }
+
     .led.active {
-      background: #990000;
-      box-shadow: 0 0 8px #990000;
+      background: radial-gradient(circle at 35% 30%, #fecaca 0%, #ef4444 45%, #b91c1c 80%, #7f1d1d 100%);
+      border-color: #fca5a5;
+      transform: scale(1.15);
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.9),
+        0 0 6px #ef4444,
+        0 0 14px rgba(239, 68, 68, 0.9),
+        0 0 24px rgba(220, 38, 38, 0.65);
     }
     
     #id_monitoring_footer {
