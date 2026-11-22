@@ -2526,8 +2526,8 @@ function updateModal() {
 <div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
   <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
     
-            <!-- Header Pop-up -->
-    <div class="flex justify-between items-start mb-3">
+    <!-- Header Pop-up -->
+    <div class="flex justify-between items-stretch gap-3 mb-3">
       <div>
         <h3 class="text-white text-base sm:text-xl font-bold flex items-center gap-2">
           ⚡ Aliran Energi Sistem PLTS
@@ -2535,19 +2535,20 @@ function updateModal() {
         </h3>
         <p id="subjudulDiagram" class="text-slate-400 text-xs sm:text-sm">Mendeteksi status arus baterai secara otomatis...</p>
         
-        <!-- Info IP & Signal dipindahkan ke sini -->
+        <!-- Info IP & Signal -->
         <div class="flex flex-wrap gap-3 mt-1.5 text-xs text-sky-300 font-mono">
           <span id="network_ip">IP Address: -</span>
           <span>|</span>
           <span id="network_signal">Signal: -</span>
         </div>
       </div>
-      <div class="flex items-center gap-3 shrink-0">
-        <div class="bg-slate-800/95 border border-emerald-500/50 rounded-lg px-3 py-1.5 text-right shadow-md">
+
+      <div class="flex items-stretch gap-3 shrink-0">
+        <div class="bg-slate-800/95 border border-emerald-500/50 rounded-lg px-3.5 py-1.5 flex flex-col justify-center text-right shadow-md">
           <div class="text-xs font-mono font-semibold text-white tracking-tight">Hasil Pendapatan Hari Ini</div>
-          <div id="produksiChargeKwh" style="font-size: clamp(18px, 2.2vw, 26px); line-height: 1.2;" class="font-extrabold text-emerald-400 font-mono tracking-tight mt-0.5">0,000 kWh</div>
+          <div id="produksiChargeKwh" style="font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15;" class="font-extrabold text-emerald-400 font-mono tracking-tight mt-0.5">0,000 kWh</div>
         </div>
-        <button onclick="tutupModalDiagram()" class="text-gray-400 hover:text-white text-2xl font-bold px-2 leading-none">✕</button>
+        <button onclick="tutupModalDiagram()" class="self-start text-gray-400 hover:text-white text-2xl font-bold px-2 leading-none">✕</button>
       </div>
     </div>
 
