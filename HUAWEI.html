@@ -3,7 +3,16 @@
 <head>
   <link rel="manifest" href="MANIFEST-BMS.json">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if (/iPhone|iPod/i.test(navigator.userAgent)) {
+      document.documentElement.classList.add('is-iphone');
+      document.getElementById('viewportMeta').setAttribute(
+        'content',
+        'width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no'
+      );
+    }
+  </script>
   <title>BMS HUAWEI MONITORING</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -25,15 +34,341 @@
       --icon-current: #3b82f6;
     }
     
-    body {
+    /* Pisahkan layer video latar ke GPU tersendiri */
+  #dynamic-bg-layer, #custom-bg-vid, body > video {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  body {
     font-family: 'Inter', sans-serif;
     background-color: transparent;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     color: var(--dark);
-    transition: background-color 0.3s, color 0.3s;
+  }
+
+  html.is-iphone, html.is-iphone body {
+    min-width: 760px !important;
+    width: 760px !important;
+    margin: 0 auto !important;
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+    
+/* =====================================================================
+   TAMPILAN EXTRA BESAR, TEGAS & IKON KIRI KHUSUS LAPTOP / PC
+   ===================================================================== */
+    
+/* Susunan Khusus HP Android & iPhone (Ukuran Teks Tetap) */
+@media (max-width: 1023px) {
+  #summarySection .summary-card > .grid > div {
+    display: grid !important;
+    grid-template-columns: auto auto !important;
+    grid-template-rows: auto auto !important;
+    justify-content: center !important;
+    align-content: center !important;
+    column-gap: 0.5rem !important;
+    row-gap: 0.1rem !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 0.65rem 0.5rem !important;
+  }
+  #summarySection .summary-card > .grid > div > svg {
+    grid-row: 1 / span 2 !important;
+    grid-column: 1 !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    margin: 0 !important;
+  }
+  #summarySection .summary-card > .grid > div > .text-xs {
+    grid-row: 1 !important;
+    grid-column: 2 !important;
+    margin: 0 !important;
+    align-self: end !important;
+  }
+  #summarySection .summary-card > .grid > div > .font-semibold {
+    grid-row: 2 !important;
+    grid-column: 2 !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+    /* Perbesar Semua Ikon di Dalam Kartu Baterai */
+  #batteryGrid .battery-card svg {
+    width: 1.9rem !important;
+    height: 1.9rem !important;
+    margin-right: 0.45rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+    
+/* Susunan Khusus LAPTOP / PC */
+@media (min-width: 1024px) {
+  /* 0. Header, Judul Utama & Footer */
+  header h1 { font-size: 1.95rem !important; }
+  header img[alt="Huawei"] { width: 2.6rem !important; height: 2.6rem !important; }
+  #settingsBtn svg { width: 3.2rem !important; height: 3.2rem !important; }
+  #dropdownMenu { width: 17rem !important; }
+  #dropdownMenu a { font-size: 1.25rem !important; padding: 0.8rem 1.2rem !important; }
+  main h2 { font-size: 1.75rem !important; }
+  #total-batteries, #realtime-clock, main .text-lg { font-size: 1.4rem !important; }
+  footer .text-xl { font-size: 1.4rem !important; }
+
+  /* 1. RINGKASAN SISTEM TOTAL: Ikon di Samping Kiri + Semua Teks/Angka/Ikon Diperbesar */
+  #summarySection h3 { font-size: 1.65rem !important; margin-bottom: 1rem !important; }
+  #summarySection .summary-card { padding: 1.5rem !important; }
+  #summarySection .summary-card > .grid { gap: 1.25rem !important; }
+
+  /* Ubah susunan tiap kotak ringkasan menjadi: Ikon di Kiri, Label & Angka di Kanan */
+  #summarySection .summary-card > .grid > div {
+    display: grid !important;
+    grid-template-columns: auto auto !important;
+    grid-template-rows: auto auto !important;
+    justify-content: center !important;
+    align-content: center !important;
+    column-gap: 1.25rem !important;
+    row-gap: 0.2rem !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 1.25rem 1.5rem !important;
+  }
+  #summarySection .summary-card > .grid > div > svg {
+    grid-row: 1 / span 2 !important;
+    grid-column: 1 !important;
+    width: 4.2rem !important;
+    height: 4.2rem !important;
+    margin: 0 !important;
+  }
+  #summarySection .summary-card > .grid > div > .text-xs {
+    grid-row: 1 !important;
+    grid-column: 2 !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 0.05em !important;
+    margin: 0 !important;
+    align-self: end !important;
+  }
+  #summarySection .summary-card > .grid > div > .font-semibold {
+    grid-row: 2 !important;
+    grid-column: 2 !important;
+    font-size: 2.35rem !important;
+    line-height: 2.6rem !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+
+  /* 2. DAFTAR UNIT BATERAI (Mode Card): Perbesar Semua Ikon, Teks & Angka */
+  main h3.text-lg { font-size: 1.65rem !important; }
+  main h3 span { font-size: 1.25rem !important; }
+  #btnViewTable, #btnViewCard { font-size: 1.15rem !important; padding: 0.55rem 1.15rem !important; }
+
+  #batteryGrid { gap: 1.5rem !important; }
+  #batteryGrid .battery-card { padding: 1.65rem !important; }
+  #batteryGrid .battery-card h3 { font-size: 1.75rem !important; line-height: 2.15rem !important; }
+  #batteryGrid .battery-card h3 span { font-size: 1.45rem !important; }
+  #batteryGrid .led { width: 17px !important; height: 17px !important; }
+  #batteryGrid .battery-card .mb-4 span { font-size: 1.35rem !important; }
+  #batteryGrid .mini-batt-body { height: 24px !important; }
+  #batteryGrid .mini-batt-cap { height: 14px !important; width: 7px !important; }
+  #batteryGrid .battery-card .grid .space-y-2 { display: flex !important; flex-direction: column !important; gap: 0.85rem !important; }
+  #batteryGrid .battery-card .grid .text-gray-500 { font-size: 1.15rem !important; }
+  #batteryGrid .battery-card .grid .font-semibold { font-size: 1.6rem !important; line-height: 1.95rem !important; }
+  #batteryGrid .battery-card svg {
+    width: 2.45rem !important;
+    height: 2.45rem !important;
+    margin-right: 1rem !important;
+  }
+  #batteryGrid .battery-card .border-t { padding-top: 1rem !important; margin-top: 1.25rem !important; }
+  #batteryGrid .battery-card .border-t span { font-size: 1.25rem !important; }
+
+  /* 3. Mode Tampilan Table */
+  #batteryTableContainer th { font-size: 1.2rem !important; padding: 1.2rem 1rem !important; }
+  #batteryTableContainer td { font-size: 1.45rem !important; padding: 1.25rem 1rem !important; }
+  #batteryTableContainer td .font-bold { font-size: 1.5rem !important; }
+  #batteryTableContainer td .text-\[11px\] { font-size: 1.05rem !important; }
+  #batteryTableContainer td .w-16 { width: 6rem !important; height: 2.4rem !important; }
+
+  /* 4. Gambar No. 2: Pop-up Detail 15 Sel (Perbesar Semua Teks, Angka & Bar) */
+  #batteryModal > div {
+    max-width: 82vw !important;
+    width: 82vw !important;
+    max-height: 94vh !important;
+  }
+  #batteryModal > div > div:first-child { padding: 20px 30px !important; }
+  #batteryModal h2 { font-size: 2.15rem !important; }
+  #batteryModal #led-modal { width: 18px !important; height: 18px !important; }
+  #batteryModal #closeModal { font-size: 2.1rem !important; }
+  #batteryModal > div > div:nth-child(2) {
+    padding: 24px 30px !important;
+    gap: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  #batteryModal .text-\[10px\],
+  #batteryModal .text-\[11px\] { font-size: 1.2rem !important; margin-bottom: 6px !important; }
+  #batteryModal .text-xs { font-size: 1.6rem !important; line-height: 1.95rem !important; }
+  #batteryModal .battery-3d-body { height: 52px !important; }
+  #batteryModal .battery-3d-cap { height: 28px !important; width: 13px !important; }
+  #batteryModal .battery-3d-text { font-size: 22px !important; }
+  #batteryModal #modalCells { gap: 14px !important; }
+  #batteryModal #modalCells > div { padding: 14px 10px !important; }
+
+  /* 5. Pop-up Aliran Energi PLTS */
+  #modalDiagramPlts > div {
+    max-width: 96vw !important;
+    width: 96vw !important;
+    padding: 20px 28px !important;
+  }
+  #modalDiagramPlts h3 { font-size: 2.2rem !important; }
+  #modalDiagramPlts #badgeStatusDiagram {
+    font-size: 1.15rem !important;
+    padding: 6px 16px !important;
+  }
+  #modalDiagramPlts > div > div:first-child p,
+  #modalDiagramPlts > div > div:first-child .text-xs {
+    font-size: 1.35rem !important;
+    line-height: 1.85rem !important;
+  }
+  #modalDiagramPlts > div > div:first-child button {
+    font-size: 2.4rem !important;
+  }
+
+  /* 5A. Perbesar Ikon Matahari & 3 Panah Sinar (.ikon-matahari-plts) */
+  #modalDiagramPlts .ikon-matahari-plts {
+    width: 19.5% !important;
+    left: 22.5% !important;
+    top: 17.5% !important;
+  }
+
+  /* 5B. Perbesar Semua Bulatan DC & AC di Pipa Solar, Baterai & Rumah (.bulatan-aliran) */
+  #modalDiagramPlts .bulatan-aliran {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 19px !important;
+    border-width: 3px !important;
+  }
+
+  /* 5C. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
+  #modalDiagramPlts .display-tegangan-baterai,
+  #modalDiagramPlts .display-arus-baterai,
+  #modalDiagramPlts .display-daya-baterai {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    border-radius: 7px !important;
+  }
+
+  /* 5D. Perbesar Angka di Dalam Layar TV Kanan (.display-info-dc) */
+  #modalDiagramPlts .display-info-dc {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+  }
+
+  /* 5E. Perbesar Kotak Daya Besar di Bawah TV (.display-daya-tv) */
+  #modalDiagramPlts .display-daya-tv {
+    width: 12.2% !important;
+    height: 9.2% !important;
+    left: 91.8% !important;
+    top: 79.8% !important;
+    font-size: 2.35rem !important;
+    border-width: 2px !important;
+    border-radius: 8px !important;
+  }
+
+      /* 5F. Perbesar Teks & Angka "Hasil Pendapatan Hari Ini" (Khusus Laptop / PC) */
+  #modalDiagramPlts > div > div:first-child {
+    align-items: stretch !important;
+  }
+  #modalDiagramPlts > div > div:first-child > div:last-child {
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+  #modalDiagramPlts > div > div:first-child > div:last-child > div {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    padding: 10px 24px !important;
+  }
+  /* Target teks "Hasil Pendapatan Hari Ini" */
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:first-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > span:first-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > p:first-child {
+    font-size: 1.5rem !important;
+    line-height: 1.65rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    white-space: nowrap !important;
+  }
+  /* Target angka "0,005 kWh" dan satuan kWh di dalamnya */
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:last-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:last-child span,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > span:last-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > p:last-child {
+    font-size: 3.0rem !important;
+    line-height: 2.6rem !important;
+    font-weight: 800 !important;
+    margin-top: 4px !important;
+  }
+
+  /* 6. Gambar No. 3, 4, 5: Pop-up Background, Modul Info & Status Server */
+  #bgCustomModal > div,
+  #modulInfoModal > div,
+  #serverStatusModal > div,
+  #bmsSettingModal > div {
+    max-width: 78vw !important;
+    width: 46vw !important;
+    padding: 36px 42px !important;
+  }
+  #bgCustomModal > div > div:first-child span:first-child,
+  #modulInfoModal > div > div:first-child span:first-child,
+  #serverStatusModal > div > div:first-child span:first-child {
+    font-size: 2.15rem !important;
+  }
+  #bgCustomModal > div > div:first-child span:last-child,
+  #modulInfoModal > div > div:first-child span:last-child,
+  #serverStatusModal > div > div:first-child span:last-child {
+    font-size: 2.3rem !important;
+  }
+  #modulInfoModal > div > div:nth-child(2) { gap: 18px !important; margin-bottom: 26px !important; }
+  #modulInfoModal > div > div:nth-child(2) > div,
+  #serverStatusModal #srv-list-box > div {
+    padding: 20px 24px !important;
+    font-size: 1.55rem !important;
+  }
+  #serverStatusModal #srv-list-box { gap: 14px !important; margin-bottom: 24px !important; }
+  #bgCustomModal span, #bgCustomModal button,
+  #modulInfoModal span, #modulInfoModal strong, #modulInfoModal button,
+  #serverStatusModal span, #serverStatusModal div, #serverStatusModal input, #serverStatusModal button {
+    font-size: 1.5rem !important;
+  }
+  #bgCustomModal input[type="range"] { height: 12px !important; }
+  #bgCustomModal button,
+  #modulInfoModal button,
+  #serverStatusModal button {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  /* 7. Gambar No. 6, 7, 8: Pengaturan BMS Online */
+  #bmsSettingModal h2 { font-size: 2.2rem !important; }
+  #closeBmsSetting { font-size: 2.1rem !important; }
+  #bmsSettingModal p,
+  #bmsSettingModal label,
+  #bmsSettingModal input,
+  #bmsSettingModal select,
+  #bmsSettingModal button,
+  #bmsSettingModal .text-xs,
+  #bmsSettingModal .text-sm {
+    font-size: 1.45rem !important;
+  }
+  #bmsSettingModal input,
+  #bmsSettingModal select {
+    padding: 15px 18px !important;
+  }
+  #bmsSettingModal .space-y-4 > div {
+    padding: 26px !important;
+  }
 }
     
     body[data-theme="dark"] {
@@ -47,14 +382,24 @@
     color: #f3f4f6;
 }
     
-    .battery-card {
+  /* Pisahkan layer video latar ke GPU tersendiri */
+  #dynamic-bg-layer, #custom-bg-vid, body > video {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+ }
+
+  .battery-card {
     background-color: var(--card-lapis);
     color: var(--card-text);
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-left: 5px solid var(--card-bg);
-    backdrop-filter: blur(8px);          /* Pelindung angka agar tidak silau */
-    -webkit-backdrop-filter: blur(8px);  /* Dukungan browser Safari/Apple */
-}
+    backdrop-filter: blur(4px);          /* Pelindung angka agar tidak silau */
+    -webkit-backdrop-filter: blur(4px);  /* Dukungan browser Safari/Apple */
+    transform: translateZ(0);            /* Kunci di GPU HP agar tidak lag */
+    contain: layout style;
+   }
+
 
     .battery-card h3 {
       color: var(--card-text);
@@ -120,20 +465,45 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Indikator LED 3D Glossy pada Setiap Kartu Baterai */
     .led {
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       margin-left: 6px;
-      background: #ccc;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      position: relative;
+      background: radial-gradient(circle at 35% 30%, #64748b 0%, #334155 55%, #0f172a 100%);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 
+        inset 0 2px 3px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.8),
+        0 2px 4px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
     }
-    
+
+    .led::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      width: 4.5px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.65);
+      transform: rotate(-25deg);
+      pointer-events: none;
+    }
+
     .led.active {
-      background: #990000;
-      box-shadow: 0 0 8px #990000;
+      background: radial-gradient(circle at 35% 30%, #fecaca 0%, #ef4444 45%, #b91c1c 80%, #7f1d1d 100%);
+      border-color: #fca5a5;
+      transform: scale(1.15);
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.9),
+        0 0 6px #ef4444,
+        0 0 14px rgba(239, 68, 68, 0.9),
+        0 0 24px rgba(220, 38, 38, 0.65);
     }
     
     #id_monitoring_footer {
@@ -163,11 +533,14 @@
     }
 
     .summary-card {
-    background-color: var(--card-bg);
-    color: var(--card-text);
-    backdrop-filter: blur(8px);          /* Pelindung angka ringkasan agar tidak silau */
-    -webkit-backdrop-filter: blur(8px);  /* Dukungan browser Safari/Apple */
+      background-color: var(--card-bg);
+      color: var(--card-text);
+      backdrop-filter: blur(4px);          /* Pelindung angka ringkasan agar tidak silau */
+      -webkit-backdrop-filter: blur(4px);  /* Dukungan browser Safari/Apple */
+      transform: translateZ(0);            /* Kunci di GPU HP agar tidak lag */
+      contain: layout style;
     }
+
     
     .sort-indicator {
       display: inline-flex;
@@ -394,7 +767,7 @@
 <div id="dynamic-bg-layer" style="position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;">
   <img id="custom-bg-img" alt="" style="display:none; width:100%; height:100%; object-fit:cover;" />
   <video id="custom-bg-vid" autoplay loop muted playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
-  <div id="custom-bg-overlay" style="display:none; position:absolute; inset:0; background:rgba(10, 14, 23, 0.60); backdrop-filter:blur(2px);"></div>
+  <div id="custom-bg-overlay" style="display:none; position:absolute; inset:0; background:rgba(10, 14, 23, 0.60);"></div>
 </div>
 
 <!-- Layar Selamat Datang (Splash Screen) untuk Mengaktifkan Suara -->
@@ -419,7 +792,7 @@
 
 <!-- Header -->
 <header id="mainHeader" class="bg-gradient-to-r text-white shadow-lg w-full relative">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
+  <div class="max-w-7xl lg:max-w-[96%] mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
     <div class="flex items-center">
       <div class="mr-3 flex items-center justify-center w-8 h-8">
         <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
@@ -644,7 +1017,7 @@
 
 <!-- Main content -->
 <main class="flex-1 p-4 sm:p-6 w-full">
-  <div class="max-w-7xl mx-auto">
+  <div class="max-w-7xl lg:max-w-[96%] mx-auto">
     <div class="mb-6 flex justify-between items-start">
       <h2 class="text-xl font-semibold text-white-900">BATERAI SISTEM 48V DC</h2>
       
@@ -828,7 +1201,7 @@
       </div>
     </div>
 
-    <div id="batteryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 hidden"></div>
+   <div id="batteryGrid" class="grid grid-cols-2 lg:grid-cols-3 gap-5 hidden"></div>
 
     <!-- Wadah Tampilan Table -->
     <div id="batteryTableContainer" class="hidden overflow-x-auto rounded-xl border border-gray-700/60 bg-gray-900/60 shadow-sm mb-6">
@@ -858,7 +1231,7 @@
 
 <!-- Footer -->
 <footer class="text-gray-300 py-4 w-full" style="background-color: #1f2937;">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
+  <div class="max-w-7xl lg:max-w-[96%] mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
     <div class="text-xl font-semibold">
       © 2026-2027 BMS MONITORING SISTEM
       <a href="https://wa.me/6285249402703" class="no-underline hover:text-white">
@@ -1365,17 +1738,27 @@
   let currentLoggerId = null;
   let currentTypeBattery = null;
 
-  function updateConnectionCount() {
+    function updateConnectionCount() {
     document.getElementById('total-batteries').textContent = batteries.length.toString();
+    const tableContainer = document.getElementById('batteryTableContainer');
     
     if (batteries.length === 0) {
       grid.classList.add('hidden');
+      if (tableContainer) tableContainer.classList.add('hidden');
       emptyState.classList.remove('hidden');
       summarySection.classList.add('hidden');
     } else {
-      grid.classList.remove('hidden');
       emptyState.classList.add('hidden');
       summarySection.classList.remove('hidden');
+
+      if (typeof currentViewMode !== 'undefined' && currentViewMode === 'table') {
+        grid.classList.add('hidden');
+        if (tableContainer) tableContainer.classList.remove('hidden');
+        if (typeof renderBatteryTable === 'function') renderBatteryTable();
+      } else {
+        grid.classList.remove('hidden');
+        if (tableContainer) tableContainer.classList.add('hidden');
+      }
     }
   }
   
@@ -2204,8 +2587,8 @@ function updateModal() {
 <div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
   <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
     
-            <!-- Header Pop-up -->
-    <div class="flex justify-between items-start mb-3">
+    <!-- Header Pop-up -->
+    <div class="flex justify-between items-stretch gap-3 mb-3">
       <div>
         <h3 class="text-white text-base sm:text-xl font-bold flex items-center gap-2">
           ⚡ Aliran Energi Sistem PLTS
@@ -2213,14 +2596,20 @@ function updateModal() {
         </h3>
         <p id="subjudulDiagram" class="text-slate-400 text-xs sm:text-sm">Mendeteksi status arus baterai secara otomatis...</p>
         
-        <!-- Info IP & Signal dipindahkan ke sini -->
+        <!-- Info IP & Signal -->
         <div class="flex flex-wrap gap-3 mt-1.5 text-xs text-sky-300 font-mono">
           <span id="network_ip">IP Address: -</span>
           <span>|</span>
           <span id="network_signal">Signal: -</span>
         </div>
       </div>
-      <button onclick="tutupModalDiagram()" class="text-gray-400 hover:text-white text-2xl font-bold px-2">✕</button>
+
+      <div class="flex items-stretch gap-3 shrink-0">
+       <div class="bg-slate-800/95 border border-emerald-500/50 rounded-lg px-4 py-1.5 flex flex-col justify-center text-right shadow-md shrink-0">
+        <div class="text-xs font-mono font-semibold text-white tracking-tight">Hasil Pendapatan Hari Ini</div>
+         <div id="produksiChargeKwh" style="font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15;" class="font-extrabold text-emerald-400 font-mono tracking-tight mt-0.5">0,000 kWh</div>
+        </div>
+      </div>
     </div>
 
     <!-- Kontainer Gambar & Bulatan Bergerak -->
@@ -2334,10 +2723,14 @@ function updateModal() {
       elDayaTv.textContent = dayaDcAsli;
     }
 
-    // 4. Deteksi status Charging, Standby, atau Discharging berdasarkan nilai arus DC
+    // 4. Deteksi status Charging, Full, Standby, atau Discharging
     const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
+    const elSocUtama     = document.getElementById('avg-soc');
+    const nilaiSocAngka  = parseFloat(elSocUtama ? elSocUtama.textContent : "0") || 0;
+
     const modeCharge     = nilaiArusAngka > 0.1;
     const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
+    const bateraiFull    = nilaiSocAngka >= 99.0; // Dianggap Full jika SOC >= 99%
 
     const elMatahari = document.getElementById('elemenMatahari');
     const elDcSolar  = document.getElementById('bulatanDcSolar');
@@ -2346,6 +2739,7 @@ function updateModal() {
     const elSub      = document.getElementById('subjudulDiagram');
 
     if (modeCharge) {
+      // Kondisi CHARGING: Matahari & DC Solar muncul, DC Baterai turun
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
       elDcBatt.classList.remove('anim-batt-naik');
@@ -2354,16 +2748,28 @@ function updateModal() {
       elBadge.textContent = "🟢 CHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
       elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
-    } else if (modeStandby) {
+    } else if (modeStandby && bateraiFull) {
+      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar tetap muncul menyuplai beban
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
       elDcBatt.classList.remove('anim-batt-naik');
       elDcBatt.classList.remove('anim-batt-turun');
 
+      elBadge.textContent = "🔵 FULL / STANDBY";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+      elSub.textContent = "Baterai penuh (Full).";
+    } else if (modeStandby) {
+      // Kondisi STANDBY Biasa (SOC < 99%, misalnya malam hari): Matahari & DC Solar disembunyikan
+      elMatahari.classList.add('hidden');
+      elDcSolar.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.remove('anim-batt-turun');
+
       elBadge.textContent = "🔵 STANDBY";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-      elSub.textContent = "Baterai penuh (Standby).";
+      elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
     } else {
+      // Kondisi DISCHARGING: Matahari & DC Solar sembunyi, DC Baterai naik
       elMatahari.classList.add('hidden');
       elDcSolar.classList.add('hidden');
       elDcBatt.classList.remove('anim-batt-turun');
@@ -2390,12 +2796,54 @@ function updateModal() {
       perbaruiAnimasiDiagram();
     }
   }, 2000);
+
+  let lastChargeCalcTime = Date.now();
+
+  function updateProduksiChargeKwh() {
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const savedDate = localStorage.getItem('plts_charge_date');
+    let totalKwh = parseFloat(localStorage.getItem('plts_charge_kwh')) || 0;
+
+    // Reset otomatis jika berganti hari (melewati jam 00:00)
+    if (savedDate !== todayKey) {
+      totalKwh = 0;
+      localStorage.setItem('plts_charge_date', todayKey);
+      localStorage.setItem('plts_charge_kwh', '0');
+    }
+
+    const currentTime = Date.now();
+    const deltaHours = (currentTime - lastChargeCalcTime) / 3600000;
+    lastChargeCalcTime = currentTime;
+
+    if (typeof batteries !== 'undefined' && batteries.length > 0 && deltaHours > 0 && deltaHours < 0.05) {
+      let totalCurrent = 0;
+      let totalPower = 0;
+      batteries.forEach(b => {
+        totalCurrent += parseFloat(b.current) || 0;
+        totalPower += parseFloat(b.power) || 0;
+      });
+
+      // Akumulasi energi hanya saat baterai dalam kondisi Charging (> 0.1 A)
+      if (totalCurrent > 0.1 && totalPower > 0) {
+        totalKwh += (totalPower / 1000) * deltaHours;
+        localStorage.setItem('plts_charge_kwh', totalKwh.toFixed(6));
+      }
+    }
+
+    const elKwh = document.getElementById('produksiChargeKwh');
+    if (elKwh) {
+      elKwh.textContent = totalKwh.toFixed(3).replace('.', ',') + ' kWh';
+    }
+  }
+
+  setInterval(updateProduksiChargeKwh, 1000);
 </script>
 
 <script>
   let currentViewMode = localStorage.getItem('bms_view_mode') || 'card';
 
-  function setBatteryViewMode(mode) {
+    function setBatteryViewMode(mode) {
     currentViewMode = mode;
     localStorage.setItem('bms_view_mode', mode);
 
@@ -2406,7 +2854,9 @@ function updateModal() {
 
     if (mode === 'table') {
       if (cardContainer) cardContainer.classList.add('hidden');
-      if (tableContainer) tableContainer.classList.remove('hidden');
+      if (tableContainer && typeof batteries !== 'undefined' && batteries.length > 0) {
+        tableContainer.classList.remove('hidden');
+      }
 
       btnTable.classList.add('bg-gray-700', 'text-white', 'shadow');
       btnTable.classList.remove('text-gray-400');
@@ -2416,7 +2866,7 @@ function updateModal() {
       renderBatteryTable();
     } else {
       if (tableContainer) tableContainer.classList.add('hidden');
-      if (cardContainer && typeof batteries !== 'undefined' && Object.keys(batteries).length > 0) {
+      if (cardContainer && typeof batteries !== 'undefined' && batteries.length > 0) {
         cardContainer.classList.remove('hidden');
       }
 
@@ -2502,20 +2952,17 @@ function updateModal() {
     });
   }
 
-  // Perbarui isi tabel otomatis setiap 1 detik saat mode Table aktif
   setInterval(() => {
-    if (currentViewMode === 'table') {
-      const cardContainer = document.getElementById('batteryGrid');
-      if (cardContainer) cardContainer.classList.add('hidden');
+    if (currentViewMode === 'table' && typeof batteries !== 'undefined' && batteries.length > 0) {
       renderBatteryTable();
     }
-  }, 1000);
+  }, 1500);
 
   // Jalankan mode awal
   setBatteryViewMode(currentViewMode);
 </script>
 
-<!-- 1. MODAL MODUL INFO (EKSTRA BESAR) -->
+<!-- 1. MODAL MODUL INFO -->
 <div id="modulInfoModal" onclick="if(event.target===this) this.style.display='none'" 
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
   <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
@@ -2795,35 +3242,147 @@ function updateModal() {
     });
   }
 
+  // 1. Kompresi Foto/Gambar Otomatis di Browser (Maksimal dimensi 1280px, kualitas 80%)
+  function compressImageAutomatically(file, maxDimension = 1280, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Gagal mengompres gambar"));
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("File gambar tidak valid"));
+      };
+      img.src = url;
+    });
+  }
+
+  // 2. Cek Resolusi Video sebelum disimpan
+  function checkVideoResolution(file) {
+    return new Promise((resolve) => {
+      const tempVideo = document.createElement("video");
+      tempVideo.preload = "metadata";
+      tempVideo.onloadedmetadata = () => {
+        URL.revokeObjectURL(tempVideo.src);
+        resolve({ width: tempVideo.videoWidth, height: tempVideo.videoHeight });
+      };
+      tempVideo.onerror = () => resolve({ width: 0, height: 0 });
+      tempVideo.src = URL.createObjectURL(file);
+    });
+  }
+
+  // 3. Fungsi Slider Tingkat Redup Latar
+  function updateBgDimmer(val) {
+    const lbl = document.getElementById("bg-dim-val");
+    if (lbl) lbl.innerText = val + "%";
+
+    const ovlEl = document.getElementById("custom-bg-overlay");
+    if (ovlEl && ovlEl.style.display !== "none") {
+      ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
+    }
+
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    openBgDatabase().then((db) => {
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      const store = tx.objectStore(BG_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => {
+        if (req.result) {
+          req.result.dim = val;
+          store.put(req.result, key);
+        }
+      };
+    }).catch(() => {});
+  }
+
+  // 4. Handler Pemilihan File (Kompresi Foto Otomatis + Peringatan Video)
   async function onSelectBgMedia(event) {
     const file = event.target.files && event.target.files[0];
     if (!file) return;
 
     const statusEl = document.getElementById("bg-status-msg");
-    if (file.size > 30 * 1024 * 1024) {
-      statusEl.style.color = "#fb923c";
-      statusEl.innerText = "⚠️ Maksimal ukuran file 30 MB.";
-      return;
-    }
-
-    const key = "bg_" + (currentActiveLogger || "DEFAULT");
-    const dim = document.getElementById("bg-dim-slider").value || 60;
+    let finalBlob = file;
+    let finalMime = file.type;
 
     try {
+      if (file.type && file.type.startsWith("image/")) {
+        // Kompres otomatis jika foto/gambar (kecuali GIF animasi agar animasinya tidak hilang)
+        if (file.type !== "image/gif") {
+          statusEl.style.color = "#38bdf8";
+          statusEl.innerText = "⏳ Mengompres gambar otomatis...";
+          finalBlob = await compressImageAutomatically(file, 1280, 0.8);
+          finalMime = "image/jpeg";
+        }
+      } else if (file.type && file.type.startsWith("video/")) {
+        // Cek batas ukuran 15 MB & resolusi maksimal 720p untuk video
+        const maxVideoMB = 15;
+        if (file.size > maxVideoMB * 1024 * 1024) {
+          statusEl.style.color = "#fb923c";
+          statusEl.innerText = `⚠️ Video terlalu besar (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maksimal ${maxVideoMB} MB agar tidak lag di HP.`;
+          event.target.value = "";
+          return;
+        }
+
+        statusEl.style.color = "#38bdf8";
+        statusEl.innerText = "⏳ Memeriksa resolusi video...";
+        const meta = await checkVideoResolution(file);
+        const shortSide = Math.min(meta.width, meta.height);
+
+        if (shortSide > 720) {
+          statusEl.style.color = "#ef4444";
+          statusEl.innerHTML = `❌ Resolusi video terlalu tinggi (<b>${meta.width}x${meta.height}</b>).<br>Gunakan maksimal <b>720p (1280x720)</b> agar tidak lag di HP!`;
+          event.target.value = "";
+          return;
+        }
+      }
+
+      const key = "bg_" + (currentActiveLogger || "DEFAULT");
+      const dim = document.getElementById("bg-dim-slider").value || 60;
+
       const db = await openBgDatabase();
       const tx = db.transaction(BG_STORE_NAME, "readwrite");
-      tx.objectStore(BG_STORE_NAME).put({ blob: file, mime: file.type, dim: dim }, key);
+      tx.objectStore(BG_STORE_NAME).put({ blob: finalBlob, mime: finalMime, dim: dim }, key);
 
-      renderCustomBackground(file, file.type, dim);
+      renderCustomBackground(finalBlob, finalMime, dim);
       statusEl.style.color = "#00e676";
-      statusEl.innerText = "✅ Background berhasil diganti!";
+      const sizeKB = (finalBlob.size / 1024).toFixed(0);
+      statusEl.innerText = `✅ Background terpasang (${sizeKB} KB)!`;
     } catch (e) {
       statusEl.style.color = "#ef4444";
-      statusEl.innerText = "❌ Gagal mengganti background.";
+      statusEl.innerText = "❌ Gagal memproses background.";
     }
     event.target.value = "";
   }
 
+  // 5. Render Background Kustom & Matikan (Pause) Video Lama Otomatis
   function renderCustomBackground(blob, mimeType, dimPercent) {
     if (currentBgObjectUrl) URL.revokeObjectURL(currentBgObjectUrl);
     currentBgObjectUrl = URL.createObjectURL(blob);
@@ -2833,7 +3392,12 @@ function updateModal() {
     const vidEl = document.getElementById("custom-bg-vid");
     const ovlEl = document.getElementById("custom-bg-overlay");
 
-    document.querySelectorAll("body > video").forEach(v => { v.style.display = "none"; });
+    // Matikan (pause) video bawaan agar tidak berjalan di belakang layar
+    document.querySelectorAll("body > video").forEach(v => {
+      v.pause();
+      v.style.display = "none";
+    });
+
     document.body.style.setProperty("background-color", "transparent", "important");
     document.body.style.setProperty("background-image", "none", "important");
 
@@ -2844,33 +3408,69 @@ function updateModal() {
     if (mimeType && mimeType.startsWith("video/")) {
       imgEl.style.display = "none";
       vidEl.src = currentBgObjectUrl;
+      vidEl.muted = true; // Paksa mute otomatis
       vidEl.style.display = "block";
       vidEl.play().catch(() => {});
     } else {
+      // Jika diganti ke gambar/foto, matikan & kosongkan video kustom juga
       vidEl.pause();
+      vidEl.removeAttribute("src");
+      vidEl.load();
       vidEl.style.display = "none";
+
       imgEl.src = currentBgObjectUrl;
       imgEl.style.display = "block";
     }
   }
 
+  // 6. Tombol Reset: Kembalikan ke Video Bawaan Asli
   async function resetLoggerBackground() {
     const key = "bg_" + (currentActiveLogger || "DEFAULT");
     const db = await openBgDatabase();
     db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).delete(key);
 
-    document.getElementById("custom-bg-vid").pause();
-    document.getElementById("custom-bg-vid").style.display = "none";
+    const vidEl = document.getElementById("custom-bg-vid");
+    vidEl.pause();
+    vidEl.removeAttribute("src");
+    vidEl.load();
+    vidEl.style.display = "none";
+
     document.getElementById("custom-bg-img").style.display = "none";
     document.getElementById("custom-bg-overlay").style.display = "none";
 
-    document.querySelectorAll("body > video").forEach(v => { v.style.display = "block"; });
+    // Jalankan kembali video bawaan
+    document.querySelectorAll("body > video").forEach(v => {
+      v.style.display = "block";
+      v.play().catch(() => {});
+    });
+
     document.body.style.removeProperty("background-color");
     document.body.style.removeProperty("background-image");
 
     const statusEl = document.getElementById("bg-status-msg");
     statusEl.style.color = "#38bdf8";
     statusEl.innerText = "🔄 Dikembalikan ke background asli.";
+  }
+  
+  async function updateBgDimmer(val) {
+    const dimVal = document.getElementById("bg-dim-val");
+    if (dimVal) dimVal.innerText = val + "%";
+    const ovlEl = document.getElementById("custom-bg-overlay");
+    if (ovlEl && ovlEl.style.display !== "none") {
+      ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
+    }
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    try {
+      const db = await openBgDatabase();
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      const store = tx.objectStore(BG_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => {
+        if (req.result && req.result.blob) {
+          store.put({ blob: req.result.blob, mime: req.result.mime, dim: val }, key);
+        }
+      };
+    } catch (e) {}
   }
 
   async function loadSavedLoggerBackground() {
@@ -2895,5 +3495,101 @@ function updateModal() {
     loadSavedLoggerBackground();
   });
 </script>
+
+<script>
+  if (/iPhone|iPod/i.test(navigator.userAgent)) {
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) { event.preventDefault(); }
+      lastTouchEnd = now;
+    }, false);
+  }
+</script>
+
+<style>
+@media (min-width: 1024px) {
+  /* 1. Perlebar Pop-up & Perbesar Header Seperti Gambar No. 2 */
+  #modalDiagramPlts {
+    padding: 0.75rem !important;
+  }
+  #modalDiagramPlts > div {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    padding: 18px 28px !important;
+  }
+  #modalDiagramPlts h3 {
+    font-size: 2.35rem !important;
+    line-height: 2.75rem !important;
+  }
+  #modalDiagramPlts #badgeStatusDiagram {
+    font-size: 1.15rem !important;
+    padding: 6px 16px !important;
+  }
+  #modalDiagramPlts #subjudulDiagram {
+    font-size: 1.45rem !important;
+    line-height: 2rem !important;
+    margin-top: 4px !important;
+  }
+  #modalDiagramPlts .font-mono,
+  #modalDiagramPlts #network_ip,
+  #modalDiagramPlts #network_signal {
+    font-size: 1.35rem !important;
+    margin-top: 6px !important;
+  }
+  #modalDiagramPlts > div > div:first-child button {
+    font-size: 2.6rem !important;
+  }
+
+  /* 2. Perbesar Ikon Matahari & 3 Panah Sinar */
+  #modalDiagramPlts .ikon-matahari-plts {
+    width: 15.2% !important;
+    left: 23.4% !important;
+    top: 16.5% !important;
+  }
+
+  /* 3. Perbesar Semua Bulatan DC & AC di Jalur Pipa (Sama Persis Gambar No. 2) */
+  #modalDiagramPlts .bulatan-aliran {
+    width: 3.4vw !important;
+    height: 3.4vw !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.25vw !important;
+    font-weight: 900 !important;
+    border-width: 3px !important;
+  }
+
+  /* 4. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
+  #modalDiagramPlts .display-tegangan-baterai,
+  #modalDiagramPlts .display-arus-baterai,
+  #modalDiagramPlts .display-daya-baterai {
+    font-size: 1.05vw !important;
+    font-weight: 800 !important;
+    border-width: 2px !important;
+    border-radius: 7px !important;
+  }
+
+  /* 5. Perbesar Angka di Dalam Layar TV Kanan (49.70 V / -14.31 A) */
+  #modalDiagramPlts .display-info-dc {
+    font-size: 2.1vw !important;
+    line-height: 1.25 !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+  }
+
+  /* 6. Perbesar & Posisikan Kotak Daya Besar di Bawah TV (-711.17 W) Pas di Meja TV */
+  #modalDiagramPlts .display-daya-tv {
+    left: 91.6% !important;
+    top: 79.8% !important;
+    width: 16.6% !important;
+    height: 13.0% !important;
+    font-size: 2.45vw !important;
+    font-weight: 800 !important;
+    border-width: 2.5px !important;
+    border-radius: 8px !important;
+  }
+}
+</style>
   
 </body></html>
