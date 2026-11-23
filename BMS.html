@@ -2684,9 +2684,6 @@ function updateModal() {
       <span style="color:#fbbf24;">0.00 A</span>
       </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
-      <div id="nilaiDayaBaterai" class="display-daya-baterai">0 W</div>
-      <div id="nilaiTeganganBaterai" class="display-tegangan-baterai">0.00 V</div>
-      <div id="nilaiArusBaterai" class="display-arus-baterai">0.00 A</div>
     </div>
 
   </div>
@@ -2702,15 +2699,6 @@ function updateModal() {
     const voltDcAsli  = (elVoltUtama && elVoltUtama.textContent.trim() !== "-" && elVoltUtama.textContent.trim() !== "") ? elVoltUtama.textContent.trim() : "0.00 V";
     const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
     const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
-
-    // 2. Isi ke 3 kotak Baterai di bagian bawah
-    const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
-    const elArusBatt     = document.getElementById('nilaiArusBaterai');
-    const elDayaBatt     = document.getElementById('nilaiDayaBaterai');
-
-    if (elTeganganBatt) elTeganganBatt.textContent = voltDcAsli;
-    if (elArusBatt)     elArusBatt.textContent     = arusDcAsli;
-    if (elDayaBatt)     elDayaBatt.textContent     = dayaDcAsli;
 
     // 3. Isi ke 2 kotak Sisi Kanan dengan Data Baterai DC (Menggantikan AT4PW)
     const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
