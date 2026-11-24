@@ -2389,40 +2389,40 @@ function updateModal() {
 
   <!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV untuk android dan iphone-->
 <style>
-  /* 1. Lintasan DC Panel Surya -> Inverter (Mengikuti Jalur Bawah -> Naik -> Masuk Inverter) */
+  /* 1. Lintasan DC Panel Surya -> Inverter (Tepat di Tengah Garis Biru Kiri) */
   @keyframes gerakDcSolar {
-    0%   { left: 24.5%; top: 68.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-    12%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    42%  { left: 33.2%; top: 68.5%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    78%  { left: 33.2%; top: 46.8%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    0%   { left: 26.5%; top: 69.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    40%  { left: 34.8%; top: 69.8%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    78%  { left: 34.8%; top: 45.2%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
     90%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 38.0%; top: 46.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    100% { left: 39.2%; top: 45.2%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
-  /* 2. Lintasan Inverter -> Komponen Elektronik (Mendatar -> Turun -> Masuk Beban) */
+  /* 2. Lintasan Inverter -> Komponen Elektronik (Tepat di Tengah Garis Biru Kanan) */
   @keyframes gerakAcBeban {
-    0%   { left: 50.2%; top: 46.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-    12%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    42%  { left: 59.1%; top: 46.8%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    80%  { left: 59.1%; top: 72.5%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    90%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 63.8%; top: 72.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 51.0%; top: 48.2%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    42%  { left: 60.6%; top: 48.2%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    82%  { left: 60.6%; top: 72.8%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    92%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 65.0%; top: 72.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
-  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Inverter -> Baterai) */
+  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Jalur Kanan Pipa Baterai) */
   @keyframes gerakDcBattTurun {
-    0%   { left: 43.8%; top: 56.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 46.4%; top: 57.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 43.8%; top: 70.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    100% { left: 46.4%; top: 70.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
-  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Baterai -> Inverter) */
+  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Jalur Kiri Pipa Baterai) */
   @keyframes gerakDcBattNaik {
-    0%   { left: 43.8%; top: 70.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 45.3%; top: 70.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 43.8%; top: 56.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    100% { left: 45.3%; top: 57.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
   .bulatan-aliran {
