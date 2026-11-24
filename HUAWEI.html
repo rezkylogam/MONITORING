@@ -2712,6 +2712,14 @@ function updateModal() {
 </div>
 
 <script>
+  // Variabel penyimpan Tegangan PV (Volt PV) & energi harian (kWh) dari masing-masing MPPT
+  let voltPvSamoto = 0.0;    // ID: 14751036
+  let voltPvTechfine = 0.0;  // ID: 9193904
+  let lastMpptUpdate = 0;
+
+  let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;
+  let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0;
+
   function perbaruiAnimasiDiagram() {
     // 1. Ambil langsung data Baterai DC dari Ringkasan Sistem Total
     const elVoltUtama  = document.getElementById('avg-voltage');
@@ -2722,7 +2730,7 @@ function updateModal() {
     const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
     const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
 
-    // 3. Isi ke 2 kotak Sisi Kanan dengan Data Baterai DC (Menggantikan AT4PW)
+    // 2. Isi ke 2 kotak Sisi Kanan (Putih Cerah)
     const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
     const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
 
@@ -2733,14 +2741,22 @@ function updateModal() {
       elDayaTv.textContent = dayaDcAsli;
     }
 
-    // 4. Deteksi status Charging, Full, Standby, atau Discharging
+    // 3. Deteksi status Baterai & Tegangan Panel Surya (Volt PV > 35V)
     const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
     const elSocUtama     = document.getElementById('avg-soc');
     const nilaiSocAngka  = parseFloat(elSocUtama ? elSocUtama.textContent : "0") || 0;
 
     const modeCharge     = nilaiArusAngka > 0.1;
     const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
-    const bateraiFull    = nilaiSocAngka >= 99.0; // Dianggap Full jika SOC >= 99%
+    const bateraiFull    = nilaiSocAngka >= 99.0;
+
+    // Cek apakah Volt PV salah satu MPPT > 35V (dan data masuk dalam 30 detik terakhir)
+    const maxVoltPv      = Math.max(voltPvSamoto, voltPvTechfine);
+    const isMpptFresh    = (Date.now() - lastMpptUpdate) < 30000;
+    const adaSinarPv     = isMpptFresh && (maxVoltPv > 35.0);
+
+    // Matahari & DC Solar muncul saat Charging, Full, ATAU saat Volt PV > 35V (meski Discharging)
+    const tampilkanMatahari = modeCharge || (modeStandby && bateraiFull) || adaSinarPv;
 
     const elMatahari = document.getElementById('elemenMatahari');
     const elDcSolar  = document.getElementById('bulatanDcSolar');
@@ -2748,50 +2764,43 @@ function updateModal() {
     const elBadge    = document.getElementById('badgeStatusDiagram');
     const elSub      = document.getElementById('subjudulDiagram');
 
-    if (modeCharge) {
-      // Kondisi CHARGING: Matahari & DC Solar MUNCUL, DC Baterai turun
+    if (tampilkanMatahari) {
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
-      
+    } else {
+      elMatahari.classList.add('hidden');
+      elDcSolar.classList.add('hidden');
+    }
+
+    if (modeCharge) {
       elDcBatt.classList.remove('hidden', 'anim-batt-naik');
       elDcBatt.classList.add('anim-batt-turun');
 
       elBadge.textContent = "🟢 CHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
       elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
-    } else if (modeStandby && bateraiFull) {
-      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar TETAP MUNCUL menyuplai beban
-      elMatahari.classList.remove('hidden');
-      elDcSolar.classList.remove('hidden');
-
-      elDcBatt.classList.add('hidden');
-      elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
-
-      elBadge.textContent = "🔵 FULL / STANDBY";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-      elSub.textContent = "Baterai penuh (Standby). Panel surya langsung menyuplai beban.";
     } else if (modeStandby) {
-      // Kondisi STANDBY Biasa (SOC < 99%): Matahari & DC Solar DISEMBUNYIKAN
-      elMatahari.classList.add('hidden');   // <-- Pastikan .add('hidden')
-      elDcSolar.classList.add('hidden');    // <-- Pastikan .add('hidden')
-
       elDcBatt.classList.add('hidden');
       elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
 
-      elBadge.textContent = "🔵 STANDBY";
-      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-      elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
+      if (bateraiFull || adaSinarPv) {
+        elBadge.textContent = "🔵 FULL / STANDBY";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+        elSub.textContent = "Baterai penuh / Standby. Panel surya langsung menyuplai beban.";
+      } else {
+        elBadge.textContent = "🔵 STANDBY";
+        elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+        elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
+      }
     } else {
-      // Kondisi DISCHARGING: Matahari & DC Solar DISEMBUNYIKAN, DC Baterai naik
-      elMatahari.classList.add('hidden');   // <-- Pastikan .add('hidden')
-      elDcSolar.classList.add('hidden');    // <-- Pastikan .add('hidden')
-
       elDcBatt.classList.remove('hidden', 'anim-batt-turun');
       elDcBatt.classList.add('anim-batt-naik');
 
       elBadge.textContent = "🟠 DISCHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
-      elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik).";
+      elSub.textContent = adaSinarPv
+        ? `Panel surya (${maxVoltPv.toFixed(1)}V) & baterai bekerja bersama menyuplai beban.`
+        : "Baterai menyuplai daya ke inverter (DC naik).";
     }
   }
 
@@ -2811,18 +2820,11 @@ function updateModal() {
     }
   }, 2000);
 
-  let lastChargeCalcTime = Date.now();
-
-  // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
-  let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;     // ID: 14751036
-  let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0; // ID: 9193904
-
   function updateProduksiChargeKwh() {
     const now = new Date();
     const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const savedDate = localStorage.getItem('plts_charge_date');
 
-    // Reset otomatis jika berganti hari (melewati jam 00:00)
     if (savedDate !== todayKey) {
       kwhSamoto = 0;
       kwhTechfine = 0;
@@ -2838,7 +2840,7 @@ function updateModal() {
     }
   }
 
-  // Jalankan koneksi MQTT untuk mengambil data kWh dari MPPT Samoto & Techfine
+  // Listener MQTT untuk menangkap kWh & Volt PV dari MPPT Samoto (14751036) dan Techfine (9193904)
   (function initMpptEnergyMerge() {
     const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
     const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
@@ -2853,31 +2855,62 @@ function updateModal() {
     });
 
     mpptClient.on("message", (topic, payload) => {
-      const val = parseFloat(payload.toString().trim());
+      const rawStr = payload.toString().trim();
+      const lowerTopic = topic.toLowerCase();
+      const isSamoto = topic.startsWith("14751036/");
+      const isTechfine = topic.startsWith("9193904/");
+      if (!isSamoto && !isTechfine) return;
+
+      // 1. Jika payload format JSON
+      if (rawStr.startsWith("{")) {
+        try {
+          const data = JSON.parse(rawStr);
+          const kwhVal = data.kwh ?? data.e_day ?? data.energy ?? data.d_kwh ?? data.D;
+          if (kwhVal !== undefined && !isNaN(parseFloat(kwhVal))) {
+            if (isSamoto) {
+              kwhSamoto = parseFloat(kwhVal);
+              localStorage.setItem('mppt_samoto_kwh', kwhSamoto.toString());
+            } else {
+              kwhTechfine = parseFloat(kwhVal);
+              localStorage.setItem('mppt_techfine_kwh', kwhTechfine.toString());
+            }
+            updateProduksiChargeKwh();
+          }
+
+          const pvVolt = parseFloat(data.pv_v ?? data.volt_pv ?? data.vpv ?? data.pv_volt ?? data.V ?? 0);
+          if (!isNaN(pvVolt) && pvVolt > 0) {
+            lastMpptUpdate = Date.now();
+            if (isSamoto) voltPvSamoto = pvVolt;
+            else voltPvTechfine = pvVolt;
+          }
+          return;
+        } catch (e) {}
+      }
+
+      // 2. Jika payload berupa angka biasa per topik
+      const val = parseFloat(rawStr);
       if (isNaN(val)) return;
 
-      const lowerTopic = topic.toLowerCase();
-      const isEnergyTopic = lowerTopic.includes("kwh") || 
-                            lowerTopic.includes("day") || 
-                            lowerTopic.includes("energy") || 
-                            lowerTopic.includes("e_day") || 
-                            lowerTopic.includes("total_e");
-
-      if (!isEnergyTopic) return;
-
-      if (topic.startsWith("14751036/")) {
-        kwhSamoto = val;
-        localStorage.setItem('mppt_samoto_kwh', val.toString());
+      if (lowerTopic.includes("kwh") || lowerTopic.includes("day") || lowerTopic.includes("energy") || lowerTopic.includes("e_day") || lowerTopic.includes("total_e")) {
+        if (isSamoto) {
+          kwhSamoto = val;
+          localStorage.setItem('mppt_samoto_kwh', val.toString());
+        } else {
+          kwhTechfine = val;
+          localStorage.setItem('mppt_techfine_kwh', val.toString());
+        }
         updateProduksiChargeKwh();
-      } else if (topic.startsWith("9193904/")) {
-        kwhTechfine = val;
-        localStorage.setItem('mppt_techfine_kwh', val.toString());
-        updateProduksiChargeKwh();
+      }
+
+      // Deteksi topik Volt PV (Tegangan Panel Surya)
+      if (lowerTopic.includes("pv_v") || lowerTopic.includes("volt_pv") || lowerTopic.includes("vpv") || lowerTopic.includes("pv_volt") || lowerTopic.endsWith("/v")) {
+        lastMpptUpdate = Date.now();
+        if (isSamoto) voltPvSamoto = val;
+        else voltPvTechfine = val;
       }
     });
   })();
 
-  // Perbarui tampilan setiap 1 detik
   setInterval(updateProduksiChargeKwh, 1000);
 </script>
 
