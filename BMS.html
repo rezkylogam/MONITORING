@@ -212,66 +212,83 @@
   #batteryModal #modalCells { gap: 14px !important; }
   #batteryModal #modalCells > div { padding: 14px 10px !important; }
 
-  /* 5. Pop-up Aliran Energi PLTS */
-  #modalDiagramPlts > div {
-    max-width: 96vw !important;
-    width: 96vw !important;
-    padding: 20px 28px !important;
+  /* 5. Pop-up Aliran Energi PLTS (Gabungan Bersih Khusus Laptop / PC) */
+  #modalDiagramPlts {
+    padding: 0.75rem !important;
   }
-  #modalDiagramPlts h3 { font-size: 2.2rem !important; }
+  #modalDiagramPlts > div {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    padding: 18px 28px !important;
+  }
+  #modalDiagramPlts h3 {
+    font-size: 2.35rem !important;
+    line-height: 2.75rem !important;
+  }
   #modalDiagramPlts #badgeStatusDiagram {
     font-size: 1.15rem !important;
     padding: 6px 16px !important;
   }
-  #modalDiagramPlts > div > div:first-child p,
-  #modalDiagramPlts > div > div:first-child .text-xs {
+  #modalDiagramPlts #subjudulDiagram {
+    font-size: 1.45rem !important;
+    line-height: 2rem !important;
+    margin-top: 4px !important;
+  }
+  #modalDiagramPlts .font-mono,
+  #modalDiagramPlts #network_ip,
+  #modalDiagramPlts #network_signal {
     font-size: 1.35rem !important;
-    line-height: 1.85rem !important;
+    margin-top: 6px !important;
   }
   #modalDiagramPlts > div > div:first-child button {
-    font-size: 2.4rem !important;
+    font-size: 2.6rem !important;
   }
 
   /* 5A. Perbesar Ikon Matahari & 3 Panah Sinar (.ikon-matahari-plts) */
   #modalDiagramPlts .ikon-matahari-plts {
-    width: 19.5% !important;
-    left: 22.5% !important;
-    top: 17.5% !important;
+    width: 15.2% !important;
+    left: 23.4% !important;
+    top: 16.5% !important;
   }
 
   /* 5B. Perbesar Semua Bulatan DC & AC di Pipa Solar, Baterai & Rumah (.bulatan-aliran) */
   #modalDiagramPlts .bulatan-aliran {
-    width: 52px !important;
-    height: 52px !important;
-    font-size: 19px !important;
+    width: 3.4vw !important;
+    height: 3.4vw !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.25vw !important;
+    font-weight: 900 !important;
     border-width: 3px !important;
   }
 
-  /* 5C. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
+  /* 5C. Perbesar Angka di Dalam 3 Kotak Baterai Bawah */
   #modalDiagramPlts .display-tegangan-baterai,
   #modalDiagramPlts .display-arus-baterai,
   #modalDiagramPlts .display-daya-baterai {
-    font-size: 1.35rem !important;
+    font-size: 1.05vw !important;
     font-weight: 800 !important;
+    border-width: 2px !important;
     border-radius: 7px !important;
   }
 
   /* 5D. Perbesar Angka di Dalam Layar TV Kanan (.display-info-dc) */
   #modalDiagramPlts .display-info-dc {
-    font-size: 2.25rem !important;
-    line-height: 1.2 !important;
+    font-size: 2.1vw !important;
+    line-height: 1.25 !important;
     border-width: 2px !important;
     border-radius: 6px !important;
   }
 
   /* 5E. Perbesar Kotak Daya Besar di Bawah TV (.display-daya-tv) */
   #modalDiagramPlts .display-daya-tv {
-    width: 12.2% !important;
-    height: 9.2% !important;
-    left: 91.8% !important;
+    left: 91.6% !important;
     top: 79.8% !important;
-    font-size: 2.35rem !important;
-    border-width: 2px !important;
+    width: 16.6% !important;
+    height: 13.0% !important;
+    font-size: 2.45vw !important;
+    font-weight: 800 !important;
+    border-width: 2.5px !important;
     border-radius: 8px !important;
   }
 
@@ -3522,90 +3539,6 @@ function updateModal() {
     }, false);
   }
 </script>
-
-<style>
-@media (min-width: 1024px) {
-  /* 1. Perlebar Pop-up & Perbesar Header Seperti Gambar No. 2 */
-  #modalDiagramPlts {
-    padding: 0.75rem !important;
-  }
-  #modalDiagramPlts > div {
-    max-width: 98vw !important;
-    width: 98vw !important;
-    padding: 18px 28px !important;
-  }
-  #modalDiagramPlts h3 {
-    font-size: 2.35rem !important;
-    line-height: 2.75rem !important;
-  }
-  #modalDiagramPlts #badgeStatusDiagram {
-    font-size: 1.15rem !important;
-    padding: 6px 16px !important;
-  }
-  #modalDiagramPlts #subjudulDiagram {
-    font-size: 1.45rem !important;
-    line-height: 2rem !important;
-    margin-top: 4px !important;
-  }
-  #modalDiagramPlts .font-mono,
-  #modalDiagramPlts #network_ip,
-  #modalDiagramPlts #network_signal {
-    font-size: 1.35rem !important;
-    margin-top: 6px !important;
-  }
-  #modalDiagramPlts > div > div:first-child button {
-    font-size: 2.6rem !important;
-  }
-
-  /* 2. Perbesar Ikon Matahari & 3 Panah Sinar */
-  #modalDiagramPlts .ikon-matahari-plts {
-    width: 15.2% !important;
-    left: 23.4% !important;
-    top: 16.5% !important;
-  }
-
-  /* 3. Perbesar Semua Bulatan DC & AC di Jalur Pipa (Sama Persis Gambar No. 2) */
-  #modalDiagramPlts .bulatan-aliran {
-    width: 3.4vw !important;
-    height: 3.4vw !important;
-    min-width: 50px !important;
-    min-height: 50px !important;
-    font-size: 1.25vw !important;
-    font-weight: 900 !important;
-    border-width: 3px !important;
-  }
-
-  /* 4. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
-  #modalDiagramPlts .display-tegangan-baterai,
-  #modalDiagramPlts .display-arus-baterai,
-  #modalDiagramPlts .display-daya-baterai {
-    font-size: 1.05vw !important;
-    font-weight: 800 !important;
-    border-width: 2px !important;
-    border-radius: 7px !important;
-  }
-
-  /* 5. Perbesar Angka di Dalam Layar TV Kanan (49.70 V / -14.31 A) */
-  #modalDiagramPlts .display-info-dc {
-    font-size: 2.1vw !important;
-    line-height: 1.25 !important;
-    border-width: 2px !important;
-    border-radius: 6px !important;
-  }
-
-  /* 6. Perbesar & Posisikan Kotak Daya Besar di Bawah TV (-711.17 W) Pas di Meja TV */
-  #modalDiagramPlts .display-daya-tv {
-    left: 91.6% !important;
-    top: 79.8% !important;
-    width: 16.6% !important;
-    height: 13.0% !important;
-    font-size: 2.45vw !important;
-    font-weight: 800 !important;
-    border-width: 2.5px !important;
-    border-radius: 8px !important;
-  }
-}
-</style>
 
 <script>
   // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
