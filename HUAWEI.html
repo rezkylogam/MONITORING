@@ -2684,9 +2684,6 @@ function updateModal() {
       <span style="color:#fbbf24;">0.00 A</span>
       </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
-      <div id="nilaiDayaBaterai" class="display-daya-baterai">0 W</div>
-      <div id="nilaiTeganganBaterai" class="display-tegangan-baterai">0.00 V</div>
-      <div id="nilaiArusBaterai" class="display-arus-baterai">0.00 A</div>
     </div>
 
   </div>
@@ -2702,15 +2699,6 @@ function updateModal() {
     const voltDcAsli  = (elVoltUtama && elVoltUtama.textContent.trim() !== "-" && elVoltUtama.textContent.trim() !== "") ? elVoltUtama.textContent.trim() : "0.00 V";
     const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
     const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
-
-    // 2. Isi ke 3 kotak Baterai di bagian bawah
-    const elTeganganBatt = document.getElementById('nilaiTeganganBaterai');
-    const elArusBatt     = document.getElementById('nilaiArusBaterai');
-    const elDayaBatt     = document.getElementById('nilaiDayaBaterai');
-
-    if (elTeganganBatt) elTeganganBatt.textContent = voltDcAsli;
-    if (elArusBatt)     elArusBatt.textContent     = arusDcAsli;
-    if (elDayaBatt)     elDayaBatt.textContent     = dayaDcAsli;
 
     // 3. Isi ke 2 kotak Sisi Kanan dengan Data Baterai DC (Menggantikan AT4PW)
     const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
@@ -2799,44 +2787,71 @@ function updateModal() {
 
   let lastChargeCalcTime = Date.now();
 
+  // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
+  let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;     // ID: 14751036
+  let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0; // ID: 9193904
+
   function updateProduksiChargeKwh() {
     const now = new Date();
     const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const savedDate = localStorage.getItem('plts_charge_date');
-    let totalKwh = parseFloat(localStorage.getItem('plts_charge_kwh')) || 0;
 
     // Reset otomatis jika berganti hari (melewati jam 00:00)
     if (savedDate !== todayKey) {
-      totalKwh = 0;
+      kwhSamoto = 0;
+      kwhTechfine = 0;
       localStorage.setItem('plts_charge_date', todayKey);
-      localStorage.setItem('plts_charge_kwh', '0');
+      localStorage.setItem('mppt_samoto_kwh', '0');
+      localStorage.setItem('mppt_techfine_kwh', '0');
     }
 
-    const currentTime = Date.now();
-    const deltaHours = (currentTime - lastChargeCalcTime) / 3600000;
-    lastChargeCalcTime = currentTime;
-
-    if (typeof batteries !== 'undefined' && batteries.length > 0 && deltaHours > 0 && deltaHours < 0.05) {
-      let totalCurrent = 0;
-      let totalPower = 0;
-      batteries.forEach(b => {
-        totalCurrent += parseFloat(b.current) || 0;
-        totalPower += parseFloat(b.power) || 0;
-      });
-
-      // Akumulasi energi hanya saat baterai dalam kondisi Charging (> 0.1 A)
-      if (totalCurrent > 0.1 && totalPower > 0) {
-        totalKwh += (totalPower / 1000) * deltaHours;
-        localStorage.setItem('plts_charge_kwh', totalKwh.toFixed(6));
-      }
-    }
-
+    const totalKwh = kwhSamoto + kwhTechfine;
     const elKwh = document.getElementById('produksiChargeKwh');
     if (elKwh) {
       elKwh.textContent = totalKwh.toFixed(3).replace('.', ',') + ' kWh';
     }
   }
 
+  // Jalankan koneksi MQTT untuk mengambil data kWh dari MPPT Samoto & Techfine
+  (function initMpptEnergyMerge() {
+    const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
+    const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
+      clientId: mpptClientId,
+      clean: true,
+      reconnectPeriod: 4000
+    });
+
+    mpptClient.on("connect", () => {
+      mpptClient.subscribe("14751036/#");
+      mpptClient.subscribe("9193904/#");
+    });
+
+    mpptClient.on("message", (topic, payload) => {
+      const val = parseFloat(payload.toString().trim());
+      if (isNaN(val)) return;
+
+      const lowerTopic = topic.toLowerCase();
+      const isEnergyTopic = lowerTopic.includes("kwh") || 
+                            lowerTopic.includes("day") || 
+                            lowerTopic.includes("energy") || 
+                            lowerTopic.includes("e_day") || 
+                            lowerTopic.includes("total_e");
+
+      if (!isEnergyTopic) return;
+
+      if (topic.startsWith("14751036/")) {
+        kwhSamoto = val;
+        localStorage.setItem('mppt_samoto_kwh', val.toString());
+        updateProduksiChargeKwh();
+      } else if (topic.startsWith("9193904/")) {
+        kwhTechfine = val;
+        localStorage.setItem('mppt_techfine_kwh', val.toString());
+        updateProduksiChargeKwh();
+      }
+    });
+  })();
+
+  // Perbarui tampilan setiap 1 detik
   setInterval(updateProduksiChargeKwh, 1000);
 </script>
 
@@ -3591,5 +3606,61 @@ function updateModal() {
   }
 }
 </style>
-  
+
+<script>
+  // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
+  let kwhSamoto = 0.0;   // ID MPPT Samoto 100A: 14751036
+  let kwhTechfine = 0.0; // ID MPPT Techfine 60A: 9193904
+
+  function updateTotalPendapatanHarian() {
+    const totalKwh = (parseFloat(kwhSamoto) || 0) + (parseFloat(kwhTechfine) || 0);
+    const elHasil = document.getElementById("produksiChargeKwh");
+    if (elHasil) {
+      // Format 3 angka di belakang koma dan ganti titik menjadi koma (contoh: 0,334 kWh)
+      elHasil.textContent = totalKwh.toFixed(3).replace('.', ',') + " kWh";
+    }
+  }
+
+  // Jalankan koneksi MQTT khusus untuk memantau 2 MPPT pada broker Shiftr.io
+  window.addEventListener("DOMContentLoaded", () => {
+    const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
+    const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
+      clientId: mpptClientId,
+      clean: true,
+      reconnectPeriod: 4000
+    });
+
+    mpptClient.on("connect", () => {
+      mpptClient.subscribe("14751036/#");
+      mpptClient.subscribe("9193904/#");
+    });
+
+    mpptClient.on("message", (topic, payload) => {
+      const msgStr = payload.toString().trim();
+      const val = parseFloat(msgStr);
+      if (isNaN(val)) return;
+
+      const lowerTopic = topic.toLowerCase();
+
+      // Cek apakah topik adalah data energi harian (kwh / day / energy / e_day / total_e)
+      const isEnergyTopic = lowerTopic.includes("kwh") || 
+                            lowerTopic.includes("day") || 
+                            lowerTopic.includes("energy") || 
+                            lowerTopic.includes("e_day") || 
+                            lowerTopic.includes("total_e");
+
+      if (!isEnergyTopic) return;
+
+      // Pisahkan dan simpan berdasarkan ID masing-masing MPPT
+      if (topic.startsWith("14751036/")) {
+        kwhSamoto = val;
+        updateTotalPendapatanHarian();
+      } else if (topic.startsWith("9193904/")) {
+        kwhTechfine = val;
+        updateTotalPendapatanHarian();
+      }
+    });
+  });
+</script>
+
 </body></html>
