@@ -2538,6 +2538,25 @@ function updateModal() {
     z-index: 12;
   }
 
+  /* Kotak Penampil Total Arus MPPT (Samoto + Techfine) di Atas Garis Biru Kiri Baterai */
+  .display-arus-mppt {
+    position: absolute;
+    left: 29.2%;
+    top: 66.5%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #fde047; /* Kuning emas terang agar kontras di atas cahaya garis biru */
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 900;
+    font-size: clamp(12px, 1.55vw, 24px);
+    text-shadow: 0 2px 3px #000000, 0 0 6px #000000, 0 0 12px rgba(0, 0, 0, 1), 0 0 20px rgba(0, 0, 0, 0.95);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 14;
+  }
+
     .display-daya-baterai {
       position: absolute;
       left: 39.8%;
@@ -2706,19 +2725,30 @@ function updateModal() {
       <span style="color:#ffffff;">0.00 A</span>
       </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
+      <div id="nilaiArusMppt" class="display-arus-mppt">0.00 A</div>
     </div>
 
   </div>
 </div>
 
 <script>
-  // Variabel penyimpan Tegangan PV (Volt PV) & energi harian (kWh) dari masing-masing MPPT
-  let voltPvSamoto = 0.0;    // ID: 14751036
-  let voltPvTechfine = 0.0;  // ID: 9193904
+  // Variabel penyimpan data MPPT Samoto (14751036) & Techfine (9193904)
+  let voltPvSamoto = 0.0;
+  let voltPvTechfine = 0.0;
+  let arusMpptSamoto = 0.0;
+  let arusMpptTechfine = 0.0;
   let lastMpptUpdate = 0;
 
   let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;
   let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0;
+
+  function perbaruiTampilanArusMppt() {
+    const totalArusMppt = (parseFloat(arusMpptSamoto) || 0) + (parseFloat(arusMpptTechfine) || 0);
+    const elArusMppt = document.getElementById('nilaiArusMppt');
+    if (elArusMppt) {
+      elArusMppt.textContent = totalArusMppt.toFixed(2) + " A";
+    }
+  }
 
   function perbaruiAnimasiDiagram() {
     // 1. Ambil langsung data Baterai DC dari Ringkasan Sistem Total
@@ -2730,7 +2760,7 @@ function updateModal() {
     const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
     const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
 
-    // 2. Isi ke 2 kotak Sisi Kanan (Putih Cerah)
+    // 2. Isi ke 2 kotak Sisi Kanan
     const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
     const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
 
@@ -2741,6 +2771,9 @@ function updateModal() {
       elDayaTv.textContent = dayaDcAsli;
     }
 
+    // Perbarui total arus MPPT di samping kiri baterai
+    perbaruiTampilanArusMppt();
+
     // 3. Deteksi status Baterai & Tegangan Panel Surya (Volt PV > 35V)
     const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
     const elSocUtama     = document.getElementById('avg-soc');
@@ -2750,12 +2783,10 @@ function updateModal() {
     const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
     const bateraiFull    = nilaiSocAngka >= 99.0;
 
-    // Cek apakah Volt PV salah satu MPPT > 35V (dan data masuk dalam 30 detik terakhir)
     const maxVoltPv      = Math.max(voltPvSamoto, voltPvTechfine);
     const isMpptFresh    = (Date.now() - lastMpptUpdate) < 30000;
     const adaSinarPv     = isMpptFresh && (maxVoltPv > 35.0);
 
-    // Matahari & DC Solar muncul saat Charging, Full, ATAU saat Volt PV > 35V (meski Discharging)
     const tampilkanMatahari = modeCharge || (modeStandby && bateraiFull) || adaSinarPv;
 
     const elMatahari = document.getElementById('elemenMatahari');
@@ -2840,7 +2871,7 @@ function updateModal() {
     }
   }
 
-  // Listener MQTT untuk menangkap kWh & Volt PV dari MPPT Samoto (14751036) dan Techfine (9193904)
+  // Listener MQTT untuk menangkap kWh, Volt PV, & Arus Charge dari MPPT Samoto (14751036) dan Techfine (9193904)
   (function initMpptEnergyMerge() {
     const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
     const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
@@ -2883,6 +2914,14 @@ function updateModal() {
             if (isSamoto) voltPvSamoto = pvVolt;
             else voltPvTechfine = pvVolt;
           }
+
+          // Tangkap Arus Output/Charge MPPT dari JSON
+          const mpptCurr = parseFloat(data.chg_i ?? data.bat_i ?? data.out_i ?? data.curr ?? data.ampere ?? data.I ?? NaN);
+          if (!isNaN(mpptCurr)) {
+            if (isSamoto) arusMpptSamoto = mpptCurr;
+            else arusMpptTechfine = mpptCurr;
+            perbaruiTampilanArusMppt();
+          }
           return;
         } catch (e) {}
       }
@@ -2907,6 +2946,13 @@ function updateModal() {
         lastMpptUpdate = Date.now();
         if (isSamoto) voltPvSamoto = val;
         else voltPvTechfine = val;
+      }
+
+      // Deteksi topik Arus MPPT (misal: /arus, /ampere, /chg_i, /bat_i, /i)
+      if (lowerTopic.includes("arus") || lowerTopic.includes("amp") || lowerTopic.includes("chg_i") || lowerTopic.includes("bat_i") || lowerTopic.includes("curr") || lowerTopic.endsWith("/i")) {
+        if (isSamoto) arusMpptSamoto = val;
+        else arusMpptTechfine = val;
+        perbaruiTampilanArusMppt();
       }
     });
   })();
