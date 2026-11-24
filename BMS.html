@@ -1,0 +1,3666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="MANIFEST-BMS.json">
+  <meta charset="UTF-8">
+  <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if (/iPhone|iPod/i.test(navigator.userAgent)) {
+      document.documentElement.classList.add('is-iphone');
+      document.getElementById('viewportMeta').setAttribute(
+        'content',
+        'width=760, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=no'
+      );
+    }
+  </script>
+  <title>BMS HUAWEI MONITORING</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --dark: #1f2937;
+      --light: #f9fafb;
+      --card-bg: #0455D1;
+      --card-lapis: #ffffff;
+      --card-text: #1f2937;
+      --card-subtext: #4b5563;
+      --icon-voltage: #eab308;
+      --icon-current: #3b82f6;
+    }
+    
+    /* Pisahkan layer video latar ke GPU tersendiri */
+  #dynamic-bg-layer, #custom-bg-vid, body > video {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: transparent;
+    color: var(--dark);
+  }
+
+  html.is-iphone, html.is-iphone body {
+    min-width: 760px !important;
+    width: 760px !important;
+    margin: 0 auto !important;
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+    
+/* =====================================================================
+   TAMPILAN EXTRA BESAR, TEGAS & IKON KIRI KHUSUS LAPTOP / PC
+   ===================================================================== */
+    
+/* Susunan Khusus HP Android & iPhone (Ukuran Teks Tetap) */
+@media (max-width: 1023px) {
+  #summarySection .summary-card > .grid > div {
+    display: grid !important;
+    grid-template-columns: auto auto !important;
+    grid-template-rows: auto auto !important;
+    justify-content: center !important;
+    align-content: center !important;
+    column-gap: 0.5rem !important;
+    row-gap: 0.1rem !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 0.65rem 0.5rem !important;
+  }
+  #summarySection .summary-card > .grid > div > svg {
+    grid-row: 1 / span 2 !important;
+    grid-column: 1 !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    margin: 0 !important;
+  }
+  #summarySection .summary-card > .grid > div > .text-xs {
+    grid-row: 1 !important;
+    grid-column: 2 !important;
+    margin: 0 !important;
+    align-self: end !important;
+  }
+  #summarySection .summary-card > .grid > div > .font-semibold {
+    grid-row: 2 !important;
+    grid-column: 2 !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+    /* Perbesar Semua Ikon di Dalam Kartu Baterai */
+  #batteryGrid .battery-card svg {
+    width: 1.9rem !important;
+    height: 1.9rem !important;
+    margin-right: 0.45rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+    
+/* Susunan Khusus LAPTOP / PC */
+@media (min-width: 1024px) {
+  /* 0. Header, Judul Utama & Footer */
+  header h1 { font-size: 1.95rem !important; }
+  header img[alt="Huawei"] { width: 2.6rem !important; height: 2.6rem !important; }
+  #settingsBtn svg { width: 3.2rem !important; height: 3.2rem !important; }
+  #dropdownMenu { width: 17rem !important; }
+  #dropdownMenu a { font-size: 1.25rem !important; padding: 0.8rem 1.2rem !important; }
+  main h2 { font-size: 1.75rem !important; }
+  #total-batteries, #realtime-clock, main .text-lg { font-size: 1.4rem !important; }
+  footer .text-xl { font-size: 1.4rem !important; }
+
+  /* 1. RINGKASAN SISTEM TOTAL: Ikon di Samping Kiri + Semua Teks/Angka/Ikon Diperbesar */
+  #summarySection h3 { font-size: 1.65rem !important; margin-bottom: 1rem !important; }
+  #summarySection .summary-card { padding: 1.5rem !important; }
+  #summarySection .summary-card > .grid { gap: 1.25rem !important; }
+
+  /* Ubah susunan tiap kotak ringkasan menjadi: Ikon di Kiri, Label & Angka di Kanan */
+  #summarySection .summary-card > .grid > div {
+    display: grid !important;
+    grid-template-columns: auto auto !important;
+    grid-template-rows: auto auto !important;
+    justify-content: center !important;
+    align-content: center !important;
+    column-gap: 1.25rem !important;
+    row-gap: 0.2rem !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 1.25rem 1.5rem !important;
+  }
+  #summarySection .summary-card > .grid > div > svg {
+    grid-row: 1 / span 2 !important;
+    grid-column: 1 !important;
+    width: 4.2rem !important;
+    height: 4.2rem !important;
+    margin: 0 !important;
+  }
+  #summarySection .summary-card > .grid > div > .text-xs {
+    grid-row: 1 !important;
+    grid-column: 2 !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 0.05em !important;
+    margin: 0 !important;
+    align-self: end !important;
+  }
+  #summarySection .summary-card > .grid > div > .font-semibold {
+    grid-row: 2 !important;
+    grid-column: 2 !important;
+    font-size: 2.35rem !important;
+    line-height: 2.6rem !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+
+  /* 2. DAFTAR UNIT BATERAI (Mode Card): Perbesar Semua Ikon, Teks & Angka */
+  main h3.text-lg { font-size: 1.65rem !important; }
+  main h3 span { font-size: 1.25rem !important; }
+  #btnViewTable, #btnViewCard { font-size: 1.15rem !important; padding: 0.55rem 1.15rem !important; }
+
+  #batteryGrid { gap: 1.5rem !important; }
+  #batteryGrid .battery-card { padding: 1.65rem !important; }
+  #batteryGrid .battery-card h3 { font-size: 1.75rem !important; line-height: 2.15rem !important; }
+  #batteryGrid .battery-card h3 span { font-size: 1.45rem !important; }
+  #batteryGrid .led { width: 17px !important; height: 17px !important; }
+  #batteryGrid .battery-card .mb-4 span { font-size: 1.35rem !important; }
+  #batteryGrid .mini-batt-body { height: 24px !important; }
+  #batteryGrid .mini-batt-cap { height: 14px !important; width: 7px !important; }
+  #batteryGrid .battery-card .grid .space-y-2 { display: flex !important; flex-direction: column !important; gap: 0.85rem !important; }
+  #batteryGrid .battery-card .grid .text-gray-500 { font-size: 1.15rem !important; }
+  #batteryGrid .battery-card .grid .font-semibold { font-size: 1.6rem !important; line-height: 1.95rem !important; }
+  #batteryGrid .battery-card svg {
+    width: 2.45rem !important;
+    height: 2.45rem !important;
+    margin-right: 1rem !important;
+  }
+  #batteryGrid .battery-card .border-t { padding-top: 1rem !important; margin-top: 1.25rem !important; }
+  #batteryGrid .battery-card .border-t span { font-size: 1.25rem !important; }
+
+  /* 3. Mode Tampilan Table */
+  #batteryTableContainer th { font-size: 1.2rem !important; padding: 1.2rem 1rem !important; }
+  #batteryTableContainer td { font-size: 1.45rem !important; padding: 1.25rem 1rem !important; }
+  #batteryTableContainer td .font-bold { font-size: 1.5rem !important; }
+  #batteryTableContainer td .text-\[11px\] { font-size: 1.05rem !important; }
+  #batteryTableContainer td .w-16 { width: 6rem !important; height: 2.4rem !important; }
+
+  /* 4. Gambar No. 2: Pop-up Detail 15 Sel (Perbesar Semua Teks, Angka & Bar) */
+  #batteryModal > div {
+    max-width: 82vw !important;
+    width: 82vw !important;
+    max-height: 94vh !important;
+  }
+  #batteryModal > div > div:first-child { padding: 20px 30px !important; }
+  #batteryModal h2 { font-size: 2.15rem !important; }
+  #batteryModal #led-modal { width: 18px !important; height: 18px !important; }
+  #batteryModal #closeModal { font-size: 2.1rem !important; }
+  #batteryModal > div > div:nth-child(2) {
+    padding: 24px 30px !important;
+    gap: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  #batteryModal .text-\[10px\],
+  #batteryModal .text-\[11px\] { font-size: 1.2rem !important; margin-bottom: 6px !important; }
+  #batteryModal .text-xs { font-size: 1.6rem !important; line-height: 1.95rem !important; }
+  #batteryModal .battery-3d-body { height: 52px !important; }
+  #batteryModal .battery-3d-cap { height: 28px !important; width: 13px !important; }
+  #batteryModal .battery-3d-text { font-size: 22px !important; }
+  #batteryModal #modalCells { gap: 14px !important; }
+  #batteryModal #modalCells > div { padding: 14px 10px !important; }
+
+  /* 5. Pop-up Aliran Energi PLTS */
+  #modalDiagramPlts > div {
+    max-width: 96vw !important;
+    width: 96vw !important;
+    padding: 20px 28px !important;
+  }
+  #modalDiagramPlts h3 { font-size: 2.2rem !important; }
+  #modalDiagramPlts #badgeStatusDiagram {
+    font-size: 1.15rem !important;
+    padding: 6px 16px !important;
+  }
+  #modalDiagramPlts > div > div:first-child p,
+  #modalDiagramPlts > div > div:first-child .text-xs {
+    font-size: 1.35rem !important;
+    line-height: 1.85rem !important;
+  }
+  #modalDiagramPlts > div > div:first-child button {
+    font-size: 2.4rem !important;
+  }
+
+  /* 5A. Perbesar Ikon Matahari & 3 Panah Sinar (.ikon-matahari-plts) */
+  #modalDiagramPlts .ikon-matahari-plts {
+    width: 19.5% !important;
+    left: 22.5% !important;
+    top: 17.5% !important;
+  }
+
+  /* 5B. Perbesar Semua Bulatan DC & AC di Pipa Solar, Baterai & Rumah (.bulatan-aliran) */
+  #modalDiagramPlts .bulatan-aliran {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 19px !important;
+    border-width: 3px !important;
+  }
+
+  /* 5C. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
+  #modalDiagramPlts .display-tegangan-baterai,
+  #modalDiagramPlts .display-arus-baterai,
+  #modalDiagramPlts .display-daya-baterai {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    border-radius: 7px !important;
+  }
+
+  /* 5D. Perbesar Angka di Dalam Layar TV Kanan (.display-info-dc) */
+  #modalDiagramPlts .display-info-dc {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+  }
+
+  /* 5E. Perbesar Kotak Daya Besar di Bawah TV (.display-daya-tv) */
+  #modalDiagramPlts .display-daya-tv {
+    width: 12.2% !important;
+    height: 9.2% !important;
+    left: 91.8% !important;
+    top: 79.8% !important;
+    font-size: 2.35rem !important;
+    border-width: 2px !important;
+    border-radius: 8px !important;
+  }
+
+      /* 5F. Perbesar Teks & Angka "Hasil Pendapatan Hari Ini" (Khusus Laptop / PC) */
+  #modalDiagramPlts > div > div:first-child {
+    align-items: stretch !important;
+  }
+  #modalDiagramPlts > div > div:first-child > div:last-child {
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+  #modalDiagramPlts > div > div:first-child > div:last-child > div {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    padding: 10px 24px !important;
+  }
+  /* Target teks "Hasil Pendapatan Hari Ini" */
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:first-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > span:first-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > p:first-child {
+    font-size: 1.5rem !important;
+    line-height: 1.65rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    white-space: nowrap !important;
+  }
+  /* Target angka "0,005 kWh" dan satuan kWh di dalamnya */
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:last-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > div:last-child span,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > span:last-child,
+  #modalDiagramPlts > div > div:first-child > div:last-child > div > p:last-child {
+    font-size: 3.0rem !important;
+    line-height: 2.6rem !important;
+    font-weight: 800 !important;
+    margin-top: 4px !important;
+  }
+
+  /* 6. Gambar No. 3, 4, 5: Pop-up Background, Modul Info & Status Server */
+  #bgCustomModal > div,
+  #modulInfoModal > div,
+  #serverStatusModal > div,
+  #bmsSettingModal > div {
+    max-width: 78vw !important;
+    width: 46vw !important;
+    padding: 36px 42px !important;
+  }
+  #bgCustomModal > div > div:first-child span:first-child,
+  #modulInfoModal > div > div:first-child span:first-child,
+  #serverStatusModal > div > div:first-child span:first-child {
+    font-size: 2.15rem !important;
+  }
+  #bgCustomModal > div > div:first-child span:last-child,
+  #modulInfoModal > div > div:first-child span:last-child,
+  #serverStatusModal > div > div:first-child span:last-child {
+    font-size: 2.3rem !important;
+  }
+  #modulInfoModal > div > div:nth-child(2) { gap: 18px !important; margin-bottom: 26px !important; }
+  #modulInfoModal > div > div:nth-child(2) > div,
+  #serverStatusModal #srv-list-box > div {
+    padding: 20px 24px !important;
+    font-size: 1.55rem !important;
+  }
+  #serverStatusModal #srv-list-box { gap: 14px !important; margin-bottom: 24px !important; }
+  #bgCustomModal span, #bgCustomModal button,
+  #modulInfoModal span, #modulInfoModal strong, #modulInfoModal button,
+  #serverStatusModal span, #serverStatusModal div, #serverStatusModal input, #serverStatusModal button {
+    font-size: 1.5rem !important;
+  }
+  #bgCustomModal input[type="range"] { height: 12px !important; }
+  #bgCustomModal button,
+  #modulInfoModal button,
+  #serverStatusModal button {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  /* 7. Gambar No. 6, 7, 8: Pengaturan BMS Online */
+  #bmsSettingModal h2 { font-size: 2.2rem !important; }
+  #closeBmsSetting { font-size: 2.1rem !important; }
+  #bmsSettingModal p,
+  #bmsSettingModal label,
+  #bmsSettingModal input,
+  #bmsSettingModal select,
+  #bmsSettingModal button,
+  #bmsSettingModal .text-xs,
+  #bmsSettingModal .text-sm {
+    font-size: 1.45rem !important;
+  }
+  #bmsSettingModal input,
+  #bmsSettingModal select {
+    padding: 15px 18px !important;
+  }
+  #bmsSettingModal .space-y-4 > div {
+    padding: 26px !important;
+  }
+}
+    
+    body[data-theme="dark"] {
+    --card-bg: rgba(17, 24, 39, 0.45);     /* Kotak Ringkasan dibuat transparan 45% */
+    --card-lapis: rgba(31, 41, 55, 0.40);  /* Kotak Baterai #214-#219 dibuat transparan 40% */
+    --card-text: #ffffff;
+    --card-subtext: #ffffff;
+    --icon-voltage: #f59e0b;
+    --icon-current: #60a5fa;
+    background-color: #000000;
+    color: #f3f4f6;
+}
+    
+  /* Pisahkan layer video latar ke GPU tersendiri */
+  #dynamic-bg-layer, #custom-bg-vid, body > video {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+ }
+
+  .battery-card {
+    background-color: var(--card-lapis);
+    color: var(--card-text);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid var(--card-bg);
+    backdrop-filter: blur(4px);          /* Pelindung angka agar tidak silau */
+    -webkit-backdrop-filter: blur(4px);  /* Dukungan browser Safari/Apple */
+    transform: translateZ(0);            /* Kunci di GPU HP agar tidak lag */
+    contain: layout style;
+   }
+
+
+    .battery-card h3 {
+      color: var(--card-text);
+    }
+
+    .battery-card span {
+      color: var(--card-subtext);
+    }
+
+    .battery-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-bar {
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #e5e7eb;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    
+    .cell-voltage {
+      position: relative;
+    }
+    
+    .cell-voltage::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 70%;
+      width: 4px;
+      border-radius: 2px;
+    }
+    
+    .cell-normal::before { background-color: #10b981; }
+    .cell-warning::before { background-color: #f59e0b; }
+    .cell-danger::before { background-color: #ef4444; }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Indikator LED 3D Glossy pada Setiap Kartu Baterai */
+    .led {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin-left: 6px;
+      position: relative;
+      background: radial-gradient(circle at 35% 30%, #64748b 0%, #334155 55%, #0f172a 100%);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 
+        inset 0 2px 3px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.8),
+        0 2px 4px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .led::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      width: 4.5px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.65);
+      transform: rotate(-25deg);
+      pointer-events: none;
+    }
+
+    .led.active {
+      background: radial-gradient(circle at 35% 30%, #fecaca 0%, #ef4444 45%, #b91c1c 80%, #7f1d1d 100%);
+      border-color: #fca5a5;
+      transform: scale(1.15);
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.9),
+        0 0 6px #ef4444,
+        0 0 14px rgba(239, 68, 68, 0.9),
+        0 0 24px rgba(220, 38, 38, 0.65);
+    }
+    
+    #id_monitoring_footer {
+      display: none;
+    }
+
+    header {
+      background-color: #0455D1;
+      color: #ffffff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body[data-theme="dark"] header {
+      background-color: #1f2937;
+      color: #ffffff;
+    }
+
+    footer {
+      background-color: #1f2937;
+      color: #9ca3af;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body[data-theme="dark"] footer {
+      background-color: #111827;
+      color: #d1d5db;
+    }
+
+    .summary-card {
+      background-color: var(--card-bg);
+      color: var(--card-text);
+      backdrop-filter: blur(4px);          /* Pelindung angka ringkasan agar tidak silau */
+      -webkit-backdrop-filter: blur(4px);  /* Dukungan browser Safari/Apple */
+      transform: translateZ(0);            /* Kunci di GPU HP agar tidak lag */
+      contain: layout style;
+    }
+
+    
+    .sort-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #6b7280;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+    
+    .sort-indicator i {
+      font-size: 10px;
+    }
+
+/* === GAYA IKON BATERAI 3D MEMANJANG === */
+.battery-3d-wrapper {
+  display: flex;
+  flex-direction: row-reverse; /* Memindahkan kepala baterai ke sebelah kanan */
+  align-items: center;
+  width: 100%;
+  margin-top: 6px;
+}
+
+/* Kepala / Kutub Positif Baterai */
+.battery-3d-cap {
+  width: 8px;
+  height: 16px;
+  background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+  border-radius: 0 3px 3px 0; /* Sudut membulat di sisi kanan */
+  border: 1px solid #334155;
+  border-left: none;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+    .battery-3d-body {
+      flex: 1;
+      height: 26px;
+      background: linear-gradient(180deg, #090d16 0%, #161d2d 50%, #0f172a 100%);
+      border-radius: 6px;
+      border: 1.5px solid #475569;
+      padding: 2.5px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85), inset 0 -2px 4px rgba(255, 255, 255, 0.1), 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+    .battery-3d-body::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-radius: 4px 4px 0 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .battery-3d-fill-soc {
+      height: 100%;
+      border-radius: 3.5px;
+      background: linear-gradient(180deg, #6ee7b7 0%, #10b981 45%, #047857 100%);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+      transition: width 0.5s ease;
+      position: relative;
+      z-index: 1;
+    }
+    .battery-3d-fill-soh {
+      height: 100%;
+      border-radius: 3.5px;
+      background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 45%, #0369a1 100%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+      transition: width 0.5s ease;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Teks di tengah dalam baterai 3D */
+    .battery-3d-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* === IKON BATERAI MINI UNTUK KARTU DAFTAR UNIT (KUTUB DI KANAN) === */
+    .mini-batt-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .mini-batt-body {
+      flex: 1;
+      height: 14px;
+      background-color: #1f2937;
+      border: 1.5px solid #64748b;
+      border-radius: 4px;
+      padding: 1.5px;
+      overflow: hidden;
+      position: relative;
+    }
+    .mini-batt-cap {
+      width: 4px;
+      height: 8px;
+      background-color: #94a3b8;
+      border-radius: 0 2px 2px 0;
+      margin-left: 1px;
+    }
+  </style>
+
+  <style>
+      @keyframes putarRodaGigi3D {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #settingsBtn:hover svg g,
+    #settingsBtn:active svg g {
+      animation-duration: 2.5s !important;
+    }
+    
+</style>
+<!-- Font Digital 7-Segment & Efek 3D Neon Persis Gambar 2 -->
+<style>
+  @font-face {
+    font-family: 'DSEG7Classic';
+    src: url('https://jsdelivr.net') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  .digital-3d-val {
+    font-family: 'DSEG7Classic', 'Digital-7 Mono', monospace;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1;
+    position: relative;
+    padding: 2px 1px;
+  }
+
+  @media (max-width: 768px) {
+    .digital-3d-val {
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+  }
+
+  .digital-3d-unit {
+    font-family: 'DSEG7Classic', sans-serif;
+    font-size: 0.68em;
+    margin-left: 4px;
+    font-weight: 700;
+  }
+
+  /* 1. TEGANGAN: Biru Cyan Neon 3D */
+  .neon-cyan-3d {
+    color: #38e8ff;
+    text-shadow:
+      0 2px 0 #0284c7,
+      0 4px 0 #0369a1,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(56, 232, 255, 0.9),
+      0 0 26px rgba(14, 165, 233, 0.75);
+  }
+
+  /* 2. ARUS: Hijau Emerald Neon 3D */
+  .neon-green-3d {
+    color: #10ff70;
+    text-shadow:
+      0 2px 0 #059669,
+      0 4px 0 #065f46,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(16, 255, 112, 0.9),
+      0 0 26px rgba(16, 185, 129, 0.75);
+  }
+
+  /* 3. DAYA: Kuning Emas Neon 3D */
+  .neon-amber-3d {
+    color: #ffd026;
+    text-shadow:
+      0 2px 0 #d97706,
+      0 4px 0 #92400e,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(255, 208, 38, 0.9),
+      0 0 26px rgba(245, 158, 11, 0.75);
+  }
+
+  /* 4. SUHU: Oranye-Merah Bara Neon 3D */
+  .neon-orange-3d {
+    color: #ff5722;
+    text-shadow:
+      0 2px 0 #c2410c,
+      0 4px 0 #7c2d12,
+      0 6px 6px rgba(0, 0, 0, 0.95),
+      0 0 12px rgba(255, 87, 34, 0.9),
+      0 0 26px rgba(234, 88, 12, 0.75);
+  }
+
+  /* Efek Menyala Hijau Neon di Semua Sisi Ikon Baterai 3D saat Data MQTT Masuk */
+  .batt-icon-pulse-green {
+    border-color: #00ff88 !important;
+    box-shadow:
+      0 0 10px rgba(0, 255, 136, 0.95),
+      0 0 22px rgba(16, 185, 129, 0.85),
+      inset 0 0 8px rgba(0, 255, 136, 0.65) !important;
+    transform: scale(1.03);
+    transition: all 0.12s ease-out;
+  }
+</style>
+
+<style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
+<body class="min-h-screen flex flex-col dark connected" data-theme="dark">
+<!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER -->
+<div id="dynamic-bg-layer" style="position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;">
+  <img id="custom-bg-img" alt="" style="display:none; width:100%; height:100%; object-fit:cover;" />
+  <video id="custom-bg-vid" autoplay loop muted playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+  <div id="custom-bg-overlay" style="display:none; position:absolute; inset:0; background:rgba(10, 14, 23, 0.60);"></div>
+</div>
+
+<!-- Layar Selamat Datang (Splash Screen) untuk Mengaktifkan Suara -->
+<div id="welcomeSplash" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#1f2937] text-white transition-opacity duration-500">
+    <div class="text-center p-10 bg-[#0455d1]/25 rounded-3xl border-2 border-[#0455d1]/40 backdrop-blur-lg shadow-2xl w-full max-w-lg mx-4">
+        <div class="mb-8 flex items-center justify-center w-36 h-36 mx-auto animate-pulse">
+            <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
+        </div>
+        <h1 class="text-4xl font-black mb-4 tracking-wide text-white uppercase">BMS MONITORING</h1>
+        <p class="text-lg text-gray-100 mb-10 leading-relaxed font-medium">Sistem 48V siap digunakan. Ketuk tombol di bawah untuk mengaktifkan Pemantauan dan Audio
+          Jarvis.</p>
+        
+        <button id="btnStartApp" class="w-full bg-[#0455d1] hover:bg-[#2563eb] text-white font-bold text-xl py-4 px-8 rounded-2xl shadow-xl transform active:scale-95 transition duration-200 flex items-center justify-center gap-3">
+            <i class="fas fa-play"></i> Buka Aplikasi
+        </button>
+    </div>
+</div>
+
+<video autoplay loop muted playsinline class="fixed top-0 left-0 w-full h-full object-cover -z-10 pointer-events-none opacity-30">
+    <source src="background.mp4" type="video/mp4">
+</video>
+
+<!-- Header -->
+<header id="mainHeader" class="bg-gradient-to-r text-white shadow-lg w-full relative">
+  <div class="max-w-7xl lg:max-w-[96%] mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
+    <div class="flex items-center">
+      <div class="mr-3 flex items-center justify-center w-8 h-8">
+        <img src="huawei-logo.png" alt="Huawei" class="w-full h-full object-contain">
+          </div>
+
+          <h1 class="text-2xl font-bold">HUAWEI BMS MONITORING By Rezky Logam</h1>
+      </div>
+
+    <div class="flex items-center space-x-4">
+
+      <div class="relative">
+                <button id="settingsBtn" class="p-1 rounded-full transition transform hover:scale-105 active:scale-95 focus:outline-none">
+          <svg class="w-10 h-10 drop-shadow-[0_0_10px_rgba(245,158,11,0.75)]" viewBox="0 0 48 48" fill="none" xmlns="http://w3.org">
+            <defs>
+              <linearGradient id="neonGold3D" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#fef08a"/>
+                <stop offset="45%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#9a3412"/>
+              </linearGradient>
+              <linearGradient id="depthShadow3D" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#78350f"/>
+                <stop offset="100%" stop-color="#451a03"/>
+              </linearGradient>
+              <filter id="neonGlow3D" x="-25%" y="-25%" width="150%" height="150%">
+                <feGaussianBlur stdDeviation="1.4" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <g style="transform-origin: 24px 22.7px; animation: putarRodaGigi3D 10s linear infinite;">
+              <g transform="translate(0, 2.2)" opacity="0.85">
+                <path d="M21.4 4H26.6L27.5 8.6C28.8 9 30.1 9.5 31.2 10.2L35.3 7.7L39 11.4L36.5 15.5C37.2 16.6 37.7 17.9 38.1 19.2L42.7 20.1V25.3L38.1 26.2C37.7 27.5 37.2 28.8 36.5 29.9L39 34L35.3 37.7L31.2 35.2C30.1 35.9 28.8 36.4 27.5 36.8L26.6 41.4H21.4L20.5 36.8C19.2 36.4 17.9 35.9 16.8 35.2L12.7 37.7L9 34L11.5 29.9C10.8 28.8 10.3 27.5 9.9 26.2L5.3 25.3V20.1L9.9 19.2C10.3 17.9 10.8 16.6 11.5 15.5L9 11.4L12.7 7.7L16.8 10.2C17.9 9.5 19.2 9 20.5 8.6L21.4 4Z" stroke="url(#depthShadow3D)" stroke-width="3.2" stroke-linejoin="round"/>
+                <circle cx="24" cy="22.7" r="9.2" stroke="url(#depthShadow3D)" stroke-width="2.8"/>
+                <circle cx="24" cy="22.7" r="4.8" stroke="url(#depthShadow3D)" stroke-width="2.5"/>
+              </g>
+
+              <g filter="url(#neonGlow3D)">
+                <path d="M21.4 4H26.6L27.5 8.6C28.8 9 30.1 9.5 31.2 10.2L35.3 7.7L39 11.4L36.5 15.5C37.2 16.6 37.7 17.9 38.1 19.2L42.7 20.1V25.3L38.1 26.2C37.7 27.5 37.2 28.8 36.5 29.9L39 34L35.3 37.7L31.2 35.2C30.1 35.9 28.8 36.4 27.5 36.8L26.6 41.4H21.4L20.5 36.8C19.2 36.4 17.9 35.9 16.8 35.2L12.7 37.7L9 34L11.5 29.9C10.8 28.8 10.3 27.5 9.9 26.2L5.3 25.3V20.1L9.9 19.2C10.3 17.9 10.8 16.6 11.5 15.5L9 11.4L12.7 7.7L16.8 10.2C17.9 9.5 19.2 9 20.5 8.6L21.4 4Z" stroke="url(#neonGold3D)" stroke-width="2.6" stroke-linejoin="round"/>
+                <circle cx="24" cy="22.7" r="9.2" stroke="url(#neonGold3D)" stroke-width="2.4"/>
+                <circle cx="24" cy="22.7" r="4.8" stroke="#fef9c3" stroke-width="2"/>
+              </g>
+            </g>
+          </svg>
+        </button>
+
+        <div id="dropdownMenu" class="absolute right-0 mt-3 w-72 sm:w-80 bg-white text-gray-800 rounded-2xl shadow-2xl hidden z-50 overflow-hidden border border-gray-200">
+           <a id="networkBtn" href="#" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-blue-600">⚡ Sistem PLTS</a>
+           <a id="jarvisToggleBtn" href="#" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-green-600">🔊 Audio Jarvis : ON</a>
+           <a id="bgSettingBtn" href="#" onclick="event.preventDefault(); toggleBgPanel();" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-purple-600">🖼️ Ganti Background</a>
+           <hr class="my-1 border-gray-200">
+           <a id="modulInfoBtn" href="#" onclick="event.preventDefault(); openModulInfoModal();" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-gray-700">📡 Modul Info</a>
+           <a id="serverStatusBtn" href="#" onclick="event.preventDefault(); openServerStatusModal();" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-emerald-600">🌐 Server (<span id="srv-online-count">0</span>/4)</a>
+           <a id="bmsSettingBtn" href="#" class="block px-5 py-3.5 text-xl hover:bg-gray-100 font-bold text-blue-600">⚙ Setting BMS</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Modal Setting BMS -->
+<div id="bmsSettingModal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50 p-3 sm:p-4">
+  <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto p-5 sm:p-7 relative">
+    <button id="closeBmsSetting" class="absolute top-4 right-5 text-gray-500 hover:text-gray-800 text-2xl font-bold">X</button>
+    
+    <div class="mb-4 pr-6">
+      <h2 class="text-xl sm:text-2xl font-bold mb-1 text-gray-900">⚙️ Pengaturan BMS Online</h2>
+      <p class="text-xs sm:text-sm text-gray-500">Kirim perintah konfigurasi langsung ke BMS Huawei via ESP32 & RS485.</p>
+    </div>
+
+    <div id="settingFeedbackBox" class="hidden mb-4 p-3.5 rounded-xl text-sm font-semibold"></div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+      <div>
+        <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">Target Unit Baterai</label>
+        <select id="setTargetAddr" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm sm:text-base bg-white">
+          <option value="0">Semua Baterai Online</option>
+          <option value="214">HUAWEI #214</option>
+          <option value="215">HUAWEI #215</option>
+          <option value="216">HUAWEI #216</option>
+          <option value="217">HUAWEI #217</option>
+          <option value="218">HUAWEI #218</option>
+          <option value="219">HUAWEI #219</option>
+          <option value="220">HUAWEI #220</option>
+          <option value="221">HUAWEI #221</option>
+          <option value="222">HUAWEI #222</option>
+          <option value="223">HUAWEI #223</option>
+          <option value="224">HUAWEI #224</option>
+          <option value="225">HUAWEI #225</option>
+          <option value="226">HUAWEI #226</option>
+          <option value="227">HUAWEI #227</option>
+          <option value="228">HUAWEI #228</option>
+          <option value="229">HUAWEI #229</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">PIN Keamanan</label>
+        <input type="password" id="setSecurityPin" placeholder="Masukkan PIN" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm sm:text-base bg-white">
+      </div>
+    </div>
+
+    <div class="flex gap-2 border-b border-gray-200 mb-4 overflow-x-auto pb-1">
+      <button type="button" onclick="switchBmsTab('tabKontrol')" id="btn-tabKontrol" class="bms-tab-btn px-4 py-2 rounded-t-xl font-bold text-xs sm:text-sm bg-blue-600 text-white">
+        1. Sharing & Arus
+      </button>
+      <button type="button" onclick="switchBmsTab('tabProteksi')" id="btn-tabProteksi" class="bms-tab-btn px-4 py-2 rounded-t-xl font-bold text-xs sm:text-sm bg-gray-100 text-gray-600 hover:bg-gray-200">
+        2. Proteksi OVP / UVP
+      </button>
+      <button type="button" onclick="switchBmsTab('tabKeamanan')" id="btn-tabKeamanan" class="bms-tab-btn px-4 py-2 rounded-t-xl font-bold text-xs sm:text-sm bg-gray-100 text-gray-600 hover:bg-gray-200">
+        3. Unlock Anti-Theft
+      </button>
+    </div>
+
+    <!-- TAB 1: AUTO LOAD & CHARGE SHARING + BATAS ARUS MANUAL -->
+    <div id="tabKontrol" class="bms-tab-content space-y-4">
+      <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-sm">
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+          <div>
+            <div class="text-sm font-bold text-gray-800 uppercase">⚖️ Auto Load & Charge Sharing</div>
+            <p class="text-xs text-gray-600">Membagi arus pengisian dan beban otomatis berdasarkan SOC × SOH antar baterai.</p>
+          </div>
+          <span id="sharingStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-600 text-white">STATUS: AKTIF</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <button type="button" onclick="sendSharingCommand('SHARING_ON')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl">AKTIFKAN (ON)</button>
+          <button type="button" onclick="sendSharingCommand('SHARING_OFF')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl">MATIKAN (OFF)</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-emerald-200">
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1">Max Charge / Unit (A)</label>
+            <input type="number" id="shareMaxChg" value="25" min="5" max="105" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1">Max Discharge / Unit (A)</label>
+            <input type="number" id="shareMaxDchg" value="30" min="5" max="105" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white">
+          </div>
+          <div class="flex items-end">
+            <button type="button" onclick="saveSharingParams()" class="w-full bg-gray-800 hover:bg-black text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-lg">Simpan Limit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+        <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Charge Manual</div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <input type="number" id="valReg4109" placeholder="15.0 (A)" step="0.5" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
+            <button type="button" onclick="sendScaledCommand(4109, 'valReg4109', 10, 1, 105)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl">Set Charge</button>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div class="text-xs font-bold text-gray-700 uppercase mb-2">Batas Arus Discharge Manual</div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <input type="number" id="valReg4107" placeholder="30.0 (A)" step="0.5" class="w-full p-2.5 border border-gray-300 rounded-xl text-sm">
+            <button type="button" onclick="sendScaledCommand(4107, 'valReg4107', 10, 1, 105)" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl">Set Discharge</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: PROTEKSI TEGANGAN ATAS (PACK OVP) & TEGANGAN BAWAH (PACK UVP) -->
+    <div id="tabProteksi" class="bms-tab-content hidden space-y-4">
+      <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium">
+        ⚠️ <b>Perhatian:</b> Pastikan nilai Recovery berada di antara batas UVP dan OVP agar tetap dalam rentang aman LiFePO4 15S.
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+        <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm space-y-3">
+          <div class="text-xs font-bold text-blue-700 uppercase">Proteksi Tegangan Atas (Pack OVP)</div>
+          <div>
+            <label class="block text-xs text-gray-600 mb-1">Pack OVP Cutoff (53.0 - 56.5 V)</label>
+            <div class="flex gap-2">
+              <input type="number" id="valPackOvp" placeholder="55.50" step="0.05" class="w-full p-2 border border-gray-300 rounded-xl text-sm">
+              <button type="button" onclick="sendScaledCommand(4100, 'valPackOvp', 100, 53.0, 56.5)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 rounded-xl">Simpan</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-600 mb-1">Pack OVP Recovery (51.0 - 55.0 V)</label>
+            <div class="flex gap-2">
+              <input type="number" id="valPackOvpRec" placeholder="53.50" step="0.05" class="w-full p-2 border border-gray-300 rounded-xl text-sm">
+              <button type="button" onclick="sendScaledCommand(4101, 'valPackOvpRec', 100, 51.0, 55.0)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 rounded-xl">Simpan</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-gray-200 bg-white shadow-sm space-y-3">
+          <div class="text-xs font-bold text-orange-700 uppercase">Proteksi Tegangan Bawah (Pack UVP)</div>
+          <div>
+            <label class="block text-xs text-gray-600 mb-1">Pack UVP Cutoff (42.0 - 48.0 V)</label>
+            <div class="flex gap-2">
+              <input type="number" id="valPackUvp" placeholder="44.50" step="0.05" class="w-full p-2 border border-gray-300 rounded-xl text-sm">
+              <button type="button" onclick="sendScaledCommand(4104, 'valPackUvp', 100, 42.0, 48.0)" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-3 rounded-xl">Simpan</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-600 mb-1">Pack UVP Recovery (45.0 - 50.0 V)</label>
+            <div class="flex gap-2">
+              <input type="number" id="valPackUvpRec" placeholder="47.00" step="0.05" class="w-full p-2 border border-gray-300 rounded-xl text-sm">
+              <button type="button" onclick="sendScaledCommand(4105, 'valPackUvpRec', 100, 45.0, 50.0)" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-3 rounded-xl">Simpan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: NONAKTIFKAN KUNCI ANTI-THEFT & DISABLE GYROSCOPE -->
+    <div id="tabKeamanan" class="bms-tab-content hidden space-y-4">
+      <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 shadow-sm">
+        <div class="text-xs font-bold text-emerald-800 uppercase mb-1">🔓 Nonaktifkan Kunci Anti-Theft & Disable Gyroscope</div>
+        <p class="text-xs text-gray-600 mb-3">Membuka penguncian Anti-Theft dan menonaktifkan sensor gerak/kemiringan Gyroscope agar baterai aman saat rak digeser.</p>
+        <button type="button" onclick="unlockAntiTheft()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl shadow-sm">Buka Kunci Anti-Theft & Disable Gyroscope</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Main content -->
+<main class="flex-1 p-4 sm:p-6 w-full">
+  <div class="max-w-7xl lg:max-w-[96%] mx-auto">
+    <div class="mb-6 flex justify-between items-start">
+      <h2 class="text-xl font-semibold text-white-900">BATERAI SISTEM 48V DC</h2>
+      
+          <!-- Kelompok Kanan: Jumlah Baterai (Atas) & Jam Real-time (Bawah) -->
+        <div class="flex flex-col items-end gap-1">
+            <div class="text-lg text-white-100">
+                <span id="total-batteries">6</span> Baterai Terkoneksi
+            </div>
+            <div id="realtime-clock" class="text-lg font-semibold text-gray-300"></div>
+        </div>
+    </div>
+    
+        <!-- Summary Section dengan Ikon 3D -->
+    <div id="summarySection" class="mb-8 hidden">
+      <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
+      <div class="summary-card rounded-xl border border-gray-700/50 shadow-sm p-5">
+        <div class="grid grid-cols-3 gap-4 text-center justify-center text-lg">
+          
+          <!-- ==================== BARIS 1 (ATAS) ==================== -->
+          
+          <!-- 1. RATA RATA SOC (Baterai 3D Hijau Glossy) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(16,185,129,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="bat3dBody" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#6ee7b7"/>
+                  <stop offset="45%" stop-color="#10b981"/>
+                  <stop offset="100%" stop-color="#065f46"/>
+                </linearGradient>
+                <linearGradient id="bat3dCap" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f3f4f6"/>
+                  <stop offset="100%" stop-color="#9ca3af"/>
+                </linearGradient>
+              </defs>
+              <!-- Tutup Positif Baterai -->
+              <rect x="19" y="4" width="10" height="4" rx="1.5" fill="url(#bat3dCap)"/>
+              <!-- Bodi Utama 3D -->
+              <rect x="12" y="8" width="24" height="35" rx="5" fill="url(#bat3dBody)" stroke="#a7f3d0" stroke-width="1"/>
+              <!-- Kilau Kaca Samping -->
+              <rect x="14.5" y="10.5" width="4.5" height="30" rx="2.2" fill="#ffffff" fill-opacity="0.32"/>
+              <!-- Petir Energi di Tengah -->
+              <path d="M25.5 16L19.5 26H24L22.5 35L28.5 25H24L25.5 16Z" fill="#fef08a"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOC</div>
+            <div id="avg-soc" class="font-semibold text-white-1500"></div>
+          </div>
+
+          <!-- 2. RATA RATA SOH (Hati 3D Pink/Merah Glossy) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(244,63,94,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <radialGradient id="heart3d" cx="35%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#fda4af"/>
+                  <stop offset="45%" stop-color="#f43f5e"/>
+                  <stop offset="100%" stop-color="#881337"/>
+                </radialGradient>
+              </defs>
+              <path d="M24 41C24 41 7 30.2 7 17.8C7 12.1 11.4 8 16.6 8C19.8 8 22.6 9.6 24 12.1C25.4 9.6 28.2 8 31.4 8C36.6 8 41 12.1 41 17.8C41 30.2 24 41 24 41Z" fill="url(#heart3d)"/>
+              <!-- Kilau 3D pada Lekukan Atas -->
+              <ellipse cx="15.5" cy="14.5" rx="3.5" ry="2" transform="rotate(-30 15.5 14.5)" fill="#ffffff" fill-opacity="0.5"/>
+              <!-- Garis Detak Kesehatan -->
+              <path d="M13 24H18.5L21 19.5L24.5 28.5L27 23H35" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RATA RATA SOH</div>
+            <div id="avg-soh" class="font-semibold text-white-1500"></div>
+          </div>
+
+          <!-- 3. RENTANG SUHU (Termometer 3D Oranye-Merah) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(249,115,22,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="thermoGlass" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#e2e8f0"/>
+                  <stop offset="50%" stop-color="#94a3b8"/>
+                  <stop offset="100%" stop-color="#475569"/>
+                </linearGradient>
+                <radialGradient id="thermoMercury" cx="35%" cy="35%" r="65%">
+                  <stop offset="0%" stop-color="#fed7aa"/>
+                  <stop offset="45%" stop-color="#f97316"/>
+                  <stop offset="100%" stop-color="#9a3412"/>
+                </radialGradient>
+              </defs>
+              <!-- Tabung Kaca Luar -->
+              <path d="M20 9C20 6.79 21.79 5 24 5C26.21 5 28 6.79 28 9V26.2C30.4 27.6 32 30.1 32 33C32 37.42 28.42 41 24 41C19.58 41 16 37.42 16 33C16 30.1 17.6 27.6 20 26.2V9Z" fill="url(#thermoGlass)" stroke="#cbd5e1" stroke-width="1"/>
+              <!-- Air Raksa 3D -->
+              <circle cx="24" cy="33" r="5.5" fill="url(#thermoMercury)"/>
+              <rect x="22.2" y="13" width="3.6" height="17" rx="1.8" fill="url(#thermoMercury)"/>
+              <!-- Kilau Bola Bawah -->
+              <circle cx="22.2" cy="31.2" r="1.6" fill="#ffffff" fill-opacity="0.6"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">RENTANG SUHU</div>
+            <div id="avg-temp" class="font-semibold text-white-1500">-- / -- °C</div>
+          </div>
+
+          <!-- ==================== BARIS 2 (BAWAH) ==================== -->
+
+          <!-- 4. TEGANGAN RATA RATA (Petir 3D Emas Mengkilap) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(234,179,8,0.55)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="bolt3d" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#fef9c3"/>
+                  <stop offset="40%" stop-color="#facc15"/>
+                  <stop offset="100%" stop-color="#b45309"/>
+                </linearGradient>
+              </defs>
+              <!-- Bayangan Tebal 3D di Belakang -->
+              <path d="M28.5 5L12.5 26H24.5L21.5 43L37.5 22H25.5L28.5 5Z" fill="#78350f"/>
+              <!-- Bodi Petir Emas Utama -->
+              <path d="M27 4L11 25H23L20 42L36 21H24L27 4Z" fill="url(#bolt3d)" stroke="#fef08a" stroke-width="0.8"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TEGANGAN RATA RATA</div>
+            <div id="avg-voltage" class="font-semibold text-white-1500"></div>
+          </div>
+
+          <!-- 5. TOTAL ARUS (Gelombang Arus 3D Biru-Cyan) -->
+          <div class="space-y-1.5 bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center border border-white/5">
+            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(56,189,248,0.5)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="curr3dBg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="50%" stop-color="#0284c7"/>
+                  <stop offset="100%" stop-color="#1e3a8a"/>
+                </linearGradient>
+              </defs>
+              <!-- Lencana Kotak 3D Membulat -->
+              <rect x="6" y="7" width="36" height="34" rx="9" fill="url(#curr3dBg)" stroke="#7dd3fc" stroke-width="1"/>
+              <!-- Kilau Atas -->
+              <path d="M10 12C10 9.8 11.8 8 14 8H34C36.2 8 38 9.8 38 12V15H10V12Z" fill="#ffffff" fill-opacity="0.22"/>
+              <!-- Garis Gelombang Arus 3D -->
+              <path d="M11 25H17L20.5 14L27.5 34L31 25H37" stroke="#0c4a6e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,1.5)"/>
+              <path d="M11 25H17L20.5 14L27.5 34L31 25H37" stroke="#fef08a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL ARUS</div>
+            <div id="total-current" class="font-semibold text-white-1500"></div>
+          </div>
+
+          <!-- 6. TOTAL DAYA (Steker/Colokan Listrik 3D Merah-Oranye) -->
+          <div class="space-y-1.5 bg-white/5 p-2 rounded-lg flex flex-col items-center justify-center">
+            <svg class="w-6 h-6 drop-shadow-[0_4px_6px_rgba(239,68,68,0.55)]" viewBox="0 0 48 48" fill="none">
+              <defs>
+                <linearGradient id="plug3dBody" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#fca5a5"/>
+                  <stop offset="45%" stop-color="#ef4444"/>
+                  <stop offset="100%" stop-color="#7f1d1d"/>
+                </linearGradient>
+                <linearGradient id="plugPin" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#f8fafc"/>
+                  <stop offset="100%" stop-color="#94a3b8"/>
+                </linearGradient>
+              </defs>
+              <!-- Dua Pin Colokan Logam 3D -->
+              <rect x="17" y="5" width="3.5" height="9" rx="1.5" fill="url(#plugPin)"/>
+              <rect x="27.5" y="5" width="3.5" height="9" rx="1.5" fill="url(#plugPin)"/>
+              <!-- Kepala Steker 3D -->
+              <path d="M12 14H36V23C36 29.6274 30.6274 35 24 35C17.3726 35 12 29.6274 12 23V14Z" fill="url(#plug3dBody)" stroke="#fecaca" stroke-width="1"/>
+              <!-- Kabel Bawah -->
+              <path d="M24 35V43" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+              <!-- Simbol Petir Daya di Tengah Steker -->
+              <path d="M25 18L20.5 24.5H24L23 30.5L27.5 24H24L25 18Z" fill="#fef08a"/>
+            </svg>
+            <div class="text-light gray-1000 text-xs font-medium uppercase tracking-wider">TOTAL DAYA</div>
+            <div id="total-power" class="font-semibold text-white-1500"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 mt-6">
+      <h3 class="text-lg font-semibold text-light gray-850">
+        DAFTAR UNIT BATERAI <span class="text-sm sm:text-base font-normal text-slate-400">(Klik untuk detail 15 sel)</span>
+      </h3>
+
+      <!-- Tombol Pengubah Tampilan Table / Card di Pojok Kanan -->
+      <div class="inline-flex bg-gray-800/90 border border-gray-700 p-1 rounded-lg shadow-sm ml-auto">
+        <button id="btnViewTable" onclick="setBatteryViewMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-gray-400 hover:text-white transition">
+          <i class="fas fa-table"></i> Table
+        </button>
+        <button id="btnViewCard" onclick="setBatteryViewMode('card')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-700 text-white shadow transition">
+          <i class="fas fa-th-large"></i> Card
+        </button>
+      </div>
+    </div>
+
+   <div id="batteryGrid" class="grid grid-cols-2 lg:grid-cols-3 gap-5 hidden"></div>
+
+    <!-- Wadah Tampilan Table -->
+    <div id="batteryTableContainer" class="hidden overflow-x-auto rounded-xl border border-gray-700/60 bg-gray-900/60 shadow-sm mb-6">
+      <table class="w-full text-left border-collapse text-xs sm:text-sm">
+        <thead>
+           <tr class="bg-gray-800 text-white font-bold border-b-2 border-gray-600 uppercase text-xs sm:text-sm tracking-wider">
+             <th class="py-3 pl-12 pr-3">BATERAI</th>
+             <th class="py-3 px-3">TEGANGAN</th>
+             <th class="py-3 pl-9 pr-3">ARUS</th>
+             <th class="py-3 pl-12 pr-3">DAYA</th>
+             <th class="py-3 pl-14 pr-3">SUHU</th>
+            </tr>
+          </thead>
+        <tbody id="batteryTableBody" class="divide-y divide-gray-800 text-gray-200"></tbody>
+      </table>
+    </div>
+    
+    <div id="empty-state" class="text-center py-12 bg-white rounded-xl shadow-sm">
+      <div class="text-blue-500 mb-4">
+        <i class="fas fa-car-battery text-5xl opacity-50"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-700 mb-2">Tidak ada baterai yang terhubung</h3>
+      <p class="text-gray-500 max-w-md mx-auto">Data baterai akan muncul di sini setelah sistem BMS Anda terhubung dan mengirimkan data.</p>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="text-gray-300 py-4 w-full" style="background-color: #1f2937;">
+  <div class="max-w-7xl lg:max-w-[96%] mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
+    <div class="text-xl font-semibold">
+      © 2026-2027 BMS MONITORING SISTEM
+      <a href="https://wa.me/6285249402703" class="no-underline hover:text-white">
+      </a>
+      <label id="id_monitoring_footer" style="display:block;"></label>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal Detail Baterai (Tema Gelap Presisi seperti Lokal ESP32) -->
+<div id="batteryModal" class="fixed inset-0 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="w-full max-w-2xl rounded-xl border shadow-2xl overflow-hidden text-slate-200 flex flex-col max-h-[90vh]" style="background-color: #161922; border-color: #2d3343;">
+    
+    <!-- Header Modal -->
+    <div class="flex items-center justify-between px-6 py-4 border-b" style="background-color: #1c202b; border-color: #2d3343;">
+      <div class="flex items-center gap-2.5">
+        <span id="led-modal" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+        <h2 id="modalTitle" class="text-base font-bold tracking-wide text-white uppercase">HUAWEI B1 2025 #214</h2>
+      </div>
+      <button id="closeModal" class="text-slate-400 hover:text-white text-xl font-bold leading-none">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Body Modal -->
+    <div class="p-6 space-y-5 overflow-y-auto flex-1">
+      
+      <!-- 1. KAPASITAS & KESEHATAN -->
+      <div>
+        <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-2">KAPASITAS & KESEHATAN</div>
+        <div class="rounded-lg border p-3.5 space-y-3" style="background-color: #11141c; border-color: #2d3343;">
+        <!-- Ikon Baterai 3D Memanjang untuk SOC (Hijau + Teks di Dalam) -->
+          <div class="battery-3d-wrapper" title="State of Charge (SOC)">
+            <div class="battery-3d-cap"></div>
+            <div class="battery-3d-body">
+              <div id="modalSocBar" class="battery-3d-fill-soc" style="width: 0%;"></div>
+              <div class="battery-3d-text">
+                SOC: &nbsp;<span id="modalSoc">0.00%</span>&nbsp; (<span id="modalRem">0.00 Ah</span>)
+              </div>
+            </div>
+          </div>
+
+          <!-- Ikon Baterai 3D Memanjang untuk SOH (Biru + Teks di Dalam) -->
+          <div class="battery-3d-wrapper" title="State of Health (SOH)">
+            <div class="battery-3d-cap"></div>
+            <div class="battery-3d-body">
+              <div id="modalSohBar" class="battery-3d-fill-soh" style="width: 0%;"></div>
+              <div class="battery-3d-text">
+                SOH: &nbsp;<span id="modalSoh">100.00%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t text-xs" style="border-color: #232734;">
+            <div>
+              <div class="text-[10px] text-slate-400">Siklus (Cycles)</div>
+              <div id="modalCycles" class="font-bold text-white mt-0.5">0</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400">Suhu Min / Max</div>
+              <div id="modalTempRange" class="font-bold text-white mt-0.5">-- / --</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400">Pembaruan</div>
+              <div id="modalTime" class="font-bold text-white mt-0.5">--:--:--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. TEGANGAN & KESEIMBANGAN SEL -->
+      <div>
+        <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-2">TEGANGAN & KESEIMBANGAN SEL</div>
+        <div class="rounded-lg border p-3.5 grid grid-cols-5 gap-2 text-xs" style="background-color: #11141c; border-color: #2d3343;">
+          <div>
+            <div class="text-[10px] text-slate-400">Pack Voltage</div>
+            <div id="modalPackVolt" class="font-bold text-white mt-0.5">0.00 V</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Bus Voltage</div>
+            <div id="modalBusVolt" class="font-bold text-white mt-0.5">0.00 V</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Min Cell</div>
+            <div id="modalMinCell" class="font-bold text-sky-400 mt-0.5">0.000 V</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Max Cell</div>
+            <div id="modalMaxCell" class="font-bold text-orange-400 mt-0.5">0.000 V</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Selisih (Diff)</div>
+            <div id="modalDiffCell" class="font-bold text-white mt-0.5">0 mV</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ARUS & DAYA -->
+      <div>
+        <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-2">ARUS & DAYA</div>
+        <div class="rounded-lg border p-3.5 grid grid-cols-5 gap-2 text-xs" style="background-color: #11141c; border-color: #2d3343;">
+          <div>
+            <div class="text-[10px] text-slate-400">Pack Current</div>
+            <div id="modalPackCurr" class="font-bold text-white mt-0.5">0.00 A</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Bus Current</div>
+            <div id="modalBusCurr" class="font-bold text-white mt-0.5">0.00 A</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Pack Power</div>
+            <div id="modalPackPower" class="font-bold text-white mt-0.5">0.00 W</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Bus Power</div>
+            <div id="modalBusPower" class="font-bold text-white mt-0.5">0.00 W</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Estimasi Loss</div>
+            <div id="modalLossPower" class="font-bold text-white mt-0.5">0.00 W</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. TEGANGAN & SUHU 15 SEL -->
+      <div>
+        <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-2">
+          TEGANGAN & SUHU 15 SEL (BIRU = MIN, ORANYE = MAX)
+        </div>
+        <div id="modalCells" class="grid grid-cols-5 gap-2.5"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let id_logger = "-";
+  let client;
+  let client2;
+  let batteries = [];
+  let pollingSts = false;
+  let timer_poll;
+  let xxx;
+  const cardTimers = {};
+  
+  // Fungsi untuk mengurutkan baterai berdasarkan typeBattery dan address
+  function sortBatteries() {
+    batteries.sort((a, b) => {
+      // Urutkan berdasarkan typeBattery terlebih dahulu
+      if (a.typeBattery < b.typeBattery) return -1;
+      if (a.typeBattery > b.typeBattery) return 1;
+      
+      // Jika typeBattery sama, urutkan berdasarkan address
+      return parseInt(a.addr) - parseInt(b.addr);
+    });
+    
+    // Setelah mengurutkan array, re-render semua card
+    reRenderAllCards();
+  }
+  
+  // Fungsi untuk merender ulang semua card berdasarkan urutan terbaru
+  function reRenderAllCards() {
+    const grid = document.getElementById("batteryGrid");
+    
+    // Kosongkan grid
+    grid.innerHTML = '';
+    
+    // Render ulang semua baterai sesuai urutan terbaru
+    batteries.forEach(batt => {
+      let cardId = `card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
+      
+      // Hapus timer lama jika ada
+      if (cardTimers[cardId]) {
+        clearTimeout(cardTimers[cardId]);
+        delete cardTimers[cardId];
+      }
+
+      let card = document.createElement("div");
+      card.id = cardId;
+      card.className = "battery-card rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md fade-in hidden";
+      card.dataset.loggerId = batt.loggerId;
+      card.dataset.addr = String(batt.addr);
+      card.dataset.typeBattery = batt.typeBattery;
+      card.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">HUAWEI B1 2025 &nbsp; <span class="text-sm font-semibold text-gray-800">#${batt.addr}</span></h3>
+          <div class="led" id="led-card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}"></div>
+        </div>
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-1">
+            <div class="flex items-center gap-1">
+              <span class="text-sm font-semibold text-gray-800">SOC :</span>
+              <span class="text-sm font-semibold" id="soc-value-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.soc}%</span>
+            </div>
+            <span class="text-sm font-semibold" id="status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.status || '--'}</span>
+          </div>
+          <div class="mini-batt-wrapper">
+            <div class="mini-batt-body">
+              <div id="soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="progress-fill bg-green-500" style="width: ${batt.soc}%"></div>
+            </div>
+            <div class="mini-batt-cap"></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5 text-sm">
+          <div class="space-y-2">
+            <!-- 1. Tegangan (Petir 3D Emas) -->
+            <div class="flex items-center">
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(234,179,8,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <linearGradient id="cBolt3d" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#fef08a"/>
+                    <stop offset="50%" stop-color="#facc15"/>
+                    <stop offset="100%" stop-color="#b45309"/>
+                  </linearGradient>
+                </defs>
+                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#78350f"/>
+                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cBolt3d)"/>
+              </svg>
+              <div>
+                <div class="text-gray-500">Tegangan</div>
+                <div id="voltage-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.voltage} V</div>
+              </div>
+            </div>
+
+            <!-- 2. Selisih Sel (Bola Biru 3D dengan Garis Selisih) -->
+            <div class="flex items-center">
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(59,130,246,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cDiff3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#93c5fd"/>
+                    <stop offset="55%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#1e3a8a"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cDiff3d)"/>
+                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
+                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
+              </svg>
+              <div>
+                <div class="text-gray-500">Selisih Sel</div>
+                <div id="voltagedif-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vdif} mV</div>
+              </div>
+            </div>
+
+            <!-- 3. Min Cell (Bola Merah 3D Minus) -->
+            <div class="flex items-center">
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cMin3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#fca5a5"/>
+                    <stop offset="55%" stop-color="#ef4444"/>
+                    <stop offset="100%" stop-color="#7f1d1d"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cMin3d)"/>
+                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
+                <rect x="7" y="10.8" width="10" height="2.4" rx="1.2" fill="#ffffff"/>
+              </svg>
+              <div>
+                <div class="text-gray-500">Min Cell</div>
+                <div id="cellmin-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmin} V</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <!-- 4. Arus (Gauge/Speedometer 3D Biru-Cyan) -->
+            <div class="flex items-center">
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(56,189,248,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cCurr3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#7dd3fc"/>
+                    <stop offset="55%" stop-color="#0284c7"/>
+                    <stop offset="100%" stop-color="#0c4a6e"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cCurr3d)"/>
+                <path d="M7 14.5C7 11.7 9.2 9.5 12 9.5C14.8 9.5 17 11.7 17 14.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 14.5L15 11" stroke="#fef08a" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="14.5" r="1.5" fill="#ffffff"/>
+              </svg>
+              <div>
+                <div class="text-gray-500">Arus</div>
+                <div id="current-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.current} A</div>
+              </div>
+            </div>
+
+            <!-- 5. Daya (Petir 3D Merah-Oranye) -->
+            <div class="flex items-center">
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(239,68,68,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <linearGradient id="cPow3d" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#fca5a5"/>
+                    <stop offset="45%" stop-color="#ef4444"/>
+                    <stop offset="100%" stop-color="#7f1d1d"/>
+                  </linearGradient>
+                </defs>
+                <path d="M14.5 2.5L6.5 13H12.5L11 21.5L19 11H13L14.5 2.5Z" fill="#450a0a"/>
+                <path d="M13.5 2L5.5 12.5H11.5L10 21L18 10.5H12L13.5 2Z" fill="url(#cPow3d)"/>
+              </svg>
+              <div>
+                <div class="text-gray-500">Daya</div>
+                <div id="power-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${(batt.voltage*batt.current).toFixed(1)} W</div>
+              </div>
+            </div>
+
+            <!-- 6. Max Cell (Bola Hijau 3D Plus) -->
+            <div class="flex items-center">
+              <svg class="w-4 h-4 shrink-0 mr-2 drop-shadow-[0_2px_3px_rgba(34,197,94,0.6)]" viewBox="0 0 24 24" fill="none">
+                <defs>
+                  <radialGradient id="cMax3d" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#86efac"/>
+                    <stop offset="55%" stop-color="#22c55e"/>
+                    <stop offset="100%" stop-color="#14532d"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#cMax3d)"/>
+                <ellipse cx="9" cy="7.5" rx="3" ry="1.5" transform="rotate(-25 9 7.5)" fill="#ffffff" fill-opacity="0.45"/>
+                <path d="M12 7.5V16.5M7.5 12H16.5" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div class="text-gray-500">Max Cell</div>
+                <div id="cellmax-${batt.loggerId}-${batt.typeBattery}-${batt.addr}" class="font-semibold">${batt.cell_vmax} V</div>
+              </div>
+            </div>
+          </div>
+        </div>
+         <div class="mt-4 pt-3 border-t border-gray-100 text-gray-500 flex justify-between items-center w-full">
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Suhu: <span id="temp-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.temp || '--'}</span></span>
+           <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Siklus (Cycles) : <span id="cycles-${batt.loggerId}-${batt.typeBattery}-${batt.addr}">${batt.cycles}</span></span>
+        </div>
+      `;
+      card.onclick = () => openModal(batt.loggerId, batt.addr, batt.typeBattery);
+      grid.appendChild(card);
+
+      // Set SOC bar color
+      const socBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+      if (batt.soc > 70) socBar.className = 'progress-fill bg-green-500';
+      else if (batt.soc > 30) socBar.className = 'progress-fill bg-yellow-500';
+      else socBar.className = 'progress-fill bg-red-500';
+
+      // Blink LED
+      const led = document.getElementById(`led-card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+      led.classList.add("active");
+      setTimeout(() => led.classList.remove("active"), 250);
+
+      // Set timeout untuk remove card
+      cardTimers[cardId] = setTimeout(() => {
+        let c = document.getElementById(cardId);
+        if (c) {
+          c.remove();
+          removeBatteryFromArray(batt.loggerId, batt.typeBattery, batt.addr);
+        }
+        delete cardTimers[cardId];
+      }, 30000);
+    });
+    
+    updateConnectionCount();
+  }
+  
+  function startMQTT() {
+  const activeId = getTargetLoggerId();
+  if (activeId) {
+    id_logger = activeId;
+    xxx = id_logger.split("-");
+  }
+
+  window.handleLegacyMqttMessage = function(topic, message) {
+    if (typeof updateConnectionStatus === "function") {
+      updateConnectionStatus(true);
+    }
+    if (typeof handleJSON === "function") {
+      handleJSON(topic, message);
+    }
+  };
+
+  const virtualClient = {
+    connected: true,
+    publish: function(topic, payload) {
+      if (typeof multiMqttClients !== "undefined") {
+        multiMqttClients.forEach(c => {
+          if (c && c.connected) {
+            c.publish(topic, payload);
+          }
+        });
+      }
+    },
+    subscribe: function(topic) {
+      if (typeof multiMqttClients !== "undefined") {
+        multiMqttClients.forEach(c => {
+          if (c && c.connected) {
+            c.subscribe(topic);
+          }
+        });
+      }
+    }
+  };
+
+  client = virtualClient;
+  client2 = virtualClient;
+}
+
+  function handleJSON(topic, message){
+    if(topic == "sysMon/"+xxx[0]+"/info/" || topic == "sysMon/"+xxx[0]+"/info" ){
+      let a = message.toString().split(",");
+      document.getElementById("network_ip").innerText = "IP Address: " + a[0];
+      document.getElementById("network_signal").innerText = "Signal: " + a[1];
+      
+      //document.getElementById("id_monitoring").innerText =text_head;
+      //document.getElementById("id_monitoring_footer").innerText =text_head;
+   } else if (topic.endsWith("/status")) {
+      try {
+        const res = JSON.parse(message.toString());
+        if (typeof showSettingStatus === "function") {
+          showSettingStatus(res.ok, (res.ok ? "✅ " : "❌ ") + res.msg);
+        }
+      } catch (e) {}
+    } else {
+
+      try {
+        const raw = JSON.parse(message.toString());
+        const batt = normalizeFromMqtt(raw, topic);
+        console.log("ISI DATA MQTT:", raw);
+
+        const idx = batteries.findIndex(b => b.loggerId === batt.loggerId && b.addr === batt.addr && b.typeBattery === batt.typeBattery);
+        if (idx >= 0) { 
+          batteries[idx] = batt;
+          update_cards(batt);
+        } else {
+          batt.elementId = `battery-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
+          batteries.push(batt);
+          // Setelah menambahkan baterai baru, urutkan semua baterai
+          sortBatteries();
+        }
+
+        updateSummary();
+        updateModal(); 
+      } catch (e) {
+        console.error("Invalid JSON", e);
+      }
+    }
+  }
+
+  function updateConnectionStatus(connected) {
+    const statusIndicator = document.getElementById('connection-status');
+    if (connected) {
+      document.body.classList.remove('disconnected');
+      document.body.classList.add('connected');
+    } else {
+      document.body.classList.remove('connected');
+      document.body.classList.add('disconnected');
+    }
+  }
+
+  function getCurrentTimeHHMMSS() {
+    const now = new Date();
+    let hours = now.getHours().toString().padStart(2, '0');
+    let minutes = now.getMinutes().toString().padStart(2, '0');
+    let seconds = now.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  function normalizeFromMqtt(data, topic) {
+  const cells = data.cell_voltages.map(v => (v / 1000).toFixed(3));
+  const cell_temps = data.cell_temps || []; // <-- BARIS BARU: Tangkap array suhu sel dari MQTT
+  const cell_vmax = Math.max(...data.cell_voltages) / 1000;
+  const cell_vmin = Math.min(...data.cell_voltages) / 1000;
+  const cell_vdiff = (cell_vmax - cell_vmin) * 1000;
+
+  return {
+    loggerId: topic.split('/')[1],
+    typeBattery: data.typeBattery,
+    addr: data.AddrBattery,
+    soc: data.SOC !== undefined ? parseFloat(data.SOC).toFixed(2) : (data.remaining_capacity !== undefined ? parseFloat(data.remaining_capacity).toFixed(2) : "0.00"),
+    soh: parseFloat(data.SOH).toFixed(2),
+    voltage: data.bat_voltage.toFixed(2),
+    busVoltage: data.bus_voltage.toFixed(2),
+    busCurrent: data.bus_current !== undefined ? data.bus_current.toFixed(2) : data.bat_current.toFixed(2),
+    current: data.bat_current.toFixed(2),
+    capacity: data.full_capacity.toFixed(2),
+    remaining: data.rem_capacity.toFixed(2),
+    cycles: data.cycle_count,
+    cycle_count: data.cycle_count,
+    cells,
+    cell_temps, // <-- BARIS BARU: Masukkan ke objek baterai
+    cell_vmax: cell_vmax.toFixed(3),
+    cell_vmin: cell_vmin.toFixed(3),
+    cell_vdif: cell_vdiff.toFixed(0),
+    time: getCurrentTimeHHMMSS(),
+    power: (data.bat_voltage * data.bat_current).toFixed(2),
+    status: data.bat_current > 0.1 ? 'Charging' : (data.bat_current < -0.1 ? 'Discharging' : 'Standby'),
+    temp: (data.min_temp !== undefined && data.max_temp !== undefined) ? `${data.min_temp}°C ~ ${data.max_temp}°C` : (data.min_temp !== undefined ? `${data.min_temp}°C` : '--'),
+    min_temp: data.min_temp,
+    max_temp: data.max_temp,
+  };
+}
+
+  const grid = document.getElementById("batteryGrid");
+  const modal = document.getElementById("batteryModal");
+  const emptyState = document.getElementById("empty-state");
+  const summarySection = document.getElementById("summarySection");
+  let currentAddr = null;
+  let currentLoggerId = null;
+  let currentTypeBattery = null;
+
+    function updateConnectionCount() {
+    document.getElementById('total-batteries').textContent = batteries.length.toString();
+    const tableContainer = document.getElementById('batteryTableContainer');
+    
+    if (batteries.length === 0) {
+      grid.classList.add('hidden');
+      if (tableContainer) tableContainer.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+      summarySection.classList.add('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      summarySection.classList.remove('hidden');
+
+      if (typeof currentViewMode !== 'undefined' && currentViewMode === 'table') {
+        grid.classList.add('hidden');
+        if (tableContainer) tableContainer.classList.remove('hidden');
+        if (typeof renderBatteryTable === 'function') renderBatteryTable();
+      } else {
+        grid.classList.remove('hidden');
+        if (tableContainer) tableContainer.classList.add('hidden');
+      }
+    }
+  }
+  
+  function removeBatteryFromArray(loggerId, typeBattery, addr) {
+    batteries = batteries.filter(b => !(b.loggerId === loggerId && b.typeBattery === typeBattery && b.addr === addr));
+    updateConnectionCount();
+    updateSummary();
+    // Setelah menghapus baterai, urutkan ulang
+    sortBatteries();
+  }
+  
+  function getSocColorClass(soc) {
+    let val = parseFloat(soc);
+    if (val <= 20) return 'bg-red-500';       // Merah jika baterai ≤ 20%
+    if (val <= 50) return 'bg-yellow-500';    // Kuning jika baterai 21% - 50%
+    return 'bg-green-500';                    // Hijau jika baterai > 50%
+  }
+
+  function update_cards(batt) {
+    let cardId = `card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
+    let card = document.getElementById(cardId);
+    
+    if (!card) {
+      // Jika card tidak ada, tambahkan baterai ke array dan urutkan
+      batt.elementId = `battery-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
+      batteries.push(batt);
+      sortBatteries();
+      return;
+    }
+
+    // Update card yang sudah ada
+    document.getElementById(`soc-value-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).textContent = `${batt.soc}%`;
+    let progressBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+    if (progressBar) {
+    // 1. Update lebar bar sesuai persentase baterai
+    progressBar.style.width = `${batt.SOC}%`;
+    
+    // 2. Bersihkan kelas warna bawaan Tailwind agar tidak bentrok
+    progressBar.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-blue-500');
+    
+    // 3. Pasang warna baru yang sesuai dengan kondisi SOC saat ini
+    let colorClass = getSocColorClass(batt.SOC);
+    progressBar.classList.add(colorClass);
+    }
+    document.getElementById(`voltage-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.voltage} V`;
+    document.getElementById(`current-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.current} A`;
+    document.getElementById(`cellmin-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.cell_vmin} V`;
+    document.getElementById(`cellmax-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.cell_vmax} V`;
+    document.getElementById(`power-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${(batt.voltage*batt.current).toFixed(1)} W`;
+    document.getElementById(`voltagedif-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).innerHTML = `${batt.cell_vdif} mV`;
+
+    const socBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+    if (batt.soc > 70) socBar.className = 'progress-fill bg-green-500';
+    else if (batt.soc > 30) socBar.className = 'progress-fill bg-yellow-500';
+    else socBar.className = 'progress-fill bg-red-500';
+
+    const tempElem = document.getElementById(`temp-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+if (tempElem) {
+    tempElem.textContent = batt.temp;
+}
+    
+    const cyclesElem = document.getElementById(`cycles-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+if (cyclesElem) {
+    cyclesElem.textContent = batt.cycles;
+}
+
+    const statusElem = document.getElementById(`status-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+    if (statusElem) {
+      statusElem.textContent = batt.status;
+
+      // Memaksa pewarnaan teks secara mutlak menggunakan inline styles
+      if (batt.status === 'Charging') {
+        statusElem.style.color = '#22c55e'; // Warna Hijau Terang (Green-500)
+        statusElem.style.fontWeight = 'bold';
+      } else if (batt.status === 'Discharging') {
+        statusElem.style.color = '#f97316'; // Warna Oranye Terang (Orange-500)
+        statusElem.style.fontWeight = 'bold';
+      } else {
+        statusElem.style.color = '#9ca3af'; // Warna Abu-abu Standby (Gray-400)
+        statusElem.style.fontWeight = 'normal';
+      }
+    }
+
+    const led = document.getElementById(`led-card-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
+    if (led) {
+      led.classList.add("active");
+      setTimeout(() => led.classList.remove("active"), 250);
+    }
+
+    // Nyalakan seluruh sisi ikon baterai 3D di Table selama 280ms saat data unit ini masuk
+    window.battLastBlink = window.battLastBlink || {};
+    window.battLastBlink[batt.addr] = Date.now();
+    const tblIcon = document.getElementById(`tbl-batt-icon-${batt.addr}`);
+    if (tblIcon) {
+      tblIcon.classList.add("batt-icon-pulse-green");
+      setTimeout(() => {
+        const el = document.getElementById(`tbl-batt-icon-${batt.addr}`);
+        if (el) el.classList.remove("batt-icon-pulse-green");
+      }, 280);
+    }
+
+    // Reset timeout
+    if (cardTimers[cardId]) {
+      clearTimeout(cardTimers[cardId]);
+    }
+    cardTimers[cardId] = setTimeout(() => {
+      let c = document.getElementById(cardId);
+      if (c) {
+        c.remove();
+        removeBatteryFromArray(batt.loggerId, batt.typeBattery, batt.addr);
+      }
+      delete cardTimers[cardId];
+    }, 30000);
+
+    let currentCard = document.getElementById(cardId);
+    if (currentCard) {
+        currentCard.classList.remove('hidden');
+    }
+  }
+
+  function updateSummary() {
+  if (batteries.length === 0) {
+    document.getElementById("avg-voltage").textContent = "-";
+    document.getElementById("avg-soc").textContent = "-";
+    document.getElementById("avg-soh").textContent = "-";
+    document.getElementById("avg-temp").textContent = "-- / -- °C";
+    document.getElementById("total-current").textContent = "-";
+    document.getElementById("total-power").textContent = "-";
+    return;
+  }
+
+  let totalVoltage = 0;
+  let totalSoc = 0;
+  let totalSoh = 0;
+  let totalCurrent = 0;
+  let totalPower = 0;
+  let minTemp = 999;
+  let maxTemp = -999;
+  let count = batteries.length;
+
+  batteries.forEach(b => {
+    totalVoltage += parseFloat(b.voltage);
+    totalSoc += parseFloat(b.soc);
+    totalSoh += parseFloat(b.soh);
+    totalCurrent += parseFloat(b.current);
+    totalPower += parseFloat(b.power);
+
+    if (b.min_temp !== undefined && b.min_temp < minTemp) minTemp = b.min_temp;
+    if (b.max_temp !== undefined && b.max_temp > maxTemp) maxTemp = b.max_temp;
+  });
+
+  let avgSoc = totalSoc / count;
+  let avgSoh = totalSoh / count;
+  let tempRange = (minTemp !== 999 && maxTemp !== -999) ? `${minTemp}°C / ${maxTemp}°C` : "-- / -- °C";
+
+  // Render ke HTML UI Ringkasan atas
+  document.getElementById("avg-voltage").textContent = (totalVoltage / count).toFixed(2) + " V";
+  document.getElementById("avg-soc").textContent = avgSoc.toFixed(1) + "%";
+  document.getElementById("avg-soh").textContent = avgSoh.toFixed(1) + "%";
+  document.getElementById("avg-temp").textContent = tempRange;
+  document.getElementById("total-current").textContent = totalCurrent.toFixed(2) + " A";
+  document.getElementById("total-power").textContent = totalPower.toFixed(2) + " W";
+}
+
+  function openModal(loggerId, addr, typeBattery) {
+    currentLoggerId = loggerId;
+    currentAddr = addr;
+    currentTypeBattery = typeBattery;
+    updateModal();
+    modal.classList.remove("hidden");
+    document.body.style.overflow = 'hidden';
+  }
+
+function updateModal() {
+  if (currentAddr === null || currentLoggerId === null) return;
+  const batt = batteries.find(b => b.addr === currentAddr && b.loggerId === currentLoggerId && b.typeBattery === currentTypeBattery);
+  if (!batt) return;
+
+  // Header
+  document.getElementById("modalTitle").innerHTML = `HUAWEI B1 2025 &nbsp;&nbsp; #${batt.addr}`;
+
+  // 1. Kapasitas & Kesehatan
+  document.getElementById("modalSoc").textContent = `${batt.soc}%`;
+  document.getElementById("modalRem").textContent = `${batt.remaining} Ah`;
+  document.getElementById("modalSoh").textContent = `${batt.soh}%`;
+  document.getElementById("modalSocBar").style.width = `${Math.min(100, Math.max(0, parseFloat(batt.soc)))}%`;
+  document.getElementById("modalSohBar").style.width = `${Math.min(100, Math.max(0, parseFloat(batt.soh)))}%`;
+  document.getElementById("modalCycles").textContent = batt.cycles;
+  document.getElementById("modalTempRange").textContent = batt.temp ? batt.temp.replace('~', '/') : '-- / --';
+  document.getElementById("modalTime").textContent = batt.time;
+
+  // 2. Tegangan & Keseimbangan Sel
+  document.getElementById("modalPackVolt").textContent = `${batt.voltage} V`;
+  document.getElementById("modalBusVolt").textContent = `${batt.busVoltage} V`;
+  document.getElementById("modalMinCell").textContent = `${batt.cell_vmin} V`;
+  document.getElementById("modalMaxCell").textContent = `${batt.cell_vmax} V`;
+  document.getElementById("modalDiffCell").textContent = `${batt.cell_vdif} mV`;
+
+  // 3. Arus & Daya
+  const packPower = parseFloat(batt.voltage) * parseFloat(batt.current);
+  // Gunakan bus_current dari MQTT jika ada, atau samakan dengan current jika tidak tersedia
+  const busCurrVal = batt.busCurrent !== undefined ? parseFloat(batt.busCurrent) : parseFloat(batt.current);
+  const busPower = parseFloat(batt.busVoltage) * busCurrVal;
+  const lossPower = Math.abs(packPower - busPower);
+
+  document.getElementById("modalPackCurr").textContent = `${parseFloat(batt.current).toFixed(2)} A`;
+  document.getElementById("modalBusCurr").textContent = `${busCurrVal.toFixed(2)} A`;
+  document.getElementById("modalPackPower").textContent = `${packPower.toFixed(2)} W`;
+  document.getElementById("modalBusPower").textContent = `${busPower.toFixed(2)} W`;
+  document.getElementById("modalLossPower").textContent = `${lossPower.toFixed(2)} W`;
+
+  // 4. Kotak 15 Sel (Tema Gelap Presisi: Biru = Min, Oranye = Max)
+  const cellsDiv = document.getElementById("modalCells");
+  cellsDiv.innerHTML = "";
+
+  const minVal = parseFloat(batt.cell_vmin);
+  const maxVal = parseFloat(batt.cell_vmax);
+
+  batt.cells.forEach((v, i) => {
+    const val = parseFloat(v);
+    const cellBox = document.createElement("div");
+    cellBox.className = "rounded-lg p-2.5 text-center border transition-all";
+
+    if (Math.abs(val - minVal) < 0.0005) {
+      cellBox.style.borderColor = "#38bdf8";      // Biru Terang (Min)
+      cellBox.style.backgroundColor = "#132638";
+    } else if (Math.abs(val - maxVal) < 0.0005) {
+      cellBox.style.borderColor = "#fb923c";      // Oranye Terang (Max)
+      cellBox.style.backgroundColor = "#2d201a";
+    } else {
+      cellBox.style.borderColor = "#2d3343";      // Abu Gelap Normal
+      cellBox.style.backgroundColor = "#11141c";
+    }
+
+    const label = document.createElement("div");
+    label.className = "text-[10px] font-bold tracking-wider mb-1";
+    label.style.color = "#94a3b8";
+    label.textContent = `CELL ${i + 1}`;
+
+    const value = document.createElement("div");
+    value.className = "text-xs font-bold text-white";
+    value.textContent = `${v} V`;
+
+    const tempEl = document.createElement("div");
+    tempEl.className = "text-[11px] font-semibold mt-1";
+    tempEl.style.color = "#00e676";
+    const cTemp = (batt.cell_temps && batt.cell_temps[i] !== undefined) ? `${batt.cell_temps[i]} °C` : "-- °C";
+    tempEl.textContent = cTemp;
+
+    cellBox.appendChild(label);
+    cellBox.appendChild(value);
+    cellBox.appendChild(tempEl);
+    cellsDiv.appendChild(cellBox);
+  });
+
+  blinkLed("led-modal");
+}
+
+  document.getElementById("closeModal").onclick = () => {
+    modal.classList.add("hidden");
+    document.body.style.overflow = 'auto';
+    currentAddr = null;
+    currentLoggerId = null;
+    currentTypeBattery = null;
+  };
+  
+  modal.onclick = e => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+      document.body.style.overflow = 'auto';
+      currentAddr = null;
+      currentLoggerId = null;
+      currentTypeBattery = null;
+    }
+  };
+
+  function blinkLed(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    el.classList.remove("bg-gray-300");
+    el.classList.add("bg-green-500");
+    
+    setTimeout(() => {
+      el.classList.remove("bg-green-500");
+      el.classList.add("bg-gray-300");
+    }, 250);
+  }
+
+  function startRealTimeClock() {
+    function updateClock() {
+        const now = new Date();
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        const dayName = days[now.getDay()];
+        const date = now.getDate().toString().padStart(2, '0');
+        const monthName = months[now.getMonth()];
+        const year = now.getFullYear();
+
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+
+        const formattedTime = `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}:${seconds}`;
+        const clockEl = document.getElementById('realtime-clock');
+        if (clockEl) clockEl.textContent = formattedTime;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+    }
+
+  window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    let queryData = {};
+    startRealTimeClock();
+
+    for (const [key, value] of params.entries()) {
+        queryData[key] = value;
+    }
+
+    id_logger = queryData.id;
+
+    // 1. Cek apakah ada ID Logger dari URL Parameter
+    if (id_logger !== undefined && id_logger.trim() !== "") {
+        localStorage.setItem("saved_id_logger", id_logger);
+        startMQTT();
+        updateConnectionCount();
+      
+    } else {
+        // 2. Jika tidak ada di URL, cek memori HP
+        let savedID = localStorage.getItem("saved_id_logger");
+
+        if (savedID && savedID.trim() !== "") {
+            id_logger = savedID;
+            startMQTT();
+            updateConnectionCount();
+            
+        } else {
+            // 3. Jika benar-benar kosong, munculkan prompt
+            let userInput = prompt("Masukkan ID Logger:");
+            if (userInput === null || userInput.trim() === "") {
+                alert("Error: Please reload and input a value!");
+            } else {
+                id_logger = userInput.trim();
+                localStorage.setItem("saved_id_logger", id_logger);
+                startMQTT();
+                updateConnectionCount();  
+            }
+          }
+        }
+      };
+    </script>
+
+<script>
+  // 1. Kunci permanen ke Dark Mode
+  document.body.setAttribute('data-theme', 'dark');
+  document.body.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
+
+  // 2. Pengaturan Menu Dropdown & Modal Info
+  const btn = document.getElementById("settingsBtn");
+  const menu = document.getElementById("dropdownMenu");
+
+  if (btn && menu) {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("hidden");
+    });
+
+    window.addEventListener("click", () => {
+      menu.classList.add("hidden");
+    });
+  }
+
+    const networkBtn = document.getElementById("networkBtn");
+
+  if (networkBtn) {
+    networkBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      menu.classList.add("hidden");
+      bukaModalDiagram();
+    });
+  }
+
+  // 3. Pengaturan Audio Jarvis (ON/OFF) & Splash Screen
+  const jarvisAudio = new Audio('./jarvis.mp3');
+  const jarvisToggleBtn = document.getElementById('jarvisToggleBtn');
+  let isJarvisOn = localStorage.getItem('jarvis_audio') !== 'off';
+
+  function updateJarvisButtonUI() {
+    if (!jarvisToggleBtn) return;
+    if (isJarvisOn) {
+      jarvisToggleBtn.innerHTML = '🔊 Audio Jarvis : ON';
+      jarvisToggleBtn.classList.remove('text-red-500');
+      jarvisToggleBtn.classList.add('text-green-600');
+    } else {
+      jarvisToggleBtn.innerHTML = '🔇 Audio Jarvis : OFF';
+      jarvisToggleBtn.classList.remove('text-green-600');
+      jarvisToggleBtn.classList.add('text-red-500');
+    }
+  }
+
+  updateJarvisButtonUI();
+
+  if (jarvisToggleBtn) {
+    jarvisToggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      isJarvisOn = !isJarvisOn;
+      localStorage.setItem('jarvis_audio', isJarvisOn ? 'on' : 'off');
+      updateJarvisButtonUI();
+
+      if (isJarvisOn) {
+        speakWelcome();
+      } else {
+        jarvisAudio.pause();
+        jarvisAudio.currentTime = 0;
+      }
+    });
+  }
+
+  function speakWelcome() {
+    if (!isJarvisOn) return;
+    jarvisAudio.currentTime = 0;
+    jarvisAudio.play().catch(error => {
+      console.log("Audio tidak diputar:", error);
+    });
+  }
+
+  // Jalankan langsung tanpa menunggu DOMContentLoaded agar tombol selalu responsif
+  const splash = document.getElementById("welcomeSplash");
+  const btnStart = document.getElementById("btnStartApp");
+
+  if (btnStart && splash) {
+    btnStart.addEventListener("click", function() {
+      speakWelcome();
+      splash.style.opacity = "0";
+      setTimeout(() => {
+        splash.remove();
+      }, 500);
+    });
+  }
+</script>
+
+<script>
+  function switchBmsTab(tabId) {
+    document.querySelectorAll('.bms-tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.bms-tab-btn').forEach(btn => {
+      btn.classList.remove('bg-blue-600', 'text-white');
+      btn.classList.add('bg-gray-100', 'text-gray-600');
+    });
+
+    const activeTab = document.getElementById(tabId);
+    const activeBtn = document.getElementById('btn-' + tabId);
+    if (activeTab) activeTab.classList.remove('hidden');
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+      activeBtn.classList.add('bg-blue-600', 'text-white');
+    }
+  }
+
+  const bmsSettingBtn = document.getElementById("bmsSettingBtn");
+  const bmsSettingModal = document.getElementById("bmsSettingModal");
+  const closeBmsSetting = document.getElementById("closeBmsSetting");
+
+  if (bmsSettingBtn && bmsSettingModal) {
+    bmsSettingBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      bmsSettingModal.classList.remove("hidden");
+    });
+  }
+
+  if (closeBmsSetting) {
+    closeBmsSetting.addEventListener("click", () => {
+      bmsSettingModal.classList.add("hidden");
+    });
+  }
+
+  function showSettingStatus(isOk, text) {
+    const box = document.getElementById("settingFeedbackBox");
+    if (!box) return;
+    box.classList.remove("hidden", "bg-green-100", "text-green-800", "bg-red-100", "text-red-800", "bg-yellow-100", "text-yellow-800");
+    if (isOk === true) {
+      box.classList.add("bg-green-100", "text-green-800");
+    } else if (isOk === false) {
+      box.classList.add("bg-red-100", "text-red-800");
+    } else {
+      box.classList.add("bg-yellow-100", "text-yellow-800");
+    }
+    box.textContent = text;
+  }
+
+    function publishSettingPayload(payloadObj) {
+    const pin = document.getElementById("setSecurityPin").value.trim();
+    if (!pin) {
+      showSettingStatus(false, "Harap masukkan PIN Keamanan terlebih dahulu!");
+      return false;
+    }
+
+    const loggerTarget = (typeof currentActiveLogger !== "undefined" && currentActiveLogger)
+      ? currentActiveLogger
+      : id_logger.split("-")[0];
+
+    if (!loggerTarget || loggerTarget === "-") {
+      showSettingStatus(false, "❌ ID Logger belum diatur!");
+      return false;
+    }
+
+    payloadObj.pin = pin;
+    const topic = loggerTarget + "/seting";
+    const payloadStr = JSON.stringify(payloadObj);
+    let terkirim = false;
+
+    if (typeof multiMqttClients !== "undefined" && multiMqttClients.length > 0) {
+      multiMqttClients.forEach(c => {
+        if (c && c.connected) {
+          c.publish(topic, payloadStr);
+          terkirim = true;
+        }
+      });
+    } else if (typeof client !== "undefined" && client && client.connected) {
+      client.publish(topic, payloadStr);
+      terkirim = true;
+    }
+
+    if (!terkirim) {
+      showSettingStatus(false, "Koneksi MQTT belum terhubung ke server!");
+      return false;
+    }
+
+    showSettingStatus(null, "⏳ Mengirim perintah ke ESP32...");
+    return true;
+  }
+
+  function sendBmsCommand(regAddr, val) {
+    const targetAddr = parseInt(document.getElementById("setTargetAddr").value);
+    publishSettingPayload({
+      cmd: "WRITE_REG",
+      addr: targetAddr,
+      reg: parseInt(regAddr),
+      val: parseInt(val)
+    });
+  }
+
+  function sendScaledCommand(regAddr, inputId, scale, minVal, maxVal) {
+    const rawVal = parseFloat(document.getElementById(inputId).value);
+    if (isNaN(rawVal) || rawVal < minVal || rawVal > maxVal) {
+      showSettingStatus(false, "Masukkan nilai valid antara " + minVal + " hingga " + maxVal + "!");
+      return;
+    }
+    const scaledVal = Math.round(rawVal * scale);
+    sendBmsCommand(regAddr, scaledVal);
+  }
+
+  function sendSharingCommand(cmdType) {
+    if (publishSettingPayload({ cmd: cmdType })) {
+      const badge = document.getElementById("sharingStatusBadge");
+      if (badge) {
+        if (cmdType === "SHARING_ON") {
+          badge.textContent = "STATUS: AKTIF";
+          badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-600 text-white";
+        } else {
+          badge.textContent = "STATUS: NONAKTIF";
+          badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-rose-600 text-white";
+        }
+      }
+    }
+  }
+
+  function saveSharingParams() {
+    const maxChg = parseInt(document.getElementById("shareMaxChg").value);
+    const maxDchg = parseInt(document.getElementById("shareMaxDchg").value);
+    if (isNaN(maxChg) || isNaN(maxDchg) || maxChg < 5 || maxDchg < 5 || maxChg > 105 || maxDchg > 105) {
+      showSettingStatus(false, "Nilai batas sharing harus antara 5A hingga 105A!");
+      return;
+    }
+    publishSettingPayload({
+      cmd: "SHARING_CFG",
+      maxChg: maxChg,
+      maxDchg: maxDchg
+    });
+  }
+
+  function unlockAntiTheft() {
+    const targetAddr = parseInt(document.getElementById("setTargetAddr").value);
+    publishSettingPayload({
+      cmd: "UNLOCK_ANTITHEFT",
+      addr: targetAddr
+    });
+  }
+
+  setTimeout(() => {
+    if (typeof id_logger !== "undefined" && id_logger !== "-") {
+      const statusTopic = "sysMon/" + id_logger.split("-")[0] + "/status";
+      if (typeof client2 !== "undefined") {
+        client2.subscribe(statusTopic);
+        client2.on("message", (topic, message) => {
+          if (topic === statusTopic) {
+            try {
+              const res = JSON.parse(message.toString());
+              showSettingStatus(res.ok, (res.ok ? "✅ " : "❌ ") + res.msg);
+            } catch (e) {}
+          }
+        });
+      }
+    }
+  }, 3000);
+</script>
+
+<!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV -->
+<style>
+  /* 1. Lintasan DC Panel Surya -> Inverter (Horizontal) */
+  @keyframes gerakDcSolar {
+    0%   { left: 20.0%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 32.5%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+   /* 2. Lintasan AC Inverter -> Rumah */
+  @keyframes gerakAcBeban {
+    0%   { left: 46.8%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); } /* Diubah dari 43.5% */
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    52%  { left: 57.3%; top: 39.0%; opacity: 1; } /* Wajib disamakan dengan 0% */
+    82%  { left: 57.3%; top: 77.5%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 64.5%; top: 77.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Inverter -> Baterai) */
+  @keyframes gerakDcBattTurun {
+    0%   { left: 39.8%; top: 63.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 39.8%; top: 75.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Baterai -> Inverter) */
+  @keyframes gerakDcBattNaik {
+    0%   { left: 39.8%; top: 75.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 39.8%; top: 63.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  }
+
+  .bulatan-aliran {
+    position: absolute;
+    width: clamp(22px, 3.0vw, 36px);
+    height: clamp(22px, 3.0vw, 36px);
+    border-radius: 9999px;
+    background: radial-gradient(circle at 30% 30%, #3b82f6, #1e3a8a);
+    border: 2px solid #93c5fd;
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.95), 0 0 24px rgba(147, 197, 253, 0.7);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: clamp(9px, 1.05vw, 13px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .bulatan-aliran.hidden {
+    display: none !important;
+  }
+
+  .anim-solar-dc   { animation: gerakDcSolar 2.4s linear infinite; }
+  .anim-ac-beban   { animation: gerakAcBeban 3.2s linear infinite; }
+  .anim-batt-turun { animation: gerakDcBattTurun 2.0s linear infinite; }
+  .anim-batt-naik  { animation: gerakDcBattNaik 2.0s linear infinite; }
+
+ /* Ikon SVG Matahari 3D Simetris + 3 Panah Sinar (Presisi Gambar No. 1) */
+.ikon-matahari-plts {
+  position: absolute;
+  left: 23.4%;
+  top: 15.8%;
+  width: 13.8%;
+  aspect-ratio: 245 / 215;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 18px rgba(253, 224, 71, 0.8)) drop-shadow(0 0 38px rgba(245, 158, 11, 0.5));
+  pointer-events: none;
+  z-index: 8;
+}
+
+.matahari-inti-3d {
+  transform-origin: 145px 80px; /* Disesuaikan dengan titik pusat matahari baru */
+  animation: sinarMatahari 3.2s ease-in-out infinite;
+}
+
+
+.panah-sinar-1 { animation: aliranSinar3d 1.8s ease-in-out infinite 0s; }
+.panah-sinar-2 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.25s; }
+.panah-sinar-3 { animation: aliranSinar3d 1.8s ease-in-out infinite 0.5s; }
+
+@keyframes sinarMatahari {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%      { transform: scale(1.04); filter: brightness(1.12); }
+}
+
+@keyframes aliranSinar3d {
+  0%, 100% { opacity: 0.55; transform: translate(0, 0); }
+  50%      { opacity: 1; transform: translate(-3px, 2.5px); }
+}
+
+/* Kotak Penampil Total Daya di Bawah TV dan Baterai */
+.display-daya-tv {
+  position: absolute;
+  left: 91.5%;
+  top: 79.8%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.92);
+  border: 1.5px solid #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+  color: #38bdf8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 800;
+  font-size: clamp(14px, 1.8vw, 22px); /* Ukuran teks diperkecil */
+  width: 110px;                        /* Mengunci lebar kotak */
+  height: 43px;                        /* Mengunci tinggi kotak */
+  display: flex;                       /* Menjaga teks tetap di tengah */
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 12;
+}
+
+    /* Kotak Penampil Tegangan & Arus Baterai DC di Sisi Kanan Atas */
+  .display-info-dc {
+    position: absolute;
+    right: 4.1%;
+    top: 45.7%;
+    width: 12.2%;
+    height: 19.0%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.15;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.94);
+    border: 1px solid #38bdf8;
+    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
+    color: #e0f2fe;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 800;
+    font-size: clamp(13px, 1.6vw, 22px);
+    padding: 2px;
+    border-radius: 3px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 12;
+  }
+
+    .display-daya-baterai {
+      position: absolute;
+      left: 39.8%;
+      top: 85.5%;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
+      color: #4ade80;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: clamp(13px, 1.85vw, 23px);
+      padding: 6px 16px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    /* Geser Ketiga Kotak ke Bawah agar Tutup Atas Baterai Terlihat Utuh */
+    .display-tegangan-baterai,
+    .display-arus-baterai,
+    .display-daya-baterai {
+      position: absolute;
+      top: 85.8%;   /* Diturunkan dari 84.2% agar pas di bodi bawah baterai */
+      width: 6.6%;  /* Disesuaikan sedikit agar tidak melewati garis pinggir baterai */
+      height: 8.2%; /* Disesuaikan agar bagian tutup atas dan bawah baterai rapi */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      background: rgba(15, 23, 42, 0.90);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: clamp(8px, 1.02vw, 13px);
+      padding: 0;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    /* Kotak Kiri (Baterai 1): Digeser sedikit ke kanan dari 31.3% */
+    .display-tegangan-baterai {
+      left: 31.95%;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+      color: #38bdf8;
+    }
+
+    /* Kotak Tengah (Baterai 2): Tetap di tengah */
+    .display-arus-baterai {
+      left: 39.8%;
+      border: 1.5px solid #f59e0b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.55);
+      color: #fbbf24;
+    }
+
+    /* Kotak Kanan (Baterai 3): Digeser sedikit ke kiri dari 48.3% */
+    .display-daya-baterai {
+      left: 47.6%;
+      border: 1.5px solid #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.55);
+      color: #4ade80;
+    }
+</style>
+
+<!-- Modal Diagram 3D dengan Animasi Dinamis -->
+<div id="modalDiagramPlts" onclick="tutupModalDiagram()" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-3 sm:p-6">
+  <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-5xl w-full p-4 sm:p-6 relative">
+    
+    <!-- Header Pop-up -->
+    <div class="flex justify-between items-stretch gap-3 mb-3">
+      <div>
+        <h3 class="text-white text-base sm:text-xl font-bold flex items-center gap-2">
+          ⚡ Aliran Energi Sistem PLTS
+          <span id="badgeStatusDiagram" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-semibold">MEMUAT...</span>
+        </h3>
+        <p id="subjudulDiagram" class="text-slate-400 text-xs sm:text-sm">Mendeteksi status arus baterai secara otomatis...</p>
+        
+        <!-- Info IP & Signal -->
+        <div class="flex flex-wrap gap-3 mt-1.5 text-xs text-sky-300 font-mono">
+          <span id="network_ip">IP Address: -</span>
+          <span>|</span>
+          <span id="network_signal">Signal: -</span>
+        </div>
+      </div>
+
+      <div class="flex items-stretch gap-3 shrink-0">
+       <div class="bg-slate-800/95 border border-emerald-500/50 rounded-lg px-4 py-1.5 flex flex-col justify-center text-right shadow-md shrink-0">
+        <div class="text-xs font-mono font-semibold text-white tracking-tight">Hasil Pendapatan Hari Ini</div>
+         <div id="produksiChargeKwh" style="font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15;" class="font-extrabold text-emerald-400 font-mono tracking-tight mt-0.5">0,000 kWh</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kontainer Gambar & Bulatan Bergerak -->
+    <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
+      <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
+      
+      <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
+        <div id="elemenMatahari" class="ikon-matahari-plts">
+         <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
+            <defs>
+              <radialGradient id="gradSinar3D" cx="45%" cy="42%" r="55%">
+                <stop offset="0%" stop-color="#fef9c3" />
+                <stop offset="65%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#d97706" />
+              </radialGradient>
+              <radialGradient id="gradInti3D" cx="38%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="55%" stop-color="#fef08a" />
+                <stop offset="90%" stop-color="#facc15" />
+                <stop offset="100%" stop-color="#ca8a04" />
+              </radialGradient>
+              <linearGradient id="gradPanah3D" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#fef08a" />
+                <stop offset="100%" stop-color="#eab308" />
+              </linearGradient>
+              <filter id="shadow3D" x="-25%" y="-25%" width="150%" height="150%">
+                <feDropShadow dx="-1.5" dy="2.5" stdDeviation="2.2" flood-color="#78350f" flood-opacity="0.55" />
+              </filter>
+            </defs>
+
+            <!-- Matahari 3D Simetris (16 Gerigi Runcing + Bola Inti) -->
+            <g class="matahari-inti-3d" filter="url(#shadow3D)">
+              <polygon fill="url(#gradSinar3D)" points="
+                145,15  153,36  170,20  169,42  191,34  181,54  204,55  187,70
+                208,80  187,90  204,105 181,106 191,126 169,118 170,140 153,124
+                145,145 137,124 120,140 121,118 99,126  109,106 86,105  103,90
+                82,80   103,70  86,55   109,54  99,34   121,42  120,20  137,36
+              " />
+              <circle cx="145" cy="80" r="39" fill="#eab308" opacity="0.45" />
+              <circle cx="145" cy="80" r="36" fill="url(#gradInti3D)" />
+            </g>
+
+            <!-- 3 Panah Sinar Diagonal (Lebih Jauh dari Matahari & Melebar ke Panel Surya) -->
+            <g filter="url(#shadow3D)">
+              <!-- Panah 1 (Kiri Atas - Mengarah ke bagian atas panel surya) -->
+              <g class="panah-sinar-1">
+                <line x1="66" y1="92" x2="26" y2="122" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="20,127 34,125 26,114" fill="url(#gradPanah3D)" />
+              </g>
+
+              <!-- Panah 2 (Tengah - Mengarah ke tengah panel surya) -->
+              <g class="panah-sinar-2">
+                <line x1="78" y1="112" x2="40" y2="146" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="34,151 48,148 39,138" fill="url(#gradPanah3D)" />
+              </g>
+
+              <!-- Panah 3 (Kanan Bawah - Mengarah lebih melebar ke bawah) -->
+              <g class="panah-sinar-3">
+                <line x1="94" y1="130" x2="60" y2="168" stroke="url(#gradPanah3D)" stroke-width="4.2" stroke-linecap="round" />
+                <polygon points="55,174 68,169 58,160" fill="url(#gradPanah3D)" />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+      <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
+      <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
+      <div class="bulatan-aliran anim-ac-beban">DC</div>
+      <div id="nilaiInfoDcBawahTv" class="display-info-dc">
+      <span style="color:#38bdf8;">0.00 V</span>
+      <span style="color:#fbbf24;">0.00 A</span>
+      </div>
+      <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function perbaruiAnimasiDiagram() {
+    // 1. Ambil langsung data Baterai DC dari Ringkasan Sistem Total
+    const elVoltUtama  = document.getElementById('avg-voltage');
+    const elArusUtama  = document.getElementById('total-current');
+    const elPowerUtama = document.getElementById('total-power');
+
+    const voltDcAsli  = (elVoltUtama && elVoltUtama.textContent.trim() !== "-" && elVoltUtama.textContent.trim() !== "") ? elVoltUtama.textContent.trim() : "0.00 V";
+    const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
+    const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
+
+    // 3. Isi ke 2 kotak Sisi Kanan dengan Data Baterai DC (Menggantikan AT4PW)
+    const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
+    const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
+
+    if (elInfoKanan) {
+      elInfoKanan.innerHTML = `<span style="color:#38bdf8;">${voltDcAsli}</span><span style="color:#fbbf24;">${arusDcAsli}</span>`;
+    }
+    if (elDayaTv) {
+      elDayaTv.textContent = dayaDcAsli;
+    }
+
+    // 4. Deteksi status Charging, Full, Standby, atau Discharging
+    const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
+    const elSocUtama     = document.getElementById('avg-soc');
+    const nilaiSocAngka  = parseFloat(elSocUtama ? elSocUtama.textContent : "0") || 0;
+
+    const modeCharge     = nilaiArusAngka > 0.1;
+    const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
+    const bateraiFull    = nilaiSocAngka >= 99.0; // Dianggap Full jika SOC >= 99%
+
+    const elMatahari = document.getElementById('elemenMatahari');
+    const elDcSolar  = document.getElementById('bulatanDcSolar');
+    const elDcBatt   = document.getElementById('bulatanDcBaterai');
+    const elBadge    = document.getElementById('badgeStatusDiagram');
+    const elSub      = document.getElementById('subjudulDiagram');
+
+    if (modeCharge) {
+      // Kondisi CHARGING: Matahari & DC Solar muncul, DC Baterai turun
+      elMatahari.classList.remove('hidden');
+      elDcSolar.classList.remove('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.add('anim-batt-turun');
+
+      elBadge.textContent = "🟢 CHARGING";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
+      elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
+    } else if (modeStandby && bateraiFull) {
+      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar tetap muncul menyuplai beban
+      elMatahari.classList.remove('hidden');
+      elDcSolar.classList.remove('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.remove('anim-batt-turun');
+
+      elBadge.textContent = "🔵 FULL / STANDBY";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+      elSub.textContent = "Baterai penuh (Full).";
+    } else if (modeStandby) {
+      // Kondisi STANDBY Biasa (SOC < 99%, misalnya malam hari): Matahari & DC Solar disembunyikan
+      elMatahari.classList.add('hidden');
+      elDcSolar.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-naik');
+      elDcBatt.classList.remove('anim-batt-turun');
+
+      elBadge.textContent = "🔵 STANDBY";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
+      elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
+    } else {
+      // Kondisi DISCHARGING: Matahari & DC Solar sembunyi, DC Baterai naik
+      elMatahari.classList.add('hidden');
+      elDcSolar.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-turun');
+      elDcBatt.classList.add('anim-batt-naik');
+
+      elBadge.textContent = "🟠 DISCHARGING";
+      elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
+      elSub.textContent = "Baterai menyuplai daya ke inverter (DC naik).";
+    }
+  }
+
+  function bukaModalDiagram() {
+    perbaruiAnimasiDiagram();
+    document.getElementById('modalDiagramPlts').classList.remove('hidden');
+  }
+
+  function tutupModalDiagram() {
+    document.getElementById('modalDiagramPlts').classList.add('hidden');
+  }
+
+  setInterval(() => {
+    const modal = document.getElementById('modalDiagramPlts');
+    if (modal && !modal.classList.contains('hidden')) {
+      perbaruiAnimasiDiagram();
+    }
+  }, 2000);
+
+  let lastChargeCalcTime = Date.now();
+
+  // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
+  let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;     // ID: 14751036
+  let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0; // ID: 9193904
+
+  function updateProduksiChargeKwh() {
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const savedDate = localStorage.getItem('plts_charge_date');
+
+    // Reset otomatis jika berganti hari (melewati jam 00:00)
+    if (savedDate !== todayKey) {
+      kwhSamoto = 0;
+      kwhTechfine = 0;
+      localStorage.setItem('plts_charge_date', todayKey);
+      localStorage.setItem('mppt_samoto_kwh', '0');
+      localStorage.setItem('mppt_techfine_kwh', '0');
+    }
+
+    const totalKwh = kwhSamoto + kwhTechfine;
+    const elKwh = document.getElementById('produksiChargeKwh');
+    if (elKwh) {
+      elKwh.textContent = totalKwh.toFixed(3).replace('.', ',') + ' kWh';
+    }
+  }
+
+  // Jalankan koneksi MQTT untuk mengambil data kWh dari MPPT Samoto & Techfine
+  (function initMpptEnergyMerge() {
+    const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
+    const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
+      clientId: mpptClientId,
+      clean: true,
+      reconnectPeriod: 4000
+    });
+
+    mpptClient.on("connect", () => {
+      mpptClient.subscribe("14751036/#");
+      mpptClient.subscribe("9193904/#");
+    });
+
+    mpptClient.on("message", (topic, payload) => {
+      const val = parseFloat(payload.toString().trim());
+      if (isNaN(val)) return;
+
+      const lowerTopic = topic.toLowerCase();
+      const isEnergyTopic = lowerTopic.includes("kwh") || 
+                            lowerTopic.includes("day") || 
+                            lowerTopic.includes("energy") || 
+                            lowerTopic.includes("e_day") || 
+                            lowerTopic.includes("total_e");
+
+      if (!isEnergyTopic) return;
+
+      if (topic.startsWith("14751036/")) {
+        kwhSamoto = val;
+        localStorage.setItem('mppt_samoto_kwh', val.toString());
+        updateProduksiChargeKwh();
+      } else if (topic.startsWith("9193904/")) {
+        kwhTechfine = val;
+        localStorage.setItem('mppt_techfine_kwh', val.toString());
+        updateProduksiChargeKwh();
+      }
+    });
+  })();
+
+  // Perbarui tampilan setiap 1 detik
+  setInterval(updateProduksiChargeKwh, 1000);
+</script>
+
+<script>
+  let currentViewMode = localStorage.getItem('bms_view_mode') || 'card';
+
+    function setBatteryViewMode(mode) {
+    currentViewMode = mode;
+    localStorage.setItem('bms_view_mode', mode);
+
+    const cardContainer = document.getElementById('batteryGrid');
+    const tableContainer = document.getElementById('batteryTableContainer');
+    const btnTable = document.getElementById('btnViewTable');
+    const btnCard = document.getElementById('btnViewCard');
+
+    if (mode === 'table') {
+      if (cardContainer) cardContainer.classList.add('hidden');
+      if (tableContainer && typeof batteries !== 'undefined' && batteries.length > 0) {
+        tableContainer.classList.remove('hidden');
+      }
+
+      btnTable.classList.add('bg-gray-700', 'text-white', 'shadow');
+      btnTable.classList.remove('text-gray-400');
+
+      btnCard.classList.remove('bg-gray-700', 'text-white', 'shadow');
+      btnCard.classList.add('text-gray-400');
+      renderBatteryTable();
+    } else {
+      if (tableContainer) tableContainer.classList.add('hidden');
+      if (cardContainer && typeof batteries !== 'undefined' && batteries.length > 0) {
+        cardContainer.classList.remove('hidden');
+      }
+
+      btnCard.classList.add('bg-gray-700', 'text-white', 'shadow');
+      btnCard.classList.remove('text-gray-400');
+
+      btnTable.classList.remove('bg-gray-700', 'text-white', 'shadow');
+      btnTable.classList.add('text-gray-400');
+    }
+  }
+
+  function renderBatteryTable() {
+    const tbody = document.getElementById('batteryTableBody');
+    if (!tbody || typeof batteries === 'undefined') return;
+    tbody.innerHTML = '';
+
+    const sortedList = Object.values(batteries).sort((a, b) => Number(a.addr) - Number(b.addr));
+
+    sortedList.forEach(batt => {
+      const socVal = parseFloat(batt.soc) || 0;
+      const socColor = socVal > 50 ? 'text-emerald-400' : (socVal > 20 ? 'text-amber-400' : 'text-red-400');
+      const powerVal = (parseFloat(batt.voltage) * parseFloat(batt.current)).toFixed(1);
+
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-white/10 active:bg-white/15 cursor-pointer transition select-none';
+    tr.dataset.loggerId = batt.loggerId;
+    tr.dataset.typeBattery = batt.typeBattery;
+    tr.dataset.addr = String(batt.addr);
+
+    const tbodyEl = document.getElementById('batteryTableBody');
+    if (tbodyEl && !tbodyEl.dataset.clickReady) {
+      tbodyEl.dataset.clickReady = 'true';
+      tbodyEl.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (row && row.dataset.addr && typeof openModal === 'function') {
+          openModal(row.dataset.loggerId, Number(row.dataset.addr), row.dataset.typeBattery);
+        }
+      });
+    }
+
+      tr.innerHTML = `
+        <td class="py-3 px-3 whitespace-nowrap">
+          <div class="flex flex-col items-start gap-1.5">
+            <!-- 1. Paling Atas: Ikon Baterai Horizontal 3D + Nilai SOC -->
+            <div class="flex flex-row-reverse items-center shrink-0">
+              <!-- Kutub Positif 3D di Kanan -->
+              <div class="w-1.5 h-3.5 rounded-r-sm bg-gradient-to-b from-gray-200 via-gray-400 to-gray-600 shadow-sm border-y border-r border-gray-300/60"></div>
+              
+              <!-- Bodi Baterai 3D -->
+              <div id="tbl-batt-icon-${batt.addr}" class="relative w-[132px] h-7 rounded-md bg-gradient-to-b from-gray-800 via-gray-900 to-black border border-gray-600/80 p-0.5 overflow-hidden transition-all duration-200 ${(window.battLastBlink && (Date.now() - window.battLastBlink[batt.addr] < 320)) ? 'batt-icon-pulse-green' : 'shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),0_2px_5px_rgba(0,0,0,0.5)]'}">
+                <!-- Bar Isi 3D Otomatis Sesuai Persen SOC -->
+                <div class="h-full rounded-[4px] transition-all duration-500 ${
+                  socVal > 50
+                    ? 'bg-gradient-to-b from-emerald-300 via-emerald-500 to-emerald-800 shadow-[0_0_8px_rgba(16,185,129,0.6)]'
+                    : socVal > 20
+                    ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-800 shadow-[0_0_8px_rgba(245,158,11,0.6)]'
+                    : 'bg-gradient-to-b from-rose-400 via-red-600 to-red-900 shadow-[0_0_8px_rgba(239,68,68,0.6)]'
+                }" style="width: ${Math.max(0, Math.min(100, socVal))}%;"></div>
+
+                <!-- Efek Kilau Kaca 3D Bagian Atas -->
+                <div class="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent pointer-events-none"></div>
+
+                <!-- Angka Nilai SOC di Tengah Baterai -->
+                <div class="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)] tracking-wide">
+                  ${parseFloat(batt.soc || 0).toFixed(1)}
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Tengah: Nama Unit (HUAWEI #214) di Bawah Ikon Baterai -->
+            <div class="font-bold text-white text-xs sm:text-sm leading-tight">${batt.typeBattery} B1 2025 <span class="text-[11px] font-normal text-gray-300">#${batt.addr}</span></div>
+
+            <!-- 3. Paling Bawah: Info Diff & Cycles di Bawah Nama Unit -->
+            <div class="text-[11px] text-gray-400 leading-tight">Diff: ${batt.cell_vdif} mV · Cycles: ${batt.cycles || '--'}</div>
+          </div>
+        </td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-cyan-3d">${batt.voltage}<span class="digital-3d-unit">V</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-green-3d">${batt.current}<span class="digital-3d-unit">A</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-amber-3d">${powerVal}<span class="digital-3d-unit">W</span></span></td>
+        <td class="py-3 px-3 whitespace-nowrap"><span class="digital-3d-val neon-orange-3d">${(batt.temp || '--').replace(/°C/g, '<span class="digital-3d-unit">°C</span>')}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  setInterval(() => {
+    if (currentViewMode === 'table' && typeof batteries !== 'undefined' && batteries.length > 0) {
+      renderBatteryTable();
+    }
+  }, 1500);
+
+  // Jalankan mode awal
+  setBatteryViewMode(currentViewMode);
+</script>
+
+<!-- 1. MODAL MODUL INFO -->
+<div id="modulInfoModal" onclick="if(event.target===this) this.style.display='none'" 
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
+  <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;">
+      <span style="font-size:25px; font-weight:800; color:#38bdf8;">📡 Device Modul Info</span>
+      <span onclick="document.getElementById('modulInfoModal').style.display='none'" style="cursor:pointer; font-size:34px; color:#94a3b8; line-height:1;">&times;</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px; font-size:19px; margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">ID Logger:</span>
+        <strong id="info-modal-logger" style="color:#00e676; font-size:20px;">--</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">IP Address:</span>
+        <strong id="info-modal-ip" style="color:#ffffff; font-size:20px;">--</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">Sinyal Wi-Fi:</span>
+        <strong id="info-modal-rssi" style="color:#38bdf8; font-size:20px;">--</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#1e222d; padding:16px 18px; border-radius:14px; border:1px solid #2d3343;">
+        <span style="color:#94a3b8;">Status Polling:</span>
+        <strong id="info-modal-poll" style="color:#00e676; font-size:20px;">Aktif</strong>
+      </div>
+    </div>
+    <button type="button" onclick="document.getElementById('modulInfoModal').style.display='none'" 
+            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:16px; border-radius:14px; font-size:20px; font-weight:800; cursor:pointer;">Tutup</button>
+  </div>
+</div>
+
+<!-- 2. MODAL STATUS 4 SERVER & GANTI ID LOGGER (EKSTRA BESAR) -->
+<div id="serverStatusModal" onclick="if(event.target===this) this.style.display='none'" 
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
+  <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span style="font-size:25px; font-weight:800; color:#00e676;">🌐 Status Server</span>
+      <span onclick="document.getElementById('serverStatusModal').style.display='none'" style="cursor:pointer; font-size:34px; color:#94a3b8; line-height:1;">&times;</span>
+    </div>
+    <div id="srv-summary-text" style="font-size:18px; color:#94a3b8; margin-bottom:18px;">Memeriksa koneksi ke 4 server...</div>
+    <div id="srv-list-box" style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;"></div>
+
+    <div style="background:#1e222d; border:1px solid #2d3343; border-radius:14px; padding:16px; margin-bottom:20px; font-size:18px;">
+      <div style="color:#94a3b8; margin-bottom:10px; font-weight:700;">Lihat ID Logger Unit Ini</div>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="modal-logger-input" maxlength="10" readonly onclick="bukaTampilanIdLogger()" placeholder="Klik Untuk Melihat" 
+               style="flex:1; min-width:0; background:#0f1117; color:#38bdf8; border:1.5px solid #334155; padding:12px 14px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer;" />
+        <button type="button" onclick="gantiLoggerDariModal()" 
+                style="background:#00e676; color:#0f172a; border:none; padding:12px 20px; border-radius:12px; font-size:19px; font-weight:800; cursor:pointer; flex-shrink:0;">Simpan</button>
+      </div>
+    </div>
+    <button type="button" onclick="document.getElementById('serverStatusModal').style.display='none'" 
+            style="width:100%; background:#2563eb; color:#ffffff; border:none; padding:16px; border-radius:14px; font-size:20px; font-weight:800; cursor:pointer;">Tutup</button>
+  </div>
+</div>
+
+<!-- 3. MODAL GANTI BACKGROUND (EKSTRA BESAR) -->
+<div id="bgCustomModal" onclick="if(event.target===this) this.style.display='none'" 
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; align-items:center; justify-content:center; padding:8px;">
+  <div style="background:#161922; border:2px solid #334155; border-radius:20px; padding:28px 24px; width:600px; max-width:97vw; max-height:92vh; overflow-y:auto; color:#f8fafc; box-shadow:0 25px 50px rgba(0,0,0,0.85);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span style="font-size:25px; font-weight:800; color:#c084fc;">🖼️ Ganti Background</span>
+      <span onclick="document.getElementById('bgCustomModal').style.display='none'" style="cursor:pointer; font-size:34px; color:#94a3b8; line-height:1;">&times;</span>
+    </div>
+    <div style="font-size:18px; color:#94a3b8; margin-bottom:20px; line-height:1.45;">
+      Tersimpan khusus di browser Anda untuk ID: <strong id="bg-active-logger-lbl" style="color:#38bdf8; font-size:19px;">--</strong>
+    </div>
+    <input type="file" id="bg-media-picker" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" style="display:none;" onchange="onSelectBgMedia(event)" />
+    <div style="display:flex; gap:12px; margin-bottom:22px;">
+      <button type="button" onclick="document.getElementById('bg-media-picker').click()" 
+              style="flex:1; background:#2563eb; color:#fff; border:none; padding:16px 14px; border-radius:14px; font-size:18px; font-weight:800; cursor:pointer;">📁 Pilih Gambar / Video</button>
+      <button type="button" onclick="resetLoggerBackground()" 
+              style="background:#334155; color:#f87171; border:1.5px solid #475569; padding:16px 18px; border-radius:14px; font-size:18px; font-weight:800; cursor:pointer;">🔄 Reset</button>
+    </div>
+    <div style="margin-bottom:22px;">
+      <div style="display:flex; justify-content:space-between; font-size:18px; color:#cbd5e1; margin-bottom:10px;">
+        <span>Tingkat Redup Latar</span>
+        <span id="bg-dim-val" style="font-weight:800; color:#00e676; font-size:20px;">60%</span>
+      </div>
+      <input type="range" id="bg-dim-slider" min="15" max="85" value="60" oninput="updateBgDimmer(this.value)" style="width:100%; height:12px; accent-color:#00e676; cursor:pointer;" />
+    </div>
+    <div id="bg-status-msg" style="font-size:17px; color:#00e676; margin-bottom:14px; font-weight:600;"></div>
+    <button type="button" onclick="document.getElementById('bgCustomModal').style.display='none'" 
+            style="width:100%; background:#334155; color:#ffffff; border:none; padding:16px; border-radius:14px; font-size:19px; font-weight:800; cursor:pointer;">Tutup</button>
+  </div>
+</div>
+
+<script>
+  const FOUR_SERVERS = [
+    { id: 1, name: "Server 1", url: "wss://broker.emqx.io:8084/mqtt",            user: "emqx", pass: "emqx" },
+    { id: 2, name: "Server 2", url: "wss://broker-cn.emqx.io:8084/mqtt",         user: "emqx", pass: "emqx" },
+    { id: 3, name: "Server 3", url: "wss://test.mosquitto.org:8081/mqtt",        user: "",     pass: "" },
+    { id: 4, name: "Server 4", url: "wss://public:public@public.cloud.shiftr.io", user: "",    pass: "" }
+  ];
+
+  let multiMqttClients = [];
+  let serverOnlineMap = { 1: false, 2: false, 3: false, 4: false };
+  let msgDedupeCache = {};
+  let currentActiveLogger = "";
+
+  function getTargetLoggerId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const idFromUrl = urlParams.get("id");
+    if (idFromUrl && idFromUrl.trim().length >= 6) {
+      const cleanId = idFromUrl.trim();
+      localStorage.setItem("rezky_bms_logger_id", cleanId);
+      return cleanId;
+    }
+    return localStorage.getItem("rezky_bms_logger_id") || "";
+  }
+
+  function closeGearDropdown() {
+    const dd = document.getElementById("dropdownMenu");
+    if (dd) dd.classList.add("hidden");
+  }
+
+  // Fungsi pembantu untuk menyensor ID menjadi 25XXXXXXXX
+  function formatSensorLoggerId(id) {
+    if (!id) return "--";
+    if (id.length <= 2) return id;
+    return id.substring(0, 2) + "X".repeat(id.length - 2);
+  }
+
+  // Gambar No. 2: Device Modul Info tampilkan 25XXXXXXXX
+  function openModulInfoModal() {
+    closeGearDropdown();
+    const el = document.getElementById("info-modal-logger");
+    if (el) el.innerText = formatSensorLoggerId(currentActiveLogger);
+    document.getElementById("modulInfoModal").style.display = "flex";
+  }
+
+  // Gambar No. 3: Status Server reset ke "Klik Untuk Melihat" setiap kali dibuka
+  function openServerStatusModal() {
+    closeGearDropdown();
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl) {
+      inputEl.value = "";
+      inputEl.readOnly = true;
+      inputEl.style.color = "#38bdf8";
+      inputEl.placeholder = "Klik Untuk Melihat";
+    }
+    renderServerModalList();
+    document.getElementById("serverStatusModal").style.display = "flex";
+  }
+
+  // Fungsi saat kotak "Klik Untuk Melihat" diklik
+  function bukaTampilanIdLogger() {
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl && inputEl.readOnly) {
+      inputEl.readOnly = false;
+      inputEl.value = currentActiveLogger || "";
+      inputEl.style.color = "#00e676";
+      inputEl.placeholder = "Masukkan 10 digit ID...";
+    }
+  }
+
+  // Gambar No. 1: Ganti Background tampilkan 25XXXXXXXX
+  function toggleBgPanel() {
+    closeGearDropdown();
+    const lbl = document.getElementById("bg-active-logger-lbl");
+    if (lbl) lbl.innerText = currentActiveLogger ? formatSensorLoggerId(currentActiveLogger) : "DEFAULT";
+    document.getElementById("bgCustomModal").style.display = "flex";
+  }
+
+  function gantiLoggerDariModal() {
+    const inputEl = document.getElementById("modal-logger-input");
+    if (inputEl && inputEl.readOnly) {
+      alert("Klik kolom 'Klik Untuk Melihat' terlebih dahulu untuk melihat atau mengubah ID Logger.");
+      return;
+    }
+    const newId = inputEl.value.trim();
+    if (newId.length < 6) {
+      alert("Masukkan 10 digit ID Logger yang tertera pada modul!");
+      return;
+    }
+    localStorage.setItem("rezky_bms_logger_id", newId);
+    window.location.href = window.location.pathname + "?id=" + encodeURIComponent(newId);
+  }
+
+  function renderServerModalList() {
+    let onlineCount = 0;
+    let html = "";
+    FOUR_SERVERS.forEach(srv => {
+      const isOnline = serverOnlineMap[srv.id];
+      if (isOnline) onlineCount++;
+      html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#1e222d; border:1px solid #2d3343; padding:16px 18px; border-radius:14px; font-size:19px;">
+          <span><strong style="color:#38bdf8;">${srv.id}.</strong> ${srv.name}</span>
+          <span style="color:${isOnline ? '#00e676' : '#ef4444'}; font-weight:800; font-size:19px;">
+            ● ${isOnline ? 'Online' : 'Offline'}
+          </span>
+        </div>`;
+    });
+
+    const badge = document.getElementById("srv-online-count");
+    const summary = document.getElementById("srv-summary-text");
+    const box = document.getElementById("srv-list-box");
+
+    if (badge) badge.innerText = onlineCount;
+    if (summary) {
+      summary.innerText = onlineCount === 4
+        ? "Semua server terhubung."
+        : `${onlineCount} dari 4 server terhubung (Failover aktif).`;
+    }
+    if (box) box.innerHTML = html;
+  }
+
+  function initFourServerConnection(loggerId) {
+    currentActiveLogger = loggerId;
+    multiMqttClients.forEach(c => { try { c.end(true); } catch (e) {} });
+    multiMqttClients = [];
+    serverOnlineMap = { 1: false, 2: false, 3: false, 4: false };
+    renderServerModalList();
+
+    if (!loggerId) {
+      openServerStatusModal();
+      return;
+    }
+
+    FOUR_SERVERS.forEach(srv => {
+      const randomClientId = `WebRezky_${loggerId.slice(-4)}_S${srv.id}_${Math.random().toString(16).substring(2, 10)}`;
+      const opts = { clientId: randomClientId, clean: true, reconnectPeriod: 4000, connectTimeout: 8000 };
+      if (srv.user) { opts.username = srv.user; opts.password = srv.pass; }
+
+      const client = mqtt.connect(srv.url, opts);
+
+      client.on("connect", () => {
+        serverOnlineMap[srv.id] = true;
+        renderServerModalList();
+        client.subscribe(`sysMon/${loggerId}/AutoPoll/+`);
+        client.subscribe(`sysMon/${loggerId}/info`);
+        client.subscribe(`sysMon/${loggerId}/status`);
+        client.publish(`${loggerId}/seting`, "POLL1");
+      });
+
+      client.on("close", () => { serverOnlineMap[srv.id] = false; renderServerModalList(); });
+      client.on("error", () => { serverOnlineMap[srv.id] = false; renderServerModalList(); });
+
+      client.on("message", (topic, payload) => {
+        const msgStr = payload.toString();
+        const now = Date.now();
+        const key = topic + "_" + msgStr.length;
+        if (msgDedupeCache[key] && (now - msgDedupeCache[key] < 350)) return;
+        msgDedupeCache[key] = now;
+
+        if (topic.endsWith("/info")) {
+          const p = msgStr.split(",");
+          if (p.length >= 3) {
+            if (document.getElementById("info-modal-ip")) document.getElementById("info-modal-ip").innerText = p[0];
+            if (document.getElementById("info-modal-rssi")) document.getElementById("info-modal-rssi").innerText = p[1];
+            if (document.getElementById("info-modal-poll")) document.getElementById("info-modal-poll").innerText = (p[2] === "1") ? "Aktif (ON)" : "Berhenti (OFF)";
+          }
+        }
+
+        if (typeof window.handleLegacyMqttMessage === "function") {
+          window.handleLegacyMqttMessage(topic, payload);
+        }
+      });
+
+      multiMqttClients.push(client);
+    });
+  }
+
+    const BG_DB_NAME = "RezkyBMS_CustomBG_DB";
+  const BG_STORE_NAME = "loggerBackgrounds";
+  let currentBgObjectUrl = null;
+
+  function openBgDatabase() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(BG_DB_NAME, 1);
+      req.onupgradeneeded = (e) => {
+        if (!e.target.result.objectStoreNames.contains(BG_STORE_NAME)) {
+          e.target.result.createObjectStore(BG_STORE_NAME);
+        }
+      };
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  // 1. Kompresi Foto/Gambar Otomatis di Browser (Maksimal dimensi 1280px, kualitas 80%)
+  function compressImageAutomatically(file, maxDimension = 1280, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Gagal mengompres gambar"));
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("File gambar tidak valid"));
+      };
+      img.src = url;
+    });
+  }
+
+  // 2. Cek Resolusi Video sebelum disimpan
+  function checkVideoResolution(file) {
+    return new Promise((resolve) => {
+      const tempVideo = document.createElement("video");
+      tempVideo.preload = "metadata";
+      tempVideo.onloadedmetadata = () => {
+        URL.revokeObjectURL(tempVideo.src);
+        resolve({ width: tempVideo.videoWidth, height: tempVideo.videoHeight });
+      };
+      tempVideo.onerror = () => resolve({ width: 0, height: 0 });
+      tempVideo.src = URL.createObjectURL(file);
+    });
+  }
+
+  // 3. Fungsi Slider Tingkat Redup Latar
+  function updateBgDimmer(val) {
+    const lbl = document.getElementById("bg-dim-val");
+    if (lbl) lbl.innerText = val + "%";
+
+    const ovlEl = document.getElementById("custom-bg-overlay");
+    if (ovlEl && ovlEl.style.display !== "none") {
+      ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
+    }
+
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    openBgDatabase().then((db) => {
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      const store = tx.objectStore(BG_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => {
+        if (req.result) {
+          req.result.dim = val;
+          store.put(req.result, key);
+        }
+      };
+    }).catch(() => {});
+  }
+
+  // 4. Handler Pemilihan File (Kompresi Foto Otomatis + Peringatan Video)
+  async function onSelectBgMedia(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const statusEl = document.getElementById("bg-status-msg");
+    let finalBlob = file;
+    let finalMime = file.type;
+
+    try {
+      if (file.type && file.type.startsWith("image/")) {
+        // Kompres otomatis jika foto/gambar (kecuali GIF animasi agar animasinya tidak hilang)
+        if (file.type !== "image/gif") {
+          statusEl.style.color = "#38bdf8";
+          statusEl.innerText = "⏳ Mengompres gambar otomatis...";
+          finalBlob = await compressImageAutomatically(file, 1280, 0.8);
+          finalMime = "image/jpeg";
+        }
+      } else if (file.type && file.type.startsWith("video/")) {
+        // Cek batas ukuran 15 MB & resolusi maksimal 720p untuk video
+        const maxVideoMB = 15;
+        if (file.size > maxVideoMB * 1024 * 1024) {
+          statusEl.style.color = "#fb923c";
+          statusEl.innerText = `⚠️ Video terlalu besar (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maksimal ${maxVideoMB} MB agar tidak lag di HP.`;
+          event.target.value = "";
+          return;
+        }
+
+        statusEl.style.color = "#38bdf8";
+        statusEl.innerText = "⏳ Memeriksa resolusi video...";
+        const meta = await checkVideoResolution(file);
+        const shortSide = Math.min(meta.width, meta.height);
+
+        if (shortSide > 720) {
+          statusEl.style.color = "#ef4444";
+          statusEl.innerHTML = `❌ Resolusi video terlalu tinggi (<b>${meta.width}x${meta.height}</b>).<br>Gunakan maksimal <b>720p (1280x720)</b> agar tidak lag di HP!`;
+          event.target.value = "";
+          return;
+        }
+      }
+
+      const key = "bg_" + (currentActiveLogger || "DEFAULT");
+      const dim = document.getElementById("bg-dim-slider").value || 60;
+
+      const db = await openBgDatabase();
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      tx.objectStore(BG_STORE_NAME).put({ blob: finalBlob, mime: finalMime, dim: dim }, key);
+
+      renderCustomBackground(finalBlob, finalMime, dim);
+      statusEl.style.color = "#00e676";
+      const sizeKB = (finalBlob.size / 1024).toFixed(0);
+      statusEl.innerText = `✅ Background terpasang (${sizeKB} KB)!`;
+    } catch (e) {
+      statusEl.style.color = "#ef4444";
+      statusEl.innerText = "❌ Gagal memproses background.";
+    }
+    event.target.value = "";
+  }
+
+  // 5. Render Background Kustom & Matikan (Pause) Video Lama Otomatis
+  function renderCustomBackground(blob, mimeType, dimPercent) {
+    if (currentBgObjectUrl) URL.revokeObjectURL(currentBgObjectUrl);
+    currentBgObjectUrl = URL.createObjectURL(blob);
+
+    const layerEl = document.getElementById("dynamic-bg-layer");
+    const imgEl = document.getElementById("custom-bg-img");
+    const vidEl = document.getElementById("custom-bg-vid");
+    const ovlEl = document.getElementById("custom-bg-overlay");
+
+    // Matikan (pause) video bawaan agar tidak berjalan di belakang layar
+    document.querySelectorAll("body > video").forEach(v => {
+      v.pause();
+      v.style.display = "none";
+    });
+
+    document.body.style.setProperty("background-color", "transparent", "important");
+    document.body.style.setProperty("background-image", "none", "important");
+
+    if (layerEl) layerEl.style.zIndex = "-5";
+    ovlEl.style.display = "block";
+    ovlEl.style.background = `rgba(10, 14, 23, ${(dimPercent / 100).toFixed(2)})`;
+
+    if (mimeType && mimeType.startsWith("video/")) {
+      imgEl.style.display = "none";
+      vidEl.src = currentBgObjectUrl;
+      vidEl.muted = true; // Paksa mute otomatis
+      vidEl.style.display = "block";
+      vidEl.play().catch(() => {});
+    } else {
+      // Jika diganti ke gambar/foto, matikan & kosongkan video kustom juga
+      vidEl.pause();
+      vidEl.removeAttribute("src");
+      vidEl.load();
+      vidEl.style.display = "none";
+
+      imgEl.src = currentBgObjectUrl;
+      imgEl.style.display = "block";
+    }
+  }
+
+  // 6. Tombol Reset: Kembalikan ke Video Bawaan Asli
+  async function resetLoggerBackground() {
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    const db = await openBgDatabase();
+    db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).delete(key);
+
+    const vidEl = document.getElementById("custom-bg-vid");
+    vidEl.pause();
+    vidEl.removeAttribute("src");
+    vidEl.load();
+    vidEl.style.display = "none";
+
+    document.getElementById("custom-bg-img").style.display = "none";
+    document.getElementById("custom-bg-overlay").style.display = "none";
+
+    // Jalankan kembali video bawaan
+    document.querySelectorAll("body > video").forEach(v => {
+      v.style.display = "block";
+      v.play().catch(() => {});
+    });
+
+    document.body.style.removeProperty("background-color");
+    document.body.style.removeProperty("background-image");
+
+    const statusEl = document.getElementById("bg-status-msg");
+    statusEl.style.color = "#38bdf8";
+    statusEl.innerText = "🔄 Dikembalikan ke background asli.";
+  }
+  
+  async function updateBgDimmer(val) {
+    const dimVal = document.getElementById("bg-dim-val");
+    if (dimVal) dimVal.innerText = val + "%";
+    const ovlEl = document.getElementById("custom-bg-overlay");
+    if (ovlEl && ovlEl.style.display !== "none") {
+      ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
+    }
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    try {
+      const db = await openBgDatabase();
+      const tx = db.transaction(BG_STORE_NAME, "readwrite");
+      const store = tx.objectStore(BG_STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => {
+        if (req.result && req.result.blob) {
+          store.put({ blob: req.result.blob, mime: req.result.mime, dim: val }, key);
+        }
+      };
+    } catch (e) {}
+  }
+
+  async function loadSavedLoggerBackground() {
+    const key = "bg_" + (currentActiveLogger || "DEFAULT");
+    try {
+      const db = await openBgDatabase();
+      const req = db.transaction(BG_STORE_NAME, "readonly").objectStore(BG_STORE_NAME).get(key);
+      req.onsuccess = () => {
+        if (req.result && req.result.blob) {
+          const dim = req.result.dim || 60;
+          document.getElementById("bg-dim-slider").value = dim;
+          document.getElementById("bg-dim-val").innerText = dim + "%";
+          renderCustomBackground(req.result.blob, req.result.mime, dim);
+        }
+      };
+    } catch (e) {}
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const idAktif = getTargetLoggerId();
+    initFourServerConnection(idAktif);
+    loadSavedLoggerBackground();
+  });
+</script>
+
+<script>
+  if (/iPhone|iPod/i.test(navigator.userAgent)) {
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) { event.preventDefault(); }
+      lastTouchEnd = now;
+    }, false);
+  }
+</script>
+
+<style>
+@media (min-width: 1024px) {
+  /* 1. Perlebar Pop-up & Perbesar Header Seperti Gambar No. 2 */
+  #modalDiagramPlts {
+    padding: 0.75rem !important;
+  }
+  #modalDiagramPlts > div {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    padding: 18px 28px !important;
+  }
+  #modalDiagramPlts h3 {
+    font-size: 2.35rem !important;
+    line-height: 2.75rem !important;
+  }
+  #modalDiagramPlts #badgeStatusDiagram {
+    font-size: 1.15rem !important;
+    padding: 6px 16px !important;
+  }
+  #modalDiagramPlts #subjudulDiagram {
+    font-size: 1.45rem !important;
+    line-height: 2rem !important;
+    margin-top: 4px !important;
+  }
+  #modalDiagramPlts .font-mono,
+  #modalDiagramPlts #network_ip,
+  #modalDiagramPlts #network_signal {
+    font-size: 1.35rem !important;
+    margin-top: 6px !important;
+  }
+  #modalDiagramPlts > div > div:first-child button {
+    font-size: 2.6rem !important;
+  }
+
+  /* 2. Perbesar Ikon Matahari & 3 Panah Sinar */
+  #modalDiagramPlts .ikon-matahari-plts {
+    width: 15.2% !important;
+    left: 23.4% !important;
+    top: 16.5% !important;
+  }
+
+  /* 3. Perbesar Semua Bulatan DC & AC di Jalur Pipa (Sama Persis Gambar No. 2) */
+  #modalDiagramPlts .bulatan-aliran {
+    width: 3.4vw !important;
+    height: 3.4vw !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.25vw !important;
+    font-weight: 900 !important;
+    border-width: 3px !important;
+  }
+
+  /* 4. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
+  #modalDiagramPlts .display-tegangan-baterai,
+  #modalDiagramPlts .display-arus-baterai,
+  #modalDiagramPlts .display-daya-baterai {
+    font-size: 1.05vw !important;
+    font-weight: 800 !important;
+    border-width: 2px !important;
+    border-radius: 7px !important;
+  }
+
+  /* 5. Perbesar Angka di Dalam Layar TV Kanan (49.70 V / -14.31 A) */
+  #modalDiagramPlts .display-info-dc {
+    font-size: 2.1vw !important;
+    line-height: 1.25 !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+  }
+
+  /* 6. Perbesar & Posisikan Kotak Daya Besar di Bawah TV (-711.17 W) Pas di Meja TV */
+  #modalDiagramPlts .display-daya-tv {
+    left: 91.6% !important;
+    top: 79.8% !important;
+    width: 16.6% !important;
+    height: 13.0% !important;
+    font-size: 2.45vw !important;
+    font-weight: 800 !important;
+    border-width: 2.5px !important;
+    border-radius: 8px !important;
+  }
+}
+</style>
+
+<script>
+  // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
+  let kwhSamoto = 0.0;   // ID MPPT Samoto 100A: 14751036
+  let kwhTechfine = 0.0; // ID MPPT Techfine 60A: 9193904
+
+  function updateTotalPendapatanHarian() {
+    const totalKwh = (parseFloat(kwhSamoto) || 0) + (parseFloat(kwhTechfine) || 0);
+    const elHasil = document.getElementById("produksiChargeKwh");
+    if (elHasil) {
+      // Format 3 angka di belakang koma dan ganti titik menjadi koma (contoh: 0,334 kWh)
+      elHasil.textContent = totalKwh.toFixed(3).replace('.', ',') + " kWh";
+    }
+  }
+
+  // Jalankan koneksi MQTT khusus untuk memantau 2 MPPT pada broker Shiftr.io
+  window.addEventListener("DOMContentLoaded", () => {
+    const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
+    const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
+      clientId: mpptClientId,
+      clean: true,
+      reconnectPeriod: 4000
+    });
+
+    mpptClient.on("connect", () => {
+      mpptClient.subscribe("14751036/#");
+      mpptClient.subscribe("9193904/#");
+    });
+
+    mpptClient.on("message", (topic, payload) => {
+      const msgStr = payload.toString().trim();
+      const val = parseFloat(msgStr);
+      if (isNaN(val)) return;
+
+      const lowerTopic = topic.toLowerCase();
+
+      // Cek apakah topik adalah data energi harian (kwh / day / energy / e_day / total_e)
+      const isEnergyTopic = lowerTopic.includes("kwh") || 
+                            lowerTopic.includes("day") || 
+                            lowerTopic.includes("energy") || 
+                            lowerTopic.includes("e_day") || 
+                            lowerTopic.includes("total_e");
+
+      if (!isEnergyTopic) return;
+
+      // Pisahkan dan simpan berdasarkan ID masing-masing MPPT
+      if (topic.startsWith("14751036/")) {
+        kwhSamoto = val;
+        updateTotalPendapatanHarian();
+      } else if (topic.startsWith("9193904/")) {
+        kwhTechfine = val;
+        updateTotalPendapatanHarian();
+      }
+    });
+  });
+</script>
+
+</body></html>
