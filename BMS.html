@@ -2748,7 +2748,7 @@ function updateModal() {
       elSub.textContent = "Baterai penuh (Full).";
     } else if (modeStandby) {
       // Kondisi STANDBY Biasa (SOC < 99%, misalnya malam hari): Matahari & DC Solar disembunyikan
-      elMatahari.classList.add('hidden');
+      elMatahari.classList.remove('hidden');
       elDcSolar.classList.add('hidden');
       elDcBatt.classList.remove('anim-batt-naik');
       elDcBatt.classList.remove('anim-batt-turun');
@@ -2758,7 +2758,7 @@ function updateModal() {
       elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
     } else {
       // Kondisi DISCHARGING: Matahari & DC Solar sembunyi, DC Baterai naik
-      elMatahari.classList.add('hidden');
+      elMatahari.classList.remove('hidden');
       elDcSolar.classList.add('hidden');
       elDcBatt.classList.remove('anim-batt-turun');
       elDcBatt.classList.add('anim-batt-naik');
