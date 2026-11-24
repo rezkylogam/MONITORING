@@ -212,66 +212,83 @@
   #batteryModal #modalCells { gap: 14px !important; }
   #batteryModal #modalCells > div { padding: 14px 10px !important; }
 
-  /* 5. Pop-up Aliran Energi PLTS */
-  #modalDiagramPlts > div {
-    max-width: 96vw !important;
-    width: 96vw !important;
-    padding: 20px 28px !important;
+  /* 5. Pop-up Aliran Energi PLTS (Gabungan Bersih Khusus Laptop / PC) */
+  #modalDiagramPlts {
+    padding: 0.75rem !important;
   }
-  #modalDiagramPlts h3 { font-size: 2.2rem !important; }
+  #modalDiagramPlts > div {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    padding: 18px 28px !important;
+  }
+  #modalDiagramPlts h3 {
+    font-size: 2.35rem !important;
+    line-height: 2.75rem !important;
+  }
   #modalDiagramPlts #badgeStatusDiagram {
     font-size: 1.15rem !important;
     padding: 6px 16px !important;
   }
-  #modalDiagramPlts > div > div:first-child p,
-  #modalDiagramPlts > div > div:first-child .text-xs {
+  #modalDiagramPlts #subjudulDiagram {
+    font-size: 1.45rem !important;
+    line-height: 2rem !important;
+    margin-top: 4px !important;
+  }
+  #modalDiagramPlts .font-mono,
+  #modalDiagramPlts #network_ip,
+  #modalDiagramPlts #network_signal {
     font-size: 1.35rem !important;
-    line-height: 1.85rem !important;
+    margin-top: 6px !important;
   }
   #modalDiagramPlts > div > div:first-child button {
-    font-size: 2.4rem !important;
+    font-size: 2.6rem !important;
   }
 
   /* 5A. Perbesar Ikon Matahari & 3 Panah Sinar (.ikon-matahari-plts) */
   #modalDiagramPlts .ikon-matahari-plts {
-    width: 19.5% !important;
-    left: 22.5% !important;
-    top: 17.5% !important;
+    width: 15.2% !important;
+    left: 25.0% !important;
+    top: 16.5% !important;
   }
 
   /* 5B. Perbesar Semua Bulatan DC & AC di Pipa Solar, Baterai & Rumah (.bulatan-aliran) */
   #modalDiagramPlts .bulatan-aliran {
-    width: 52px !important;
-    height: 52px !important;
-    font-size: 19px !important;
+    width: 3.4vw !important;
+    height: 3.4vw !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    font-size: 1.25vw !important;
+    font-weight: 900 !important;
     border-width: 3px !important;
   }
 
-  /* 5C. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
+  /* 5C. Perbesar Angka di Dalam 3 Kotak Baterai Bawah */
   #modalDiagramPlts .display-tegangan-baterai,
   #modalDiagramPlts .display-arus-baterai,
   #modalDiagramPlts .display-daya-baterai {
-    font-size: 1.35rem !important;
+    font-size: 1.05vw !important;
     font-weight: 800 !important;
+    border-width: 2px !important;
     border-radius: 7px !important;
   }
 
   /* 5D. Perbesar Angka di Dalam Layar TV Kanan (.display-info-dc) */
   #modalDiagramPlts .display-info-dc {
-    font-size: 2.25rem !important;
-    line-height: 1.2 !important;
-    border-width: 2px !important;
+    font-size: 2.1vw !important;
+    line-height: 1.25 !important;
+    border-width: 0px !important;
     border-radius: 6px !important;
   }
 
   /* 5E. Perbesar Kotak Daya Besar di Bawah TV (.display-daya-tv) */
   #modalDiagramPlts .display-daya-tv {
-    width: 12.2% !important;
-    height: 9.2% !important;
-    left: 91.8% !important;
+    left: 92.85% !important;
     top: 79.8% !important;
-    font-size: 2.35rem !important;
-    border-width: 2px !important;
+    width: 16.6% !important;
+    height: 13.0% !important;
+    font-size: 2.45vw !important;
+    font-weight: 900 !important;
+    border-width: 0px !important;
     border-radius: 8px !important;
   }
 
@@ -2370,43 +2387,47 @@ function updateModal() {
   }, 3000);
 </script>
 
-<!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV -->
+  <!-- Style Animasi Dinamis PLTS 3D & Tampilan Total Daya di Bawah TV untuk android dan iphone-->
 <style>
-  /* 1. Lintasan DC Panel Surya -> Inverter (Horizontal) */
+  /* 1. Lintasan DC Panel Surya -> Inverter (Tepat di Tengah Garis Biru Kiri) */
   @keyframes gerakDcSolar {
-    0%   { left: 20.0%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 32.5%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 26.5%; top: 73.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    40%  { left: 32.85%; top: 73.0%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    78%  { left: 32.85%; top: 38.0%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    90%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 36.8%; top: 38.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
-   /* 2. Lintasan AC Inverter -> Rumah */
-  @keyframes gerakAcBeban {
-    0%   { left: 46.8%; top: 39.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); } /* Diubah dari 43.5% */
-    15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    52%  { left: 57.3%; top: 39.0%; opacity: 1; } /* Wajib disamakan dengan 0% */
-    82%  { left: 57.3%; top: 77.5%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 64.5%; top: 77.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  /* 2. Lintasan Inverter -> Komponen Elektronik (Tepat di Tengah Garis Biru Kanan) */
+  @keyframes gerakDcBeban {
+    0%   { left: 51.0%; top: 38.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    42%  { left: 59.6%; top: 38.0%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    82%  { left: 59.6%; top: 77.8%; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    92%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { left: 65.0%; top: 77.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
-  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Inverter -> Baterai) */
+  /* 3A. Lintasan DC Baterai CHARGING: Vertikal Turun (Jalur Kanan Pipa Baterai) */
   @keyframes gerakDcBattTurun {
-    0%   { left: 39.8%; top: 63.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 46.4%; top: 59.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 39.8%; top: 75.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    100% { left: 46.4%; top: 70.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
-  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Baterai -> Inverter) */
+  /* 3B. Lintasan DC Baterai DISCHARGING: Vertikal Naik (Jalur Kiri Pipa Baterai) */
   @keyframes gerakDcBattNaik {
-    0%   { left: 39.8%; top: 75.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    0%   { left: 45.3%; top: 70.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { left: 39.8%; top: 63.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    100% { left: 45.3%; top: 59.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   }
 
   .bulatan-aliran {
     position: absolute;
+    z-index: 15;
     width: clamp(22px, 3.0vw, 36px);
     height: clamp(22px, 3.0vw, 36px);
     border-radius: 9999px;
@@ -2420,7 +2441,6 @@ function updateModal() {
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    z-index: 10;
   }
 
   .bulatan-aliran.hidden {
@@ -2428,14 +2448,14 @@ function updateModal() {
   }
 
   .anim-solar-dc   { animation: gerakDcSolar 2.4s linear infinite; }
-  .anim-ac-beban   { animation: gerakAcBeban 3.2s linear infinite; }
+  .anim-dc-beban   { animation: gerakDcBeban 3.2s linear infinite; }
   .anim-batt-turun { animation: gerakDcBattTurun 2.0s linear infinite; }
   .anim-batt-naik  { animation: gerakDcBattNaik 2.0s linear infinite; }
 
  /* Ikon SVG Matahari 3D Simetris + 3 Panah Sinar (Presisi Gambar No. 1) */
 .ikon-matahari-plts {
   position: absolute;
-  left: 23.4%;
+  left: 25.0%;
   top: 15.8%;
   width: 13.8%;
   aspect-ratio: 245 / 215;
@@ -2468,15 +2488,16 @@ function updateModal() {
 /* Kotak Penampil Total Daya di Bawah TV dan Baterai */
 .display-daya-tv {
   position: absolute;
-  left: 91.5%;
+  left: 92.85%;
   top: 79.8%;
   transform: translate(-50%, -50%);
-  background: rgba(15, 23, 42, 0.92);
-  border: 1.5px solid #38bdf8;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
-  color: #38bdf8;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #ffffff;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-weight: 800;
+  font-weight: 900;
+  text-shadow: 0 2px 3px #000000, 0 0 6px #000000, 0 0 12px rgba(0, 0, 0, 1), 0 0 22px rgba(0, 0, 0, 0.95);
   font-size: clamp(14px, 1.8vw, 22px); /* Ukuran teks diperkecil */
   width: 110px;                        /* Mengunci lebar kotak */
   height: 43px;                        /* Mengunci tinggi kotak */
@@ -2492,8 +2513,8 @@ function updateModal() {
     /* Kotak Penampil Tegangan & Arus Baterai DC di Sisi Kanan Atas */
   .display-info-dc {
     position: absolute;
-    right: 4.1%;
-    top: 45.7%;
+    right: 2.85%;
+    top: 44.4%;
     width: 12.2%;
     height: 19.0%;
     display: flex;
@@ -2502,12 +2523,13 @@ function updateModal() {
     justify-content: center;
     line-height: 1.15;
     transform: translateY(-50%);
-    background: rgba(15, 23, 42, 0.94);
-    border: 1px solid #38bdf8;
-    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.45);
-    color: #e0f2fe;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #ffffff;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-weight: 800;
+    font-weight: 900;
+    text-shadow: 0 2px 3px #000000, 0 0 6px #000000, 0 0 12px rgba(0, 0, 0, 1), 0 0 22px rgba(0, 0, 0, 0.95);
     font-size: clamp(13px, 1.6vw, 22px);
     padding: 2px;
     border-radius: 3px;
@@ -2617,7 +2639,7 @@ function updateModal() {
       <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
       
       <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
-        <div id="elemenMatahari" class="ikon-matahari-plts">
+        <div id="elemenMatahari" class="ikon-matahari-plts hidden">
          <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
             <defs>
               <radialGradient id="gradSinar3D" cx="45%" cy="42%" r="55%">
@@ -2678,10 +2700,10 @@ function updateModal() {
 
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
-      <div class="bulatan-aliran anim-ac-beban">DC</div>
+      <div class="bulatan-aliran anim-dc-beban">DC</div>
       <div id="nilaiInfoDcBawahTv" class="display-info-dc">
-      <span style="color:#38bdf8;">0.00 V</span>
-      <span style="color:#fbbf24;">0.00 A</span>
+      <span style="color:#ffffff;">0.00 V</span>
+      <span style="color:#ffffff;">0.00 A</span>
       </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
     </div>
@@ -2705,7 +2727,7 @@ function updateModal() {
     const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
 
     if (elInfoKanan) {
-      elInfoKanan.innerHTML = `<span style="color:#38bdf8;">${voltDcAsli}</span><span style="color:#fbbf24;">${arusDcAsli}</span>`;
+      elInfoKanan.innerHTML = `<span style="color:#ffffff;">${voltDcAsli}</span><span style="color:#ffffff;">${arusDcAsli}</span>`;
     }
     if (elDayaTv) {
       elDayaTv.textContent = dayaDcAsli;
@@ -2727,40 +2749,44 @@ function updateModal() {
     const elSub      = document.getElementById('subjudulDiagram');
 
     if (modeCharge) {
-      // Kondisi CHARGING: Matahari & DC Solar muncul, DC Baterai turun
+      // Kondisi CHARGING: Matahari & DC Solar MUNCUL, DC Baterai turun
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
+      
+      elDcBatt.classList.remove('hidden', 'anim-batt-naik');
       elDcBatt.classList.add('anim-batt-turun');
 
       elBadge.textContent = "🟢 CHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
       elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
     } else if (modeStandby && bateraiFull) {
-      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar tetap muncul menyuplai beban
+      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar TETAP MUNCUL menyuplai beban
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.remove('anim-batt-turun');
+
+      elDcBatt.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
 
       elBadge.textContent = "🔵 FULL / STANDBY";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-      elSub.textContent = "Baterai penuh (Full).";
+      elSub.textContent = "Baterai penuh (Standby). Panel surya langsung menyuplai beban.";
     } else if (modeStandby) {
-      // Kondisi STANDBY Biasa (SOC < 99%, misalnya malam hari): Matahari & DC Solar disembunyikan
-      elMatahari.classList.add('hidden');
-      elDcSolar.classList.add('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.remove('anim-batt-turun');
+      // Kondisi STANDBY Biasa (SOC < 99%): Matahari & DC Solar DISEMBUNYIKAN
+      elMatahari.classList.add('hidden');   // <-- Pastikan .add('hidden')
+      elDcSolar.classList.add('hidden');    // <-- Pastikan .add('hidden')
+
+      elDcBatt.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
 
       elBadge.textContent = "🔵 STANDBY";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
       elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
     } else {
-      // Kondisi DISCHARGING: Matahari & DC Solar sembunyi, DC Baterai naik
-      elMatahari.classList.add('hidden');
-      elDcSolar.classList.add('hidden');
-      elDcBatt.classList.remove('anim-batt-turun');
+      // Kondisi DISCHARGING: Matahari & DC Solar DISEMBUNYIKAN, DC Baterai naik
+      elMatahari.classList.add('hidden');   // <-- Pastikan .add('hidden')
+      elDcSolar.classList.add('hidden');    // <-- Pastikan .add('hidden')
+
+      elDcBatt.classList.remove('hidden', 'anim-batt-turun');
       elDcBatt.classList.add('anim-batt-naik');
 
       elBadge.textContent = "🟠 DISCHARGING";
@@ -3522,90 +3548,6 @@ function updateModal() {
     }, false);
   }
 </script>
-
-<style>
-@media (min-width: 1024px) {
-  /* 1. Perlebar Pop-up & Perbesar Header Seperti Gambar No. 2 */
-  #modalDiagramPlts {
-    padding: 0.75rem !important;
-  }
-  #modalDiagramPlts > div {
-    max-width: 98vw !important;
-    width: 98vw !important;
-    padding: 18px 28px !important;
-  }
-  #modalDiagramPlts h3 {
-    font-size: 2.35rem !important;
-    line-height: 2.75rem !important;
-  }
-  #modalDiagramPlts #badgeStatusDiagram {
-    font-size: 1.15rem !important;
-    padding: 6px 16px !important;
-  }
-  #modalDiagramPlts #subjudulDiagram {
-    font-size: 1.45rem !important;
-    line-height: 2rem !important;
-    margin-top: 4px !important;
-  }
-  #modalDiagramPlts .font-mono,
-  #modalDiagramPlts #network_ip,
-  #modalDiagramPlts #network_signal {
-    font-size: 1.35rem !important;
-    margin-top: 6px !important;
-  }
-  #modalDiagramPlts > div > div:first-child button {
-    font-size: 2.6rem !important;
-  }
-
-  /* 2. Perbesar Ikon Matahari & 3 Panah Sinar */
-  #modalDiagramPlts .ikon-matahari-plts {
-    width: 15.2% !important;
-    left: 23.4% !important;
-    top: 16.5% !important;
-  }
-
-  /* 3. Perbesar Semua Bulatan DC & AC di Jalur Pipa (Sama Persis Gambar No. 2) */
-  #modalDiagramPlts .bulatan-aliran {
-    width: 3.4vw !important;
-    height: 3.4vw !important;
-    min-width: 50px !important;
-    min-height: 50px !important;
-    font-size: 1.25vw !important;
-    font-weight: 900 !important;
-    border-width: 3px !important;
-  }
-
-  /* 4. Perbesar Angka di Dalam 3 Kotak Baterai Bawah (49.70 V, -14.31 A, -711.17 W) */
-  #modalDiagramPlts .display-tegangan-baterai,
-  #modalDiagramPlts .display-arus-baterai,
-  #modalDiagramPlts .display-daya-baterai {
-    font-size: 1.05vw !important;
-    font-weight: 800 !important;
-    border-width: 2px !important;
-    border-radius: 7px !important;
-  }
-
-  /* 5. Perbesar Angka di Dalam Layar TV Kanan (49.70 V / -14.31 A) */
-  #modalDiagramPlts .display-info-dc {
-    font-size: 2.1vw !important;
-    line-height: 1.25 !important;
-    border-width: 2px !important;
-    border-radius: 6px !important;
-  }
-
-  /* 6. Perbesar & Posisikan Kotak Daya Besar di Bawah TV (-711.17 W) Pas di Meja TV */
-  #modalDiagramPlts .display-daya-tv {
-    left: 91.6% !important;
-    top: 79.8% !important;
-    width: 16.6% !important;
-    height: 13.0% !important;
-    font-size: 2.45vw !important;
-    font-weight: 800 !important;
-    border-width: 2.5px !important;
-    border-radius: 8px !important;
-  }
-}
-</style>
 
 <script>
   // Variabel penyimpan energi harian (kWh) dari masing-masing MPPT
