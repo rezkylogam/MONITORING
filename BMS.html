@@ -2639,7 +2639,7 @@ function updateModal() {
       <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
       
       <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
-        <div id="elemenMatahari" class="ikon-matahari-plts">
+        <div id="elemenMatahari" class="ikon-matahari-plts hidden">
          <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
             <defs>
               <radialGradient id="gradSinar3D" cx="45%" cy="42%" r="55%">
@@ -2702,8 +2702,8 @@ function updateModal() {
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
       <div class="bulatan-aliran anim-dc-beban">DC</div>
       <div id="nilaiInfoDcBawahTv" class="display-info-dc">
-      <span style="color:#38bdf8;">0.00 V</span>
-      <span style="color:#fbbf24;">0.00 A</span>
+      <span style="color:#ffffff;">0.00 V</span>
+      <span style="color:#ffffff;">0.00 A</span>
       </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
     </div>
@@ -2749,40 +2749,44 @@ function updateModal() {
     const elSub      = document.getElementById('subjudulDiagram');
 
     if (modeCharge) {
-      // Kondisi CHARGING: Matahari & DC Solar muncul, DC Baterai turun
+      // Kondisi CHARGING: Matahari & DC Solar MUNCUL, DC Baterai turun
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
+      
+      elDcBatt.classList.remove('hidden', 'anim-batt-naik');
       elDcBatt.classList.add('anim-batt-turun');
 
       elBadge.textContent = "🟢 CHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
       elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
     } else if (modeStandby && bateraiFull) {
-      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar tetap muncul menyuplai beban
+      // Kondisi FULL (Standby & SOC >= 99%): Matahari & DC Solar TETAP MUNCUL menyuplai beban
       elMatahari.classList.remove('hidden');
       elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.remove('anim-batt-turun');
+
+      elDcBatt.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
 
       elBadge.textContent = "🔵 FULL / STANDBY";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-      elSub.textContent = "Baterai penuh (Full).";
+      elSub.textContent = "Baterai penuh (Standby). Panel surya langsung menyuplai beban.";
     } else if (modeStandby) {
-      // Kondisi STANDBY Biasa (SOC < 99%, misalnya malam hari): Matahari & DC Solar disembunyikan
-      elMatahari.classList.add('hidden');
-      elDcSolar.classList.add('hidden');
-      elDcBatt.classList.remove('anim-batt-naik');
-      elDcBatt.classList.remove('anim-batt-turun');
+      // Kondisi STANDBY Biasa (SOC < 99%): Matahari & DC Solar DISEMBUNYIKAN
+      elMatahari.classList.add('hidden');   // <-- Pastikan .add('hidden')
+      elDcSolar.classList.add('hidden');    // <-- Pastikan .add('hidden')
+
+      elDcBatt.classList.add('hidden');
+      elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
 
       elBadge.textContent = "🔵 STANDBY";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
       elSub.textContent = "Sistem dalam kondisi Standby (tidak ada pengisian/beban baterai).";
     } else {
-      // Kondisi DISCHARGING: Matahari & DC Solar sembunyi, DC Baterai naik
-      elMatahari.classList.remove('hidden');
-      elDcSolar.classList.remove('hidden');
-      elDcBatt.classList.remove('anim-batt-turun');
+      // Kondisi DISCHARGING: Matahari & DC Solar DISEMBUNYIKAN, DC Baterai naik
+      elMatahari.classList.add('hidden');   // <-- Pastikan .add('hidden')
+      elDcSolar.classList.add('hidden');    // <-- Pastikan .add('hidden')
+
+      elDcBatt.classList.remove('hidden', 'anim-batt-turun');
       elDcBatt.classList.add('anim-batt-naik');
 
       elBadge.textContent = "🟠 DISCHARGING";
