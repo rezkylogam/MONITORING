@@ -2696,24 +2696,9 @@ function updateModal() {
       gap: 1px !important;
     }
 
-    /* Reset posisi nilaiDayaTv saat digabungkan ke dalam kotak display-info-dc di HP */
-    #modalDiagramPlts .display-info-dc .display-daya-tv {
-      position: static !important;
-      transform: none !important;
-      left: auto !important;
-      top: auto !important;
-      width: 100% !important;
-      height: auto !important;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      margin-top: 2px !important;
-      padding-top: 2px !important;
-      border-top: 1px solid rgba(56, 189, 248, 0.3) !important;
-      font-size: 2.3vw !important;
-      line-height: 1.25 !important;
-      color: #fde047 !important;
+    /* Sembunyikan kotak daya terpisah di pojok kanan bawah saat tampilan HP */
+    #modalDiagramPlts .display-daya-tv {
+      display: none !important;
     }
 
     @keyframes gerakDcSolarMobile {
@@ -2907,12 +2892,21 @@ function updateModal() {
     const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
     const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
 
-    // 2. Isi ke 2 kotak Sisi Kanan
+    // 2. Isi ke kotak Sisi Kanan (3 baris di HP, 2 baris di Laptop/PC)
     const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
     const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
+    const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
 
     if (elInfoKanan) {
-      elInfoKanan.innerHTML = `<span style="color:#ffffff;">${voltDcAsli}</span><span style="color:#ffffff;">${arusDcAsli}</span>`;
+      if (isMobileMode) {
+        elInfoKanan.innerHTML = `
+          <span style="color:#ffffff;">${voltDcAsli}</span>
+          <span style="color:#ffffff;">${arusDcAsli}</span>
+          <span style="color:#fde047; border-top:1px solid rgba(56,189,248,0.35); width:100%; margin-top:2px; padding-top:2px;">${dayaDcAsli}</span>
+        `;
+      } else {
+        elInfoKanan.innerHTML = `<span style="color:#ffffff;">${voltDcAsli}</span><span style="color:#ffffff;">${arusDcAsli}</span>`;
+      }
     }
     if (elDayaTv) {
       elDayaTv.textContent = dayaDcAsli;
@@ -2991,12 +2985,6 @@ function updateModal() {
 
     if (!imgEl.src.includes(targetSrc)) {
       imgEl.src = targetSrc;
-    }
-
-     const boxInfoDc = document.querySelector('#modalDiagramPlts .display-info-dc');
-    const elDayaTv = document.getElementById('nilaiDayaBawahTv');
-    if (isMobileDevice && boxInfoDc && elDayaTv && elDayaTv.parentElement !== boxInfoDc) {
-      boxInfoDc.appendChild(elDayaTv);
     }
   }
 
