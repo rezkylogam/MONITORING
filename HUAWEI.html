@@ -2992,6 +2992,12 @@ function updateModal() {
     if (!imgEl.src.includes(targetSrc)) {
       imgEl.src = targetSrc;
     }
+
+    const boxInfoDc = document.querySelector('#modalDiagramPlts .display-info-dc');
+    const elDayaTv = document.getElementById('nilaiDayaTv');
+    if (isMobileDevice && boxInfoDc && elDayaTv && elDayaTv.parentElement !== boxInfoDc) {
+      boxInfoDc.appendChild(elDayaTv);
+    }
   }
 
   function bukaModalDiagram() {
