@@ -298,6 +298,11 @@
     font-weight: 900 !important;
   }
 
+  #modalDiagramPlts .display-daya-mppt {
+    font-size: 1.9vw !important;
+    font-weight: 900 !important;
+  }
+
       /* 5F. Perbesar Teks & Angka "Hasil Pendapatan Hari Ini" (Khusus Laptop / PC) */
   #modalDiagramPlts > div > div:first-child {
     align-items: stretch !important;
@@ -2563,6 +2568,24 @@ function updateModal() {
     z-index: 14;
   }
 
+  .display-daya-mppt {
+    position: absolute;
+    left: 28.0%;
+    top: 93.0%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #fde047;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 900;
+    font-size: clamp(12px, 1.55vw, 24px);
+    text-shadow: 0 2px 3px #000000, 0 0 6px #000000, 0 0 12px rgba(0, 0, 0, 1), 0 0 20px rgba(0, 0, 0, 0.95);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 14;
+  }
+
     .display-daya-baterai {
       position: absolute;
       left: 39.8%;
@@ -2732,6 +2755,7 @@ function updateModal() {
       </div>
       <div id="nilaiDayaBawahTv" class="display-daya-tv">0 W</div>
       <div id="nilaiArusMppt" class="display-arus-mppt">0.00 A</div>
+      <div id="nilaiDayaMppt" class="display-daya-mppt">0.00 W</div>
     </div>
 
   </div>
@@ -2743,16 +2767,33 @@ function updateModal() {
   let voltPvTechfine = 0.0;
   let arusMpptSamoto = 0.0;
   let arusMpptTechfine = 0.0;
+  let dayaMpptSamoto = 0.0;
+  let dayaMpptTechfine = 0.0;
   let lastMpptUpdate = 0;
 
   let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;
   let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0;
 
   function perbaruiTampilanArusMppt() {
-    const totalArusMppt = (parseFloat(arusMpptSamoto) || 0) + (parseFloat(arusMpptTechfine) || 0);
+    const arus1 = parseFloat(arusMpptSamoto) || 0;
+    const arus2 = parseFloat(arusMpptTechfine) || 0;
+    const totalArusMppt = arus1 + arus2;
+
     const elArusMppt = document.getElementById('nilaiArusMppt');
     if (elArusMppt) {
       elArusMppt.textContent = totalArusMppt.toFixed(2) + " A";
+    }
+
+    const elVoltUtama = document.getElementById('avg-voltage');
+    const voltSistem = parseFloat(elVoltUtama ? elVoltUtama.textContent : "0") || 0;
+
+    const watt1 = dayaMpptSamoto > 0 ? dayaMpptSamoto : (arus1 * voltSistem);
+    const watt2 = dayaMpptTechfine > 0 ? dayaMpptTechfine : (arus2 * voltSistem);
+    const totalDayaMppt = watt1 + watt2;
+
+    const elDayaMppt = document.getElementById('nilaiDayaMppt');
+    if (elDayaMppt) {
+      elDayaMppt.textContent = totalDayaMppt.toFixed(2) + " W";
     }
   }
 
@@ -2928,6 +2969,14 @@ function updateModal() {
             else arusMpptTechfine = mpptCurr;
             perbaruiTampilanArusMppt();
           }
+
+          const mpptWatt = parseFloat(data.chg_w ?? data.pv_w ?? data.power ?? data.watt ?? data.W ?? data.P ?? NaN);
+          if (!isNaN(mpptWatt)) {
+            if (isSamoto) dayaMpptSamoto = mpptWatt;
+            else dayaMpptTechfine = mpptWatt;
+            perbaruiTampilanArusMppt();
+          }
+
           return;
         } catch (e) {}
       }
@@ -2958,6 +3007,12 @@ function updateModal() {
       if (lowerTopic.includes("arus") || lowerTopic.includes("amp") || lowerTopic.includes("chg_i") || lowerTopic.includes("bat_i") || lowerTopic.includes("curr") || lowerTopic.endsWith("/i")) {
         if (isSamoto) arusMpptSamoto = val;
         else arusMpptTechfine = val;
+        perbaruiTampilanArusMppt();
+      }
+
+      if (lowerTopic.includes("daya") || lowerTopic.includes("watt") || lowerTopic.includes("power") || lowerTopic.endsWith("/w") || lowerTopic.endsWith("/p")) {
+        if (isSamoto) dayaMpptSamoto = val;
+        else dayaMpptTechfine = val;
         perbaruiTampilanArusMppt();
       }
     });
