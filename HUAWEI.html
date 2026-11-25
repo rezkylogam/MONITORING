@@ -180,13 +180,15 @@
   #batteryGrid .battery-card .border-t { padding-top: 1rem !important; margin-top: 1.25rem !important; }
   #batteryGrid .battery-card .border-t span { font-size: 1.25rem !important; }
 
-  /* 3. Mode Tampilan Table */
+  /* 3. Mode Tampilan Table (Khusus Laptop / PC) */
+  #batteryTableContainer table { table-layout: fixed !important; width: 100% !important; }
   #batteryTableContainer th { font-size: 1.2rem !important; padding: 1.2rem 1rem !important; }
-  #batteryTableContainer td { font-size: 1.45rem !important; padding: 1.25rem 1rem !important; }
+  #batteryTableContainer td { font-size: 1.45rem !important; padding: 1.15rem 1rem !important; line-height: 1 !important; }
+  #batteryTableContainer td .digital-3d-val { font-size: 2.05rem !important; line-height: 0.85 !important; }
   #batteryTableContainer td .font-bold { font-size: 1.5rem !important; }
   #batteryTableContainer td .text-\[11px\] { font-size: 1.05rem !important; }
   #batteryTableContainer td .w-16 { width: 6rem !important; height: 2.4rem !important; }
-
+  
   /* 4. Gambar No. 2: Pop-up Detail 15 Sel (Perbesar Semua Teks, Angka & Bar) */
   #batteryModal > div {
     max-width: 82vw !important;
