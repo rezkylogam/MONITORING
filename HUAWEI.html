@@ -2673,22 +2673,26 @@ function updateModal() {
       font-size: 3.8vw !important;
     }
 
+    /* Posisi Tegangan & Arus di Atas Garis Horizontal Jalur Beban DC */
     #modalDiagramPlts .display-info-dc {
-      left: 81.5% !important;
+      left: 59.0% !important;
       right: auto !important;
-      top: 80.5% !important;
-      width: 18.0% !important;
-      height: 7.5% !important;
+      top: 48.5% !important;
+      width: auto !important;
+      height: auto !important;
       transform: translate(-50%, -50%) !important;
-      font-size: 2.5vw !important;
+      font-size: 3.6vw !important;
+      line-height: 1.2 !important;
     }
 
+    /* Posisi Total Daya Tepat di Bawah Angka Arus (Masih di Area Jalur Beban DC) */
     #modalDiagramPlts .display-daya-tv {
-      left: 81.5% !important;
-      top: 91.5% !important;
-      width: 24.0% !important;
-      height: 5.5% !important;
-      font-size: 3.2vw !important;
+      left: 59.0% !important;
+      top: 53.2% !important;
+      width: auto !important;
+      height: auto !important;
+      font-size: 3.6vw !important;
+      color: #fde047 !important; /* Kuning emas terang agar serasi dengan angka MPPT */
     }
 
     @keyframes gerakDcSolarMobile {
@@ -2702,8 +2706,8 @@ function updateModal() {
       0%   { left: 36.5%; top: 73.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
       10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       25%  { left: 46.2%; top: 73.0%; opacity: 1; }
-      55%  { left: 46.2%; top: 57.3%; opacity: 1; }
-      85%  { left: 71.75%; top: 57.3%; opacity: 1; }
+      55%  { left: 46.2%; top: 57.35%; opacity: 1; }
+      85%  { left: 71.75%; top: 57.35%; opacity: 1; }
       100% { left: 71.75%; top: 65.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 
