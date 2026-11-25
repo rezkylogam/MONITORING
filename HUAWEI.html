@@ -2655,7 +2655,7 @@ function updateModal() {
     }
 
     /* === TATA LETAK DIAGRAM PLTS VERTIKAL KHUSUS HP ANDROID & IPHONE === */
-  @media (max-width: 1023px) {
+  @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
     #modalDiagramPlts .ikon-matahari-plts {
       left: 66.0% !important;
       top: 15.0% !important;
@@ -2759,10 +2759,7 @@ function updateModal() {
 
     <!-- Kontainer Gambar & Bulatan Bergerak -->
     <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
-      <picture class="w-full block select-none">
-        <source media="(max-width: 1023px)" srcset="diagram-plts-mobile.jpg">
-        <img src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
-      </picture>
+    <img id="imgDiagramPlts" src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
       
       <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
         <div id="elemenMatahari" class="ikon-matahari-plts hidden">
@@ -2960,7 +2957,20 @@ function updateModal() {
     }
   }
 
+  function terapkanGambarDiagramPerangkat() {
+    const imgEl = document.getElementById('imgDiagramPlts');
+    if (!imgEl) return;
+
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
+    const targetSrc = isMobileDevice ? 'diagram-plts-mobile.jpg?v=2' : 'diagram-plts-3d.jpg';
+
+    if (!imgEl.src.includes(targetSrc)) {
+      imgEl.src = targetSrc;
+    }
+  }
+
   function bukaModalDiagram() {
+    terapkanGambarDiagramPerangkat();
     perbaruiAnimasiDiagram();
     document.getElementById('modalDiagramPlts').classList.remove('hidden');
   }
