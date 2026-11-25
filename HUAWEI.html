@@ -2662,15 +2662,30 @@ function updateModal() {
       width: 32.0% !important;
     }
 
+    /* Kolom Utuh Arus & Daya 2 MPPT di Samping Kiri Inverter */
     #modalDiagramPlts .display-arus-mppt {
-      left: 44.0% !important;
-      top: 41.0% !important;
-      font-size: 3.8vw !important;
+      left: 11.5% !important;
+      top: 66.5% !important;
+      width: 21.0% !important;
+      transform: translate(-50%, -50%) !important;
+      background: rgba(15, 23, 42, 0.88) !important;
+      border: 1.5px solid rgba(250, 204, 21, 0.75) !important;
+      border-radius: 8px !important;
+      padding: 4px 5px !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75) !important;
+      font-size: 2.3vw !important;
+      line-height: 1.25 !important;
+      text-align: center !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 1px !important;
     }
+
+    /* Sembunyikan elemen daya MPPT terpisah di HP karena sudah digabung ke kotak atas */
     #modalDiagramPlts .display-daya-mppt {
-      left: 44.0% !important;
-      top: 44.8% !important;
-      font-size: 3.8vw !important;
+      display: none !important;
     }
 
     /* Satu Kolom Utuh untuk Tegangan, Arus & Daya di Atas Jalur Beban DC */
@@ -2864,11 +2879,6 @@ function updateModal() {
     const arus2 = parseFloat(arusMpptTechfine) || 0;
     const totalArusMppt = arus1 + arus2;
 
-    const elArusMppt = document.getElementById('nilaiArusMppt');
-    if (elArusMppt) {
-      elArusMppt.textContent = totalArusMppt.toFixed(2) + " A";
-    }
-
     const elVoltUtama = document.getElementById('avg-voltage');
     const voltSistem = parseFloat(elVoltUtama ? elVoltUtama.textContent : "0") || 0;
 
@@ -2876,7 +2886,21 @@ function updateModal() {
     const watt2 = dayaMpptTechfine > 0 ? dayaMpptTechfine : (arus2 * voltSistem);
     const totalDayaMppt = watt1 + watt2;
 
+    const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
+    const elArusMppt = document.getElementById('nilaiArusMppt');
     const elDayaMppt = document.getElementById('nilaiDayaMppt');
+
+    if (elArusMppt) {
+      if (isMobileMode) {
+        elArusMppt.innerHTML = `
+          <span>${totalArusMppt.toFixed(2)} A</span>
+          <span style="border-top:1px solid rgba(250,204,21,0.35); width:100%; margin-top:2px; padding-top:2px;">${totalDayaMppt.toFixed(2)} W</span>
+        `;
+      } else {
+        elArusMppt.textContent = totalArusMppt.toFixed(2) + " A";
+      }
+    }
+
     if (elDayaMppt) {
       elDayaMppt.textContent = totalDayaMppt.toFixed(2) + " W";
     }
