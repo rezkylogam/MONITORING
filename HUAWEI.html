@@ -2934,7 +2934,7 @@ function updateModal() {
     const isMpptFresh    = (Date.now() - lastMpptUpdate) < 30000;
     const adaSinarPv     = isMpptFresh && (maxVoltPv > 35.0);
 
-    const tampilkanMatahari = true; // Sementara true untuk mengecek posisi matahari
+    const tampilkanMatahari = modeCharge || (modeStandby && bateraiFull) || adaSinarPv;
 
     const elMatahari = document.getElementById('elemenMatahari');
     const elDcSolar  = document.getElementById('bulatanDcSolar');
