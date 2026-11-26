@@ -2093,13 +2093,20 @@ function updateModal() {
         const minutes = now.getMinutes().toString().padStart(2, '0');
         const seconds = now.getSeconds().toString().padStart(2, '0');
 
-        const formattedTime = `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}:${seconds}`;
+        const dateStr = `${dayName}, ${date} ${monthName} ${year}`;
+        const timeStr = `${hours}:${minutes}:${seconds}`;
+
         const clockEl = document.getElementById('realtime-clock');
-        if (clockEl) clockEl.textContent = formattedTime;
+        if (clockEl) clockEl.textContent = `${dateStr} - ${timeStr}`;
+
+        const diagDateEl = document.getElementById('diag-clock-date');
+        const diagTimeEl = document.getElementById('diag-clock-time');
+        if (diagDateEl) diagDateEl.textContent = dateStr;
+        if (diagTimeEl) diagTimeEl.textContent = timeStr;
     }
     updateClock();
     setInterval(updateClock, 1000);
-    }
+  }
 
   window.onload = function() {
     const params = new URLSearchParams(window.location.search);
@@ -2801,6 +2808,11 @@ function updateModal() {
     <!-- Kontainer Gambar & Bulatan Bergerak -->
     <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
     <img id="imgDiagramPlts" src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
+    <!-- Penampil Hari, Tanggal, & Jam Real-time di Pojok Kiri Atas Diagram -->
+      <div id="diagram-realtime-clock" class="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-20 bg-slate-900/85 border border-sky-400/60 backdrop-blur-sm px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg shadow-lg pointer-events-none">
+        <div id="diag-clock-date" class="text-[10px] sm:text-xs font-semibold text-sky-300 leading-tight">Memuat tanggal...</div>
+        <div id="diag-clock-time" class="text-xs sm:text-base font-extrabold text-white font-mono tracking-wider leading-tight mt-0.5">00:00:00</div>
+      </div>
       <!-- Garis Pipa Cabang Neon Biru (Khusus Mobile) -->
       <svg id="pipaCabangMobile" viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-10 lg:hidden">
         <defs>
