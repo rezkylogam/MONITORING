@@ -1051,12 +1051,20 @@
     <div class="mb-6 flex justify-between items-start">
       <h2 class="text-xl font-semibold text-white-900">BATERAI SISTEM 48V DC</h2>
       
-          <!-- Kelompok Kanan: Jumlah Baterai (Atas) & Jam Real-time (Bawah) -->
-        <div class="flex flex-col items-end gap-1">
+        <!-- Kelompok Kanan: Jumlah Baterai (Atas), Jam Real-time (Tengah), & Tombol Buzzer (Bawah) -->
+        <div class="flex flex-col items-end gap-1.5">
             <div class="text-lg text-white-100">
                 <span id="total-batteries">6</span> Baterai Terkoneksi
             </div>
             <div id="realtime-clock" class="text-lg font-semibold text-gray-300"></div>
+            <div class="flex items-center gap-2 mt-1">
+                <button type="button" onclick="sendRemoteBuzzerCmd('TEST_BUZZER')" class="bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow transition">
+                    🔔 Test Buzzer
+                </button>
+                <button type="button" onclick="sendRemoteBuzzerCmd('MUTE_BUZZER')" class="bg-red-600 hover:bg-red-500 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow transition">
+                    🔇 Mute Buzzer
+                </button>
+            </div>
         </div>
     </div>
     
@@ -1065,7 +1073,7 @@
         <span class="text-xl">🚨</span>
         <span id="online-alarm-text" class="font-bold text-sm sm:text-base text-white">PERINGATAN TEGANGAN BATERAI!</span>
       </div>
-      <button type="button" onclick="sendRemoteMute()" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg shadow transition">
+      <button type="button" onclick="sendRemoteBuzzerCmd('MUTE_BUZZER')" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg shadow transition">
         🔇 MUTE BUZZER ESP32
       </button>
     </div>
@@ -2002,21 +2010,24 @@ if (cyclesElem) {
     }
   }
 
-  function sendRemoteMute() {
+  function sendRemoteBuzzerCmd(cmdType) {
     const loggerTarget = (typeof currentActiveLogger !== "undefined" && currentActiveLogger)
       ? currentActiveLogger
-      : id_logger.split("-")[0];
+      : id_logger.split("-");
     if (!loggerTarget || loggerTarget === "-") return;
 
     const topic = loggerTarget + "/seting";
-    const payload = JSON.stringify({ cmd: "MUTE_BUZZER" });
+    const payload = JSON.stringify({ cmd: cmdType });
 
     if (typeof multiMqttClients !== "undefined" && multiMqttClients.length > 0) {
       multiMqttClients.forEach(c => { if (c && c.connected) c.publish(topic, payload); });
     } else if (typeof client !== "undefined" && client && client.connected) {
       client.publish(topic, payload);
     }
-    alert("Perintah Mute Buzzer terkirim ke ESP32!");
+
+    if (cmdType === "MUTE_BUZZER") {
+      alert("Perintah Mute/Unmute Buzzer terkirim ke ESP32!");
+    }
   }
   
   function openModal(loggerId, addr, typeBattery) {
