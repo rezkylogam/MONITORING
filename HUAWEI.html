@@ -1060,6 +1060,16 @@
         </div>
     </div>
     
+    <div id="online-alarm-banner" class="hidden mb-5 rounded-xl border-2 p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">🚨</span>
+        <span id="online-alarm-text" class="font-bold text-sm sm:text-base text-white">PERINGATAN TEGANGAN BATERAI!</span>
+      </div>
+      <button type="button" onclick="sendRemoteMute()" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-lg shadow transition">
+        🔇 MUTE BUZZER ESP32
+      </button>
+    </div>
+    
         <!-- Summary Section dengan Ikon 3D -->
     <div id="summarySection" class="mb-8 hidden">
       <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
@@ -1951,8 +1961,64 @@ if (cyclesElem) {
   document.getElementById("avg-temp").textContent = tempRange;
   document.getElementById("total-current").textContent = totalCurrent.toFixed(2) + " A";
   document.getElementById("total-power").textContent = totalPower.toFixed(2) + " W";
+  checkOnlineVoltageAlarm();
 }
 
+  function checkOnlineVoltageAlarm() {
+    const banner = document.getElementById("online-alarm-banner");
+    const txt = document.getElementById("online-alarm-text");
+    if (!banner || !txt) return;
+
+    let state = "NORMAL";
+    let unitId = "";
+
+    batteries.forEach(b => {
+      const v = parseFloat(b.voltage);
+      if (isNaN(v) || v < 10) return;
+      if (v >= 54.7) { state = "HIGH"; unitId = b.addr; }
+      else if (v <= 48.0 && state !== "HIGH") { state = "LOW_CRIT"; unitId = b.addr; }
+      else if (v <= 48.4 && state !== "HIGH" && state !== "LOW_CRIT") { state = "LOW_WARN"; unitId = b.addr; }
+      else if (v >= 53.0 && state === "NORMAL") { state = "FULL"; unitId = b.addr; }
+    });
+
+    if (state === "NORMAL") {
+      banner.classList.add("hidden");
+      return;
+    }
+
+    banner.classList.remove("hidden", "bg-red-950/90", "border-red-500", "bg-amber-950/90", "border-amber-500", "bg-emerald-950/90", "border-emerald-500");
+    if (state === "HIGH") {
+      banner.classList.add("bg-red-950/90", "border-red-500");
+      txt.textContent = `BAHAYA: Tegangan Tinggi (>= 54.7V) pada Unit #${unitId}!`;
+    } else if (state === "LOW_CRIT") {
+      banner.classList.add("bg-red-950/90", "border-red-500");
+      txt.textContent = `BAHAYA: Tegangan Kritis (<= 48.0V) pada Unit #${unitId}!`;
+    } else if (state === "LOW_WARN") {
+      banner.classList.add("bg-amber-950/90", "border-amber-500");
+      txt.textContent = `PERINGATAN: Tegangan Rendah (<= 48.4V) pada Unit #${unitId}!`;
+    } else if (state === "FULL") {
+      banner.classList.add("bg-emerald-950/90", "border-emerald-500");
+      txt.textContent = `INFO: Baterai Penuh (>= 53.0V) pada Unit #${unitId}!`;
+    }
+  }
+
+  function sendRemoteMute() {
+    const loggerTarget = (typeof currentActiveLogger !== "undefined" && currentActiveLogger)
+      ? currentActiveLogger
+      : id_logger.split("-")[0];
+    if (!loggerTarget || loggerTarget === "-") return;
+
+    const topic = loggerTarget + "/seting";
+    const payload = JSON.stringify({ cmd: "MUTE_BUZZER" });
+
+    if (typeof multiMqttClients !== "undefined" && multiMqttClients.length > 0) {
+      multiMqttClients.forEach(c => { if (c && c.connected) c.publish(topic, payload); });
+    } else if (typeof client !== "undefined" && client && client.connected) {
+      client.publish(topic, payload);
+    }
+    alert("Perintah Mute Buzzer terkirim ke ESP32!");
+  }
+  
   function openModal(loggerId, addr, typeBattery) {
     currentLoggerId = loggerId;
     currentAddr = addr;
