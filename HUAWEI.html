@@ -2662,16 +2662,16 @@ function updateModal() {
       width: 32.0% !important;
     }
 
-    /* Kolom Utuh Arus & Daya 2 MPPT di Samping Kiri Inverter */
+    /* Kolom Utuh Rata-rata Tegangan PV, Arus PV & Daya PV di Samping Kanan Solar Panel */
     #modalDiagramPlts .display-arus-mppt {
-      left: 13.5% !important;
-      top: 58.5% !important;
-      width: 21.0% !important;
+      left: 72.5% !important;
+      top: 31.0% !important;
+      width: 22.5% !important;
       transform: translate(-50%, -50%) !important;
       background: rgba(15, 23, 42, 0.88) !important;
       border: 1.5px solid rgba(250, 204, 21, 0.75) !important;
       border-radius: 8px !important;
-      padding: 4px 5px !important;
+      padding: 5px 6px !important;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75) !important;
       font-size: 2.3vw !important;
       line-height: 1.25 !important;
@@ -2865,6 +2865,8 @@ function updateModal() {
   // Variabel penyimpan data MPPT Samoto (14751036) & Techfine (9193904)
   let voltPvSamoto = 0.0;
   let voltPvTechfine = 0.0;
+  let arusPvSamoto = 0.0;
+  let arusPvTechfine = 0.0;
   let arusMpptSamoto = 0.0;
   let arusMpptTechfine = 0.0;
   let dayaMpptSamoto = 0.0;
@@ -2875,16 +2877,20 @@ function updateModal() {
   let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0;
 
   function perbaruiTampilanArusMppt() {
-    const arus1 = parseFloat(arusMpptSamoto) || 0;
-    const arus2 = parseFloat(arusMpptTechfine) || 0;
-    const totalArusMppt = arus1 + arus2;
+    const v1 = parseFloat(voltPvSamoto) || 0;
+    const v2 = parseFloat(voltPvTechfine) || 0;
+    const avgVoltPv = (v1 > 0 && v2 > 0) ? ((v1 + v2) / 2) : Math.max(v1, v2);
 
     const elVoltUtama = document.getElementById('avg-voltage');
     const voltSistem = parseFloat(elVoltUtama ? elVoltUtama.textContent : "0") || 0;
 
-    const watt1 = dayaMpptSamoto > 0 ? dayaMpptSamoto : (arus1 * voltSistem);
-    const watt2 = dayaMpptTechfine > 0 ? dayaMpptTechfine : (arus2 * voltSistem);
-    const totalDayaMppt = watt1 + watt2;
+    const watt1 = dayaMpptSamoto > 0 ? dayaMpptSamoto : ((arusPvSamoto > 0 && v1 > 0) ? (v1 * arusPvSamoto) : (arusMpptSamoto * voltSistem));
+    const watt2 = dayaMpptTechfine > 0 ? dayaMpptTechfine : ((arusPvTechfine > 0 && v2 > 0) ? (v2 * arusPvTechfine) : (arusMpptTechfine * voltSistem));
+    const totalDayaPv = watt1 + watt2;
+
+    const iPv1 = arusPvSamoto > 0 ? arusPvSamoto : (v1 > 0 ? (watt1 / v1) : arusMpptSamoto);
+    const iPv2 = arusPvTechfine > 0 ? arusPvTechfine : (v2 > 0 ? (watt2 / v2) : arusMpptTechfine);
+    const totalArusPv = iPv1 + iPv2;
 
     const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
     const elArusMppt = document.getElementById('nilaiArusMppt');
@@ -2893,16 +2899,17 @@ function updateModal() {
     if (elArusMppt) {
       if (isMobileMode) {
         elArusMppt.innerHTML = `
-          <span>${totalArusMppt.toFixed(2)} A</span>
-          <span style="border-top:1px solid rgba(250,204,21,0.35); width:100%; margin-top:2px; padding-top:2px;">${totalDayaMppt.toFixed(2)} W</span>
+          <span style="color:#ffffff;">${avgVoltPv.toFixed(2)} V</span>
+          <span style="color:#ffffff;">${totalArusPv.toFixed(2)} A</span>
+          <span style="color:#fde047; border-top:1px solid rgba(250,204,21,0.35); width:100%; margin-top:2px; padding-top:2px;">${totalDayaPv.toFixed(2)} W</span>
         `;
       } else {
-        elArusMppt.textContent = totalArusMppt.toFixed(2) + " A";
+        elArusMppt.textContent = totalArusPv.toFixed(2) + " A";
       }
     }
 
     if (elDayaMppt) {
-      elDayaMppt.textContent = totalDayaMppt.toFixed(2) + " W";
+      elDayaMppt.textContent = totalDayaPv.toFixed(2) + " W";
     }
   }
 
@@ -3093,6 +3100,13 @@ function updateModal() {
             else voltPvTechfine = pvVolt;
           }
 
+          const pvCurr = parseFloat(data.pv_i ?? data.ipv ?? data.pv_curr ?? data.curr_pv ?? NaN);
+          if (!isNaN(pvCurr)) {
+            if (isSamoto) arusPvSamoto = pvCurr;
+            else arusPvTechfine = pvCurr;
+            perbaruiTampilanArusMppt();
+          }
+
           // Tangkap Arus Output/Charge MPPT dari JSON
           const mpptCurr = parseFloat(data.chg_i ?? data.bat_i ?? data.out_i ?? data.curr ?? data.ampere ?? data.I ?? NaN);
           if (!isNaN(mpptCurr)) {
@@ -3125,6 +3139,12 @@ function updateModal() {
           localStorage.setItem('mppt_techfine_kwh', val.toString());
         }
         updateProduksiChargeKwh();
+      }
+
+      if (lowerTopic.includes("pv_i") || lowerTopic.includes("ipv") || lowerTopic.includes("pv_curr") || lowerTopic.includes("arus_pv")) {
+        if (isSamoto) arusPvSamoto = val;
+        else arusPvTechfine = val;
+        perbaruiTampilanArusMppt();
       }
 
       // Deteksi topik Volt PV (Tegangan Panel Surya)
