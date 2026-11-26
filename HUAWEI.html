@@ -2683,9 +2683,25 @@ function updateModal() {
       gap: 1px !important;
     }
 
-    /* Sembunyikan elemen daya MPPT terpisah di HP karena sudah digabung ke kotak atas */
+    /* Kolom Utuh Output MPPT ke Baterai di Samping Kiri Inverter */
     #modalDiagramPlts .display-daya-mppt {
-      display: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 1px !important;
+      left: 11.5% !important;
+      top: 60.5% !important;
+      width: 21.0% !important;
+      transform: translate(-50%, -50%) !important;
+      background: rgba(15, 23, 42, 0.88) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.75) !important;
+      border-radius: 8px !important;
+      padding: 4px 5px !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75) !important;
+      font-size: 2.3vw !important;
+      line-height: 1.25 !important;
+      text-align: center !important;
     }
 
     /* Satu Kolom Utuh untuk Tegangan, Arus & Daya di Atas Jalur Beban DC */
@@ -2908,10 +2924,22 @@ function updateModal() {
       }
     }
 
+    const totalArusOut = (parseFloat(arusMpptSamoto) || 0) + (parseFloat(arusMpptTechfine) || 0);
+    const totalDayaOut = ((parseFloat(dayaMpptSamoto) || 0) > 0 || (parseFloat(dayaMpptTechfine) || 0) > 0)
+      ? ((parseFloat(dayaMpptSamoto) || 0) + (parseFloat(dayaMpptTechfine) || 0))
+      : (totalArusOut * voltSistem);
+
     if (elDayaMppt) {
-      elDayaMppt.textContent = totalDayaPv.toFixed(2) + " W";
+      if (isMobileMode) {
+        elDayaMppt.innerHTML = `
+          <span style="color:#ffffff;">${voltSistem.toFixed(2)} V</span>
+          <span style="color:#ffffff;">${totalArusOut.toFixed(2)} A</span>
+          <span style="color:#fde047; border-top:1px solid rgba(56,189,248,0.35); width:100%; margin-top:2px; padding-top:2px;">${totalDayaOut.toFixed(2)} W</span>
+        `;
+      } else {
+        elDayaMppt.textContent = totalDayaOut.toFixed(2) + " W";
+      }
     }
-  }
 
   function perbaruiAnimasiDiagram() {
     // 1. Ambil langsung data Baterai DC dari Ringkasan Sistem Total
