@@ -1056,16 +1056,7 @@
             <div class="text-lg text-white-100">
                 <span id="total-batteries">6</span> Baterai Terkoneksi
             </div>
-            <div id="realtime-clock" class="text-lg font-semibold text-gray-300"></div>
-            <div class="flex items-center gap-2 mt-1">
-                <button type="button" onclick="sendRemoteBuzzerCmd('TEST_BUZZER')" class="bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow transition">
-                    🔔 Test Buzzer
-                </button>
-                <button type="button" onclick="sendRemoteBuzzerCmd('MUTE_BUZZER')" class="bg-red-600 hover:bg-red-500 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow transition">
-                    🔇 Mute Buzzer
-                </button>
-            </div>
-        </div>
+        <div id="realtime-clock" class="text-lg font-semibold text-gray-300"></div>
     </div>
     
     <div id="online-alarm-banner" class="hidden mb-5 rounded-xl border-2 p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
@@ -1080,7 +1071,17 @@
     
         <!-- Summary Section dengan Ikon 3D -->
     <div id="summarySection" class="mb-8 hidden">
-      <h3 class="text-lg font-semibold text-light gray-850 mb-4">RINGKASAN SISTEM TOTAL</h3>
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-light gray-850">RINGKASAN SISTEM TOTAL</h3>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="sendRemoteBuzzerCmd('TEST_BUZZER')" class="bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow transition">
+                    🔔 Test Buzzer
+                </button>
+                <button type="button" onclick="sendRemoteBuzzerCmd('MUTE_BUZZER')" class="bg-red-600 hover:bg-red-500 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow transition">
+                    🔇 Mute Buzzer
+                </button>
+            </div>
+        </div>
       <div class="summary-card rounded-xl border border-gray-700/50 shadow-sm p-5">
         <div class="grid grid-cols-3 gap-4 text-center justify-center text-lg">
           
