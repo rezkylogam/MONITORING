@@ -2103,6 +2103,20 @@ function updateModal() {
         const diagTimeEl = document.getElementById('diag-clock-time');
         if (diagDateEl) diagDateEl.textContent = dateStr;
         if (diagTimeEl) diagTimeEl.textContent = timeStr;
+      // 3. Otomatis tampilkan Bulan Purnama 3D di malam hari (18:00 - 05:59)
+        const currentHour = now.getHours();
+        const isNight = (currentHour >= 18 || currentHour < 6);
+        const bulanEl = document.getElementById('elemenBulan');
+        const matahariEl = document.getElementById('elemenMatahari');
+
+        if (bulanEl) {
+            const isMatahariVisible = matahariEl && !matahariEl.classList.contains('hidden');
+            if (isNight && !isMatahariVisible) {
+                bulanEl.classList.remove('hidden');
+            } else {
+                bulanEl.classList.add('hidden');
+            }
+        }
     }
     updateClock();
     setInterval(updateClock, 1000);
@@ -2895,6 +2909,52 @@ function updateModal() {
             </g>
           </svg>
         </div>
+
+      <!-- Bulan Purnama 3D Otomatis Malam Hari (Tepat di Posisi Matahari) -->
+      <div id="elemenBulan" class="ikon-matahari-plts hidden">
+        <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
+          <defs>
+            <!-- Efek Pendar Cahaya Biru Bulan -->
+            <filter id="fullMoonGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="5.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <!-- Gradasi Permukaan Bola 3D -->
+            <radialGradient id="moonSphereGrad" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="45%" stop-color="#dbeafe" />
+              <stop offset="80%" stop-color="#93c5fd" />
+              <stop offset="100%" stop-color="#3b82f6" />
+            </radialGradient>
+
+            <!-- Gradasi Kawah Bulan 3D -->
+            <radialGradient id="craterGrad" cx="60%" cy="60%" r="60%">
+              <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45" />
+              <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.15" />
+            </radialGradient>
+          </defs>
+
+          <!-- Lingkaran Bulan & Kawah tepat di titik koordinat Matahari (cx=145, cy=80, r=36) -->
+          <g filter="url(#fullMoonGlow)">
+            <circle cx="145" cy="80" r="36" fill="url(#moonSphereGrad)" stroke="#bae6fd" stroke-width="1.5" />
+            
+            <!-- Tekstur Kawah Bulan 3D -->
+            <circle cx="133" cy="66" r="7.5" fill="url(#craterGrad)" />
+            <circle cx="155" cy="72" r="10" fill="url(#craterGrad)" />
+            <circle cx="140" cy="92" r="8.5" fill="url(#craterGrad)" />
+            <circle cx="126" cy="84" r="4.5" fill="url(#craterGrad)" />
+            <circle cx="159" cy="93" r="5" fill="url(#craterGrad)" />
+            <circle cx="147" cy="58" r="4" fill="url(#craterGrad)" />
+            
+            <!-- Kilau Cahaya Atmosfer Atas Kiri -->
+            <path d="M 119 67 A 31 31 0 0 1 153 50" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="0.65" />
+          </g>
+        </svg>
+      </div>
 
       <div id="bulatanDcSolar" class="bulatan-aliran anim-solar-dc hidden">DC</div>
       <div id="bulatanDcBaterai" class="bulatan-aliran anim-batt-naik">DC</div>
