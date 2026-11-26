@@ -2801,7 +2801,29 @@ function updateModal() {
     <!-- Kontainer Gambar & Bulatan Bergerak -->
     <div class="relative w-full rounded-xl overflow-hidden bg-black border border-slate-800">
     <img id="imgDiagramPlts" src="diagram-plts-3d.jpg" alt="Diagram 3D PLTS" class="w-full h-auto block select-none">
-      
+      <!-- Garis Pipa Cabang Neon Biru (Khusus Mobile) -->
+      <svg id="pipaCabangMobile" viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-10 lg:hidden">
+        <defs>
+          <filter id="neonBlueGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="0.55" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <g stroke="#38bdf8" stroke-width="0.65" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#neonBlueGlow)">
+          <!-- 1. Garis ke Kolom Input PV (Kanan Atas) -->
+          <polyline points="45.0,36.2 65.25,36.2 65.25,34.2" />
+          
+          <!-- 2. Garis ke Kolom Output MPPT (Kiri Tengah) -->
+          <polyline points="20.0,64.0 13.5,64.0 13.5,60.8" />
+          
+          <!-- 3. Garis ke Kolom Beban DC (Tengah) -->
+          <polyline points="59.5,57.3 59.5,53.2" />
+        </g>
+      </svg>
       <!-- Matahari 3D Simetris (16 Gerigi Runcing) + 3 Panah Sinar Diagonal -->
         <div id="elemenMatahari" class="ikon-matahari-plts hidden">
          <svg viewBox="-25 -10 245 215" class="w-full h-full overflow-visible" xmlns="http://w3.org">
