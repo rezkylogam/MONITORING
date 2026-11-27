@@ -808,12 +808,19 @@
 
 <style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
 <body class="min-h-screen flex flex-col dark connected" data-theme="dark">
-<!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER -->
-<div id="dynamic-bg-layer" style="position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;">
-  <img id="custom-bg-img" alt="" style="display:none; width:100%; height:100%; object-fit:cover;" />
-  <video id="custom-bg-vid" autoplay loop muted playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
-  <div id="custom-bg-overlay" style="display:none; position:absolute; inset:0; background:rgba(10, 14, 23, 0.60);"></div>
-</div>
+<!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER (TERISOLASI KE HARDWARE GPU) -->
+<div id="dynamic-bg-layer" style="position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; transform:translate3d(0,0,0); will-change:transform;">
+  <img id="custom-bg-img" alt="" style="display:none; width:100%; height:100%; object-fit:cover; transform:translate3d(0,0,0);" />
+  <video id="custom-bg-vid" autoplay loop muted playsinline preload="auto" disablePictureInPicture style="display:none; width:100%; height:100%; object-fit:cover; transform:translate3d(0,0,0);"></video>
+  
+  <!-- Video Bawaan di dalam Layer GPU -->
+  <video id="default-bg-vid" autoplay loop muted playsinline preload="auto" disablePictureInPicture style="display:block; width:100%; height:100%; object-fit:cover; transform:translate3d(0,0,0);">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+
+  <!-- Overlay Gelap Pengganti Opacity (Default 70% = sama dengan opacity-30) -->
+  <div id="custom-bg-overlay" style="display:block; position:absolute; inset:0; background:rgba(0, 0, 0, 0.70); pointer-events:none;"></div>
+</div>>
 
 <!-- Layar Selamat Datang (Splash Screen) untuk Mengaktifkan Suara -->
 <div id="welcomeSplash" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#1f2937] text-white transition-opacity duration-500">
@@ -830,10 +837,6 @@
         </button>
     </div>
 </div>
-
-<video autoplay loop muted playsinline class="fixed top-0 left-0 w-full h-full object-cover -z-10 pointer-events-none opacity-30">
-    <source src="background.mp4" type="video/mp4">
-</video>
 
 <!-- Header -->
 <header id="mainHeader" class="bg-gradient-to-r text-white shadow-lg w-full relative">
@@ -1706,6 +1709,27 @@
   client2 = virtualClient;
 }
 
+  // Penjadwal render UI halus agar video latar di HP tidak tersendat saat data MQTT padat
+let uiRenderScheduled = false;
+let pendingCardUpdates = new Map();
+
+function scheduleSmoothUiUpdate() {
+  if (uiRenderScheduled) return;
+  uiRenderScheduled = true;
+
+  setTimeout(() => {
+    requestAnimationFrame(() => {
+      pendingCardUpdates.forEach((battData) => {
+        update_cards(battData);
+      });
+      pendingCardUpdates.clear();
+      updateSummary();
+      updateModal();
+      uiRenderScheduled = false;
+    });
+  }, 400);
+}
+  
   function handleJSON(topic, message){
     if(topic == "sysMon/"+xxx[0]+"/info/" || topic == "sysMon/"+xxx[0]+"/info" ){
       let a = message.toString().split(",");
@@ -1726,21 +1750,17 @@
       try {
         const raw = JSON.parse(message.toString());
         const batt = normalizeFromMqtt(raw, topic);
-        console.log("ISI DATA MQTT:", raw);
-
         const idx = batteries.findIndex(b => b.loggerId === batt.loggerId && b.addr === batt.addr && b.typeBattery === batt.typeBattery);
         if (idx >= 0) { 
           batteries[idx] = batt;
-          update_cards(batt);
+          pendingCardUpdates.set(`${batt.loggerId}-${batt.typeBattery}-${batt.addr}`, batt);
         } else {
           batt.elementId = `battery-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`;
           batteries.push(batt);
-          // Setelah menambahkan baterai baru, urutkan semua baterai
           sortBatteries();
         }
 
-        updateSummary();
-        updateModal(); 
+        scheduleSmoothUiUpdate(); 
       } catch (e) {
         console.error("Invalid JSON", e);
       }
@@ -3916,30 +3936,6 @@ function updateModal() {
     });
   }
 
-  // 3. Fungsi Slider Tingkat Redup Latar
-  function updateBgDimmer(val) {
-    const lbl = document.getElementById("bg-dim-val");
-    if (lbl) lbl.innerText = val + "%";
-
-    const ovlEl = document.getElementById("custom-bg-overlay");
-    if (ovlEl && ovlEl.style.display !== "none") {
-      ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
-    }
-
-    const key = "bg_" + (currentActiveLogger || "DEFAULT");
-    openBgDatabase().then((db) => {
-      const tx = db.transaction(BG_STORE_NAME, "readwrite");
-      const store = tx.objectStore(BG_STORE_NAME);
-      const req = store.get(key);
-      req.onsuccess = () => {
-        if (req.result) {
-          req.result.dim = val;
-          store.put(req.result, key);
-        }
-      };
-    }).catch(() => {});
-  }
-
   // 4. Handler Pemilihan File (Kompresi Foto Otomatis + Peringatan Video)
   async function onSelectBgMedia(event) {
     const file = event.target.files && event.target.files[0];
@@ -3999,7 +3995,7 @@ function updateModal() {
     event.target.value = "";
   }
 
-  // 5. Render Background Kustom & Matikan (Pause) Video Lama Otomatis
+  // 5. Render Background Kustom & Hentikan Video Bawaan Otomatis
   function renderCustomBackground(blob, mimeType, dimPercent) {
     if (currentBgObjectUrl) URL.revokeObjectURL(currentBgObjectUrl);
     currentBgObjectUrl = URL.createObjectURL(blob);
@@ -4007,29 +4003,31 @@ function updateModal() {
     const layerEl = document.getElementById("dynamic-bg-layer");
     const imgEl = document.getElementById("custom-bg-img");
     const vidEl = document.getElementById("custom-bg-vid");
+    const defVidEl = document.getElementById("default-bg-vid");
     const ovlEl = document.getElementById("custom-bg-overlay");
 
-    // Matikan (pause) video bawaan agar tidak berjalan di belakang layar
-    document.querySelectorAll("body > video").forEach(v => {
-      v.pause();
-      v.style.display = "none";
-    });
+    // Hentikan & sembunyikan video bawaan agar hemat GPU
+    if (defVidEl) {
+      defVidEl.pause();
+      defVidEl.style.display = "none";
+    }
 
     document.body.style.setProperty("background-color", "transparent", "important");
     document.body.style.setProperty("background-image", "none", "important");
 
-    if (layerEl) layerEl.style.zIndex = "-5";
-    ovlEl.style.display = "block";
-    ovlEl.style.background = `rgba(10, 14, 23, ${(dimPercent / 100).toFixed(2)})`;
+    if (layerEl) layerEl.style.zIndex = "-1";
+    if (ovlEl) {
+      ovlEl.style.display = "block";
+      ovlEl.style.background = `rgba(10, 14, 23, ${(dimPercent / 100).toFixed(2)})`;
+    }
 
     if (mimeType && mimeType.startsWith("video/")) {
       imgEl.style.display = "none";
       vidEl.src = currentBgObjectUrl;
-      vidEl.muted = true; // Paksa mute otomatis
+      vidEl.muted = true;
       vidEl.style.display = "block";
       vidEl.play().catch(() => {});
     } else {
-      // Jika diganti ke gambar/foto, matikan & kosongkan video kustom juga
       vidEl.pause();
       vidEl.removeAttribute("src");
       vidEl.load();
@@ -4040,42 +4038,55 @@ function updateModal() {
     }
   }
 
-  // 6. Tombol Reset: Kembalikan ke Video Bawaan Asli
+  // 6. Tombol Reset: Kembalikan ke Video Bawaan Asli (#default-bg-vid)
   async function resetLoggerBackground() {
     const key = "bg_" + (currentActiveLogger || "DEFAULT");
     const db = await openBgDatabase();
     db.transaction(BG_STORE_NAME, "readwrite").objectStore(BG_STORE_NAME).delete(key);
 
     const vidEl = document.getElementById("custom-bg-vid");
-    vidEl.pause();
-    vidEl.removeAttribute("src");
-    vidEl.load();
-    vidEl.style.display = "none";
+    const defVidEl = document.getElementById("default-bg-vid");
+    const ovlEl = document.getElementById("custom-bg-overlay");
+
+    if (vidEl) {
+      vidEl.pause();
+      vidEl.removeAttribute("src");
+      vidEl.load();
+      vidEl.style.display = "none";
+    }
 
     document.getElementById("custom-bg-img").style.display = "none";
-    document.getElementById("custom-bg-overlay").style.display = "none";
 
-    // Jalankan kembali video bawaan
-    document.querySelectorAll("body > video").forEach(v => {
-      v.style.display = "block";
-      v.play().catch(() => {});
-    });
+    // Kembalikan overlay ke tingkat gelap bawaan (70%)
+    if (ovlEl) {
+      ovlEl.style.display = "block";
+      ovlEl.style.background = "rgba(0, 0, 0, 0.70)";
+    }
 
-    document.body.style.removeProperty("background-color");
-    document.body.style.removeProperty("background-image");
+    // Jalankan kembali video bawaan di layer GPU
+    if (defVidEl) {
+      defVidEl.style.display = "block";
+      defVidEl.play().catch(() => {});
+    }
 
     const statusEl = document.getElementById("bg-status-msg");
-    statusEl.style.color = "#38bdf8";
-    statusEl.innerText = "🔄 Dikembalikan ke background asli.";
+    if (statusEl) {
+      statusEl.style.color = "#38bdf8";
+      statusEl.innerText = "🔄 Dikembalikan ke background asli.";
+    }
   }
-  
+
+  // 7. Slider Tingkat Redup Latar (Berfungsi untuk Video Bawaan maupun Kustom)
   async function updateBgDimmer(val) {
     const dimVal = document.getElementById("bg-dim-val");
     if (dimVal) dimVal.innerText = val + "%";
+
     const ovlEl = document.getElementById("custom-bg-overlay");
-    if (ovlEl && ovlEl.style.display !== "none") {
+    if (ovlEl) {
+      ovlEl.style.display = "block";
       ovlEl.style.background = `rgba(10, 14, 23, ${(val / 100).toFixed(2)})`;
     }
+
     const key = "bg_" + (currentActiveLogger || "DEFAULT");
     try {
       const db = await openBgDatabase();
