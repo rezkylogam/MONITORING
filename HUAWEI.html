@@ -2974,6 +2974,14 @@ function updateModal() {
     #modalDiagramPlts .anim-dc-beban   { animation: gerakDcBebanMobile 5.5s linear infinite !important; }
     #modalDiagramPlts .anim-batt-turun { animation: gerakDcBattTurunMobile 3.0s linear infinite !important; }
     #modalDiagramPlts .anim-batt-naik  { animation: gerakDcBattNaikMobile 3.0s linear infinite !important; }
+    #modalDiagramPlts .bulatan-aliran {
+      will-change: left, top, transform, opacity;
+      backface-visibility: hidden;
+    }
+    #modalDiagramPlts #diagram-realtime-clock {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
   }
 </style>
 
@@ -3333,10 +3341,22 @@ function updateModal() {
     terapkanGambarDiagramPerangkat();
     perbaruiAnimasiDiagram();
     document.getElementById('modalDiagramPlts').classList.remove('hidden');
+
+    // Jeda sementara video background saat pop-up PLTS terbuka agar 100% GPU fokus ke PLTS
+    const defVid = document.getElementById('default-bg-vid');
+    const custVid = document.getElementById('custom-bg-vid');
+    if (defVid && defVid.style.display !== 'none') defVid.pause();
+    if (custVid && custVid.style.display !== 'none') custVid.pause();
   }
 
   function tutupModalDiagram() {
     document.getElementById('modalDiagramPlts').classList.add('hidden');
+
+    // Lanjutkan kembali video background saat pop-up PLTS ditutup
+    const defVid = document.getElementById('default-bg-vid');
+    const custVid = document.getElementById('custom-bg-vid');
+    if (defVid && defVid.style.display !== 'none') defVid.play().catch(() => {});
+    if (custVid && custVid.style.display !== 'none') custVid.play().catch(() => {});
   }
 
   setInterval(() => {
@@ -3344,7 +3364,7 @@ function updateModal() {
     if (modal && !modal.classList.contains('hidden')) {
       perbaruiAnimasiDiagram();
     }
-  }, 150);
+  }, 500);
 
   function updateProduksiChargeKwh() {
     const now = new Date();
