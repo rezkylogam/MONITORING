@@ -789,6 +789,21 @@
     transform: scale(1.03);
     transition: all 0.12s ease-out;
   }
+      @keyframes alarmBlinkRed {
+      0%, 100% { border-color: #ef4444; box-shadow: 0 0 18px rgba(239, 68, 68, 0.75); }
+      50% { border-color: #7f1d1d; box-shadow: none; }
+    }
+    @keyframes alarmBlinkAmber {
+      0%, 100% { border-color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.65); }
+      50% { border-color: #78350f; box-shadow: none; }
+    }
+    @keyframes alarmBlinkGreen {
+      0%, 100% { border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.65); }
+      50% { border-color: #064e3b; box-shadow: none; }
+    }
+    .card-alarm-crit { animation: alarmBlinkRed 0.7s infinite !important; border-width: 2px !important; }
+    .card-alarm-warn { animation: alarmBlinkAmber 1.1s infinite !important; border-width: 2px !important; }
+    .card-alarm-full { animation: alarmBlinkGreen 1.5s infinite !important; border-width: 2px !important; }
 </style>
 
 <style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
@@ -1463,6 +1478,12 @@
       let card = document.createElement("div");
       card.id = cardId;
       card.className = "battery-card rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md fade-in hidden";
+      const vNum = parseFloat(batt.voltage);
+    if (!isNaN(vNum) && vNum > 10) {
+      if (vNum >= 54.7 || vNum <= 48.0) card.classList.add("card-alarm-crit");
+      else if (vNum <= 48.4) card.classList.add("card-alarm-warn");
+      else if (vNum >= 53.0) card.classList.add("card-alarm-full");
+    }
       card.dataset.loggerId = batt.loggerId;
       card.dataset.addr = String(batt.addr);
       card.dataset.typeBattery = batt.typeBattery;
@@ -1840,6 +1861,13 @@
     }
 
     // Update card yang sudah ada
+    card.classList.remove("card-alarm-crit", "card-alarm-warn", "card-alarm-full");
+    const vUpd = parseFloat(batt.voltage);
+    if (!isNaN(vUpd) && vUpd > 10) {
+      if (vUpd >= 54.7 || vUpd <= 48.0) card.classList.add("card-alarm-crit");
+      else if (vUpd <= 48.4) card.classList.add("card-alarm-warn");
+      else if (vUpd >= 53.0) card.classList.add("card-alarm-full");
+    }
     document.getElementById(`soc-value-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`).textContent = `${batt.soc}%`;
     let progressBar = document.getElementById(`soc-bar-${batt.loggerId}-${batt.typeBattery}-${batt.addr}`);
     if (progressBar) {
@@ -1974,6 +2002,30 @@ if (cyclesElem) {
   checkOnlineVoltageAlarm();
 }
 
+    let isPhoneAlarmMuted = false;
+  let lastPhoneAlarmState = "NORMAL";
+  let lastPhoneBeepTime = 0;
+
+  function playPhoneBeep(freq = 880, durationMs = 220, count = 2) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      for (let i = 0; i < count; i++) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.value = 0.25;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const start = ctx.currentTime + i * ((durationMs + 120) / 1000);
+        osc.start(start);
+        osc.stop(start + (durationMs / 1000));
+      }
+    } catch (e) {}
+  }
+
   function checkOnlineVoltageAlarm() {
     const banner = document.getElementById("online-alarm-banner");
     const txt = document.getElementById("online-alarm-text");
@@ -1991,28 +2043,59 @@ if (cyclesElem) {
       else if (v >= 53.0 && state === "NORMAL") { state = "FULL"; unitId = b.addr; }
     });
 
+    if (state !== lastPhoneAlarmState) {
+      if (state === "HIGH" || state === "LOW_CRIT" || state === "NORMAL") {
+        isPhoneAlarmMuted = false;
+      }
+      lastPhoneAlarmState = state;
+    }
+
     if (state === "NORMAL") {
       banner.classList.add("hidden");
       return;
     }
 
     banner.classList.remove("hidden", "bg-red-950/90", "border-red-500", "bg-amber-950/90", "border-amber-500", "bg-emerald-950/90", "border-emerald-500");
+    const now = Date.now();
+
     if (state === "HIGH") {
       banner.classList.add("bg-red-950/90", "border-red-500");
       txt.textContent = `BAHAYA: Tegangan Tinggi (>= 54.7V) pada Unit #${unitId}!`;
+      if (!isPhoneAlarmMuted && now - lastPhoneBeepTime > 3000) {
+        lastPhoneBeepTime = now;
+        playPhoneBeep(1100, 200, 3);
+      }
     } else if (state === "LOW_CRIT") {
       banner.classList.add("bg-red-950/90", "border-red-500");
       txt.textContent = `BAHAYA: Tegangan Kritis (<= 48.0V) pada Unit #${unitId}!`;
+      if (!isPhoneAlarmMuted && now - lastPhoneBeepTime > 2500) {
+        lastPhoneBeepTime = now;
+        playPhoneBeep(980, 180, 3);
+      }
     } else if (state === "LOW_WARN") {
       banner.classList.add("bg-amber-950/90", "border-amber-500");
       txt.textContent = `PERINGATAN: Tegangan Rendah (<= 48.4V) pada Unit #${unitId}!`;
+      if (!isPhoneAlarmMuted && now - lastPhoneBeepTime > 5000) {
+        lastPhoneBeepTime = now;
+        playPhoneBeep(750, 220, 2);
+      }
     } else if (state === "FULL") {
       banner.classList.add("bg-emerald-950/90", "border-emerald-500");
       txt.textContent = `INFO: Baterai Penuh (>= 53.0V) pada Unit #${unitId}!`;
+      if (!isPhoneAlarmMuted && now - lastPhoneBeepTime > 8000) {
+        lastPhoneBeepTime = now;
+        playPhoneBeep(660, 250, 1);
+      }
     }
   }
 
   function sendRemoteBuzzerCmd(cmdType) {
+    if (cmdType === "TEST_BUZZER") {
+      playPhoneBeep(880, 150, 3);
+    } else if (cmdType === "MUTE_BUZZER") {
+      isPhoneAlarmMuted = !isPhoneAlarmMuted;
+    }
+
     const loggerTarget = (typeof currentActiveLogger !== "undefined" && currentActiveLogger)
       ? currentActiveLogger
       : id_logger.split("-");
@@ -2028,7 +2111,7 @@ if (cyclesElem) {
     }
 
     if (cmdType === "MUTE_BUZZER") {
-      alert("Perintah Mute/Unmute Buzzer terkirim ke ESP32!");
+      alert(isPhoneAlarmMuted ? "Buzzer ESP32 & Suara HP DIBISUKAN (Muted)!" : "Suara Alarm DIAKTIFKAN kembali!");
     }
   }
   
