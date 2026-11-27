@@ -2949,42 +2949,42 @@ function updateModal() {
     }
 
     @keyframes gerakDcSolarMobile {
-      0%   { opacity: 0; transform: translate3d(27.6cqw, 46.88cqw, 0) translate(-50%, -50%) scale(0.8); }
-      15%  { opacity: 1; transform: translate3d(27.6cqw, 51.56cqw, 0) translate(-50%, -50%) scale(1); }
-      85%  { opacity: 1; transform: translate3d(27.6cqw, 73.44cqw, 0) translate(-50%, -50%) scale(1); }
-      100% { opacity: 0; transform: translate3d(27.6cqw, 78.13cqw, 0) translate(-50%, -50%) scale(0.8); }
+      0%   { left: 27.6%; top: 37.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      85%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { left: 27.6%; top: 62.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 
     @keyframes gerakDcBebanMobile {
-      0%   { opacity: 0; transform: translate3d(36.5cqw, 91.25cqw, 0) translate(-50%, -50%) scale(0.8); }
-      10%  { opacity: 1; transform: translate3d(40.0cqw, 91.25cqw, 0) translate(-50%, -50%) scale(1); }
-      25%  { opacity: 1; transform: translate3d(46.2cqw, 91.25cqw, 0) translate(-50%, -50%) scale(1); }
-      55%  { opacity: 1; transform: translate3d(46.2cqw, 71.69cqw, 0) translate(-50%, -50%) scale(1); }
-      85%  { opacity: 1; transform: translate3d(71.75cqw, 71.69cqw, 0) translate(-50%, -50%) scale(1); }
-      100% { opacity: 0; transform: translate3d(71.75cqw, 81.25cqw, 0) translate(-50%, -50%) scale(0.8); }
+      0%   { left: 36.5%; top: 73.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      25%  { left: 46.2%; top: 73.0%; opacity: 1; }
+      55%  { left: 46.2%; top: 57.35%; opacity: 1; }
+      85%  { left: 71.75%; top: 57.35%; opacity: 1; }
+      100% { left: 71.75%; top: 65.0%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 
     @keyframes gerakDcBattTurunMobile {
-      0%   { opacity: 0; transform: translate3d(27.6cqw, 102.25cqw, 0) translate(-50%, -50%) scale(0.8); }
-      20%  { opacity: 1; transform: translate3d(27.6cqw, 103.88cqw, 0) translate(-50%, -50%) scale(1); }
-      80%  { opacity: 1; transform: translate3d(27.6cqw, 108.63cqw, 0) translate(-50%, -50%) scale(1); }
-      100% { opacity: 0; transform: translate3d(27.6cqw, 110.25cqw, 0) translate(-50%, -50%) scale(0.8); }
+      0%   { left: 27.6%; top: 81.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      20%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      80%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { left: 27.6%; top: 88.2%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 
     @keyframes gerakDcBattNaikMobile {
-      0%   { opacity: 0; transform: translate3d(27.6cqw, 110.25cqw, 0) translate(-50%, -50%) scale(0.8); }
-      20%  { opacity: 1; transform: translate3d(27.6cqw, 108.63cqw, 0) translate(-50%, -50%) scale(1); }
-      80%  { opacity: 1; transform: translate3d(27.6cqw, 103.88cqw, 0) translate(-50%, -50%) scale(1); }
-      100% { opacity: 0; transform: translate3d(27.6cqw, 102.25cqw, 0) translate(-50%, -50%) scale(0.8); }
+      0%   { left: 27.6%; top: 88.2%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      20%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      80%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { left: 27.6%; top: 81.8%; opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 
     #modalDiagramPlts .anim-solar-dc   { animation: gerakDcSolarMobile 4.5s linear infinite !important; }
     #modalDiagramPlts .anim-dc-beban   { animation: gerakDcBebanMobile 5.5s linear infinite !important; }
     #modalDiagramPlts .anim-batt-turun { animation: gerakDcBattTurunMobile 3.0s linear infinite !important; }
     #modalDiagramPlts .anim-batt-naik  { animation: gerakDcBattNaikMobile 3.0s linear infinite !important; }
-    #modalDiagramPlts #diagram-realtime-clock {
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
+    #modalDiagramPlts .bulatan-aliran {
+      will-change: left, top, transform, opacity;
+      backface-visibility: hidden;
     }
   }
 </style>
