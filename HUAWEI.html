@@ -811,7 +811,41 @@
     .card-alarm-full { animation: alarmBlinkGreen 1.5s infinite !important; border-width: 2px !important; }
 </style>
 
-<style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style></head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0; ... </style>
+<style>
+  /* Perjelas semua judul bagian (KAPASITAS & KESEHATAN, TEGANGAN & KESEIMBANGAN SEL, dll.) */
+  #batteryModal .text-\[11px\].uppercase {
+    color: #e2e8f0 !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  /* Perjelas semua label parameter (Siklus, Suhu Min/Max, Pack Voltage, Min Cell, dll.) */
+  #batteryModal .text-\[10px\] {
+    color: #cbd5e1 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Perjelas label "CELL 1" sampai "CELL 15" */
+  #batteryModal #modalCells > div > div:first-child {
+    color: #f8fafc !important;
+    font-weight: 800 !important;
+  }
+
+  /* Tambahan ketegasan ukuran teks label khusus layar HP (Mobile) */
+  @media (max-width: 1023px) {
+    #batteryModal .text-\[11px\].uppercase {
+      font-size: 12.5px !important;
+    }
+    #batteryModal .text-\[10px\] {
+      font-size: 11.5px !important;
+    }
+    #batteryModal #modalCells > div > div:first-child {
+      font-size: 11.5px !important;
+    }
+  }
+</style>
+</head>
 <body class="min-h-screen flex flex-col dark connected" data-theme="dark">
 <!-- WADAH LATAR BELAKANG DINAMIS PER ID LOGGER (TERISOLASI KE HARDWARE GPU) -->
 <div id="dynamic-bg-layer" style="position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; transform:translate3d(0,0,0); will-change:transform;">
