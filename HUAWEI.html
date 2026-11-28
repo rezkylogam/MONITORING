@@ -3163,110 +3163,133 @@ function updateModal() {
 </div>
 
 <script>
-  // Variabel penyimpan data MPPT Samoto (14751036) & Techfine (9193904)
-  let voltPvSamoto = 0.0;
-  let voltPvTechfine = 0.0;
-  let arusPvSamoto = 0.0;
-  let arusPvTechfine = 0.0;
-  let arusMpptSamoto = 0.0;
-  let arusMpptTechfine = 0.0;
-  let dayaMpptSamoto = 0.0;
-  let dayaMpptTechfine = 0.0;
+  // Variabel terpisah untuk Input PV dan Output Baterai milik MPPT Samoto (14751036) & Techfine (9193904)
+  let voltPvSamoto = 0.0, voltPvTechfine = 0.0;
+  let arusPvSamoto = 0.0, arusPvTechfine = 0.0;
+  let dayaPvSamoto = 0.0, dayaPvTechfine = 0.0;
+
+  let voltOutSamoto = 0.0, voltOutTechfine = 0.0;
+  let arusOutSamoto = 0.0, arusOutTechfine = 0.0;
+  let dayaOutSamoto = 0.0, dayaOutTechfine = 0.0;
+
   let lastMpptUpdate = 0;
 
   let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;
   let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0;
 
-  function perbaruiTampilanArusMppt() {
-    const v1 = parseFloat(voltPvSamoto) || 0;
-    const v2 = parseFloat(voltPvTechfine) || 0;
-    const avgVoltPv = (v1 > 0 && v2 > 0) ? ((v1 + v2) / 2) : Math.max(v1, v2);
+  function hitungDataMpptAkurat() {
+    // 1. KALKULASI INPUT PANEL SURYA (KOLOM 1 - ATAS)
+    const vPv1 = parseFloat(voltPvSamoto) || 0;
+    const vPv2 = parseFloat(voltPvTechfine) || 0;
+    const avgVoltPv = (vPv1 > 0 && vPv2 > 0) ? ((vPv1 + vPv2) / 2) : Math.max(vPv1, vPv2);
 
-    const elVoltUtama = document.getElementById('avg-voltage');
-    const voltSistem = parseFloat(elVoltUtama ? elVoltUtama.textContent : "0") || 0;
+    const wPv1 = dayaPvSamoto > 0 ? dayaPvSamoto : (vPv1 * arusPvSamoto);
+    const wPv2 = dayaPvTechfine > 0 ? dayaPvTechfine : (vPv2 * arusPvTechfine);
+    const totalDayaPv = wPv1 + wPv2;
 
-    const watt1 = dayaMpptSamoto > 0 ? dayaMpptSamoto : ((arusPvSamoto > 0 && v1 > 0) ? (v1 * arusPvSamoto) : (arusMpptSamoto * voltSistem));
-    const watt2 = dayaMpptTechfine > 0 ? dayaMpptTechfine : ((arusPvTechfine > 0 && v2 > 0) ? (v2 * arusPvTechfine) : (arusMpptTechfine * voltSistem));
-    const totalDayaPv = watt1 + watt2;
-
-    const iPv1 = arusPvSamoto > 0 ? arusPvSamoto : (v1 > 0 ? (watt1 / v1) : arusMpptSamoto);
-    const iPv2 = arusPvTechfine > 0 ? arusPvTechfine : (v2 > 0 ? (watt2 / v2) : arusMpptTechfine);
+    const iPv1 = arusPvSamoto > 0 ? arusPvSamoto : (vPv1 > 0 ? (wPv1 / vPv1) : 0);
+    const iPv2 = arusPvTechfine > 0 ? arusPvTechfine : (vPv2 > 0 ? (wPv2 / vPv2) : 0);
     const totalArusPv = iPv1 + iPv2;
 
-    const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
-    const elArusMppt = document.getElementById('nilaiArusMppt');
-    const elDayaMppt = document.getElementById('nilaiDayaMppt');
+    // 2. KALKULASI OUTPUT MPPT KE SISTEM/BATERAI (KOLOM 2 - KIRI MPPT)
+    const elVoltBms = document.getElementById('avg-voltage');
+    const voltBms = parseFloat(elVoltBms ? elVoltBms.textContent : "0") || 0;
 
-    if (elArusMppt) {
+    const vOut1 = voltOutSamoto > 10 ? voltOutSamoto : voltBms;
+    const vOut2 = voltOutTechfine > 10 ? voltOutTechfine : voltBms;
+    const avgVoltOutMppt = (voltOutSamoto > 10 && voltOutTechfine > 10)
+      ? ((voltOutSamoto + voltOutTechfine) / 2)
+      : (voltOutSamoto > 10 ? voltOutSamoto : (voltOutTechfine > 10 ? voltOutTechfine : voltBms));
+
+    const iOut1 = parseFloat(arusOutSamoto) || 0;
+    const iOut2 = parseFloat(arusOutTechfine) || 0;
+    const totalArusOutMppt = iOut1 + iOut2;
+
+    const wOut1 = dayaOutSamoto > 0 ? dayaOutSamoto : (vOut1 * iOut1);
+    const wOut2 = dayaOutTechfine > 0 ? dayaOutTechfine : (vOut2 * iOut2);
+    const totalDayaOutMppt = wOut1 + wOut2;
+
+    return {
+      avgVoltPv,
+      totalArusPv,
+      totalDayaPv,
+      avgVoltOutMppt,
+      totalArusOutMppt,
+      totalDayaOutMppt,
+      voltBms
+    };
+  }
+
+    function perbaruiTampilanArusMppt() {
+    const mppt = hitungDataMpptAkurat();
+    const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
+    const elKolom1Pv = document.getElementById('nilaiArusMppt');
+    const elKolom2Out = document.getElementById('nilaiDayaMppt');
+
+    if (elKolom1Pv) {
       if (isMobileMode) {
-        elArusMppt.innerHTML = `
-          <span style="color:#ffffff;">${avgVoltPv.toFixed(2)} V</span>
-          <span style="color:#ffffff;">${totalArusPv.toFixed(2)} A</span>
-          <span style="color:#fde047; border-top:1px solid rgba(250,204,21,0.35); width:100%; margin-top:2px; padding-top:2px;">${totalDayaPv.toFixed(2)} W</span>
+        elKolom1Pv.innerHTML = `
+          <span style="color:#ffffff;">${mppt.avgVoltPv.toFixed(2)} V</span>
+          <span style="color:#ffffff;">${mppt.totalArusPv.toFixed(2)} A</span>
+          <span style="color:#fde047; border-top:1px solid rgba(250,204,21,0.35); width:100%; margin-top:2px; padding-top:2px;">${mppt.totalDayaPv.toFixed(2)} W</span>
         `;
       } else {
-        elArusMppt.textContent = totalArusPv.toFixed(2) + " A";
+        elKolom1Pv.textContent = mppt.totalArusPv.toFixed(2) + " A";
       }
     }
 
-    const totalArusOut = (parseFloat(arusMpptSamoto) || 0) + (parseFloat(arusMpptTechfine) || 0);
-    const totalDayaOut = ((parseFloat(dayaMpptSamoto) || 0) > 0 || (parseFloat(dayaMpptTechfine) || 0) > 0)
-      ? ((parseFloat(dayaMpptSamoto) || 0) + (parseFloat(dayaMpptTechfine) || 0))
-      : (totalArusOut * voltSistem);
-
-    if (elDayaMppt) {
+    if (elKolom2Out) {
       if (isMobileMode) {
-        elDayaMppt.innerHTML = `
-          <span style="color:#ffffff;">${voltSistem.toFixed(2)} V</span>
-          <span style="color:#ffffff;">${totalArusOut.toFixed(2)} A</span>
-          <span style="color:#fde047; border-top:1px solid rgba(56,189,248,0.35); width:100%; margin-top:2px; padding-top:2px;">${totalDayaOut.toFixed(2)} W</span>
+        elKolom2Out.innerHTML = `
+          <span style="color:#ffffff;">${mppt.avgVoltOutMppt.toFixed(2)} V</span>
+          <span style="color:#ffffff;">${mppt.totalArusOutMppt.toFixed(2)} A</span>
+          <span style="color:#fde047; border-top:1px solid rgba(56,189,248,0.35); width:100%; margin-top:2px; padding-top:2px;">${mppt.totalDayaOutMppt.toFixed(2)} W</span>
         `;
       } else {
-        elDayaMppt.textContent = totalDayaOut.toFixed(2) + " W";
+        elKolom2Out.textContent = mppt.totalDayaOutMppt.toFixed(2) + " W";
       }
     }
   }
 
   function perbaruiAnimasiDiagram() {
-    // 1. Ambil langsung data Baterai DC dari Ringkasan Sistem Total
-    const elVoltUtama  = document.getElementById('avg-voltage');
+    const mppt = hitungDataMpptAkurat();
+
     const elArusUtama  = document.getElementById('total-current');
     const elPowerUtama = document.getElementById('total-power');
 
-    const voltDcAsli  = (elVoltUtama && elVoltUtama.textContent.trim() !== "-" && elVoltUtama.textContent.trim() !== "") ? elVoltUtama.textContent.trim() : "0.00 V";
-    const arusDcAsli  = (elArusUtama && elArusUtama.textContent.trim() !== "-" && elArusUtama.textContent.trim() !== "") ? elArusUtama.textContent.trim() : "0.00 A";
-    const dayaDcAsli  = (elPowerUtama && elPowerUtama.textContent.trim() !== "-" && elPowerUtama.textContent.trim() !== "") ? elPowerUtama.textContent.trim() : "0 W";
+    const arusBms  = parseFloat(elArusUtama ? elArusUtama.textContent : "0") || 0;
+    const dayaBms  = parseFloat(elPowerUtama ? elPowerUtama.textContent : "0") || 0;
 
-    // 2. Isi ke kotak Sisi Kanan (3 baris di HP, 2 baris di Laptop/PC)
-    const elInfoKanan = document.getElementById('nilaiInfoDcBawahTv');
-    const elDayaTv    = document.getElementById('nilaiDayaBawahTv');
-    const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
+    // 3. KALKULASI BEBAN RUMAH (KOLOM 3 - DI ATAS RUMAH)
+    const dayaBebanAkurat = Math.max(0, mppt.totalDayaOutMppt - dayaBms);
+    const arusBebanAkurat = mppt.voltBms > 10 ? (dayaBebanAkurat / mppt.voltBms) : Math.max(0, mppt.totalArusOutMppt - arusBms);
 
-    if (elInfoKanan) {
+    const elKolom3Beban = document.getElementById('nilaiInfoDcBawahTv');
+    const elDayaTv      = document.getElementById('nilaiDayaBawahTv');
+    const isMobileMode  = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
+
+    if (elKolom3Beban) {
       if (isMobileMode) {
-        elInfoKanan.innerHTML = `
-          <span style="color:#ffffff;">${voltDcAsli}</span>
-          <span style="color:#ffffff;">${arusDcAsli}</span>
-          <span style="color:#fde047; border-top:1px solid rgba(56,189,248,0.35); width:100%; margin-top:2px; padding-top:2px;">${dayaDcAsli}</span>
+        elKolom3Beban.innerHTML = `
+          <span style="color:#ffffff;">${mppt.voltBms.toFixed(2)} V</span>
+          <span style="color:#ffffff;">${arusBebanAkurat.toFixed(2)} A</span>
+          <span style="color:#fde047; border-top:1px solid rgba(56,189,248,0.35); width:100%; margin-top:2px; padding-top:2px;">${dayaBebanAkurat.toFixed(2)} W</span>
         `;
       } else {
-        elInfoKanan.innerHTML = `<span style="color:#ffffff;">${voltDcAsli}</span><span style="color:#ffffff;">${arusDcAsli}</span>`;
+        elKolom3Beban.innerHTML = `<span style="color:#ffffff;">${mppt.voltBms.toFixed(2)} V</span><span style="color:#ffffff;">${arusBebanAkurat.toFixed(2)} A</span>`;
       }
     }
     if (elDayaTv) {
-      elDayaTv.textContent = dayaDcAsli;
+      elDayaTv.textContent = dayaBebanAkurat.toFixed(1) + " W";
     }
 
-    // Perbarui total arus MPPT di samping kiri baterai
     perbaruiTampilanArusMppt();
 
-    // 3. Deteksi status Baterai & Tegangan Panel Surya (Volt PV > 35V)
-    const nilaiArusAngka = parseFloat(arusDcAsli) || 0;
     const elSocUtama     = document.getElementById('avg-soc');
     const nilaiSocAngka  = parseFloat(elSocUtama ? elSocUtama.textContent : "0") || 0;
 
-    const modeCharge     = nilaiArusAngka > 0.1;
-    const modeStandby    = Math.abs(nilaiArusAngka) <= 0.1;
+    const modeCharge     = arusBms > 0.1;
+    const modeStandby    = Math.abs(arusBms) <= 0.1;
     const bateraiFull    = nilaiSocAngka >= 99.0;
 
     const maxVoltPv      = Math.max(voltPvSamoto, voltPvTechfine);
@@ -3295,7 +3318,7 @@ function updateModal() {
 
       elBadge.textContent = "🟢 CHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-semibold";
-      elSub.textContent = "Panel surya aktif mengisi baterai (DC turun) & menyuplai beban.";
+      elSub.textContent = `MPPT mengisi baterai (${dayaBms.toFixed(0)} W) & menyuplai beban (${dayaBebanAkurat.toFixed(0)} W).`;
     } else if (modeStandby) {
       elDcBatt.classList.add('hidden');
       elDcBatt.classList.remove('anim-batt-naik', 'anim-batt-turun');
@@ -3303,7 +3326,7 @@ function updateModal() {
       if (bateraiFull || adaSinarPv) {
         elBadge.textContent = "🔵 FULL / STANDBY";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
-        elSub.textContent = "Baterai penuh / Standby. Panel surya langsung menyuplai beban.";
+        elSub.textContent = "Baterai penuh / Standby. MPPT langsung menyuplai beban.";
       } else {
         elBadge.textContent = "🔵 STANDBY";
         elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-sky-600 text-white font-semibold";
@@ -3316,8 +3339,8 @@ function updateModal() {
       elBadge.textContent = "🟠 DISCHARGING";
       elBadge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-600 text-white font-semibold";
       elSub.textContent = adaSinarPv
-        ? `Panel surya (${maxVoltPv.toFixed(1)}V) & baterai bekerja bersama menyuplai beban.`
-        : "Baterai menyuplai daya ke inverter (DC naik).";
+        ? `MPPT (${mppt.totalDayaOutMppt.toFixed(0)} W) & baterai (${Math.abs(dayaBms).toFixed(0)} W) menyuplai beban.`
+        : `Baterai menyuplai daya ke beban (${dayaBebanAkurat.toFixed(0)} W).`;
     }
   }
 
@@ -3338,7 +3361,6 @@ function updateModal() {
     perbaruiAnimasiDiagram();
     document.getElementById('modalDiagramPlts').classList.remove('hidden');
 
-    // Jeda sementara video background saat pop-up PLTS terbuka agar 100% GPU fokus ke PLTS
     const defVid = document.getElementById('default-bg-vid');
     const custVid = document.getElementById('custom-bg-vid');
     if (defVid && defVid.style.display !== 'none') defVid.pause();
@@ -3348,7 +3370,6 @@ function updateModal() {
   function tutupModalDiagram() {
     document.getElementById('modalDiagramPlts').classList.add('hidden');
 
-    // Lanjutkan kembali video background saat pop-up PLTS ditutup
     const defVid = document.getElementById('default-bg-vid');
     const custVid = document.getElementById('custom-bg-vid');
     if (defVid && defVid.style.display !== 'none') defVid.play().catch(() => {});
@@ -3382,7 +3403,6 @@ function updateModal() {
     }
   }
 
-  // Listener MQTT untuk menangkap kWh, Volt PV, & Arus Charge dari MPPT Samoto (14751036) dan Techfine (9193904)
   (function initMpptEnergyMerge() {
     const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
     const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
@@ -3403,95 +3423,80 @@ function updateModal() {
       const isTechfine = topic.startsWith("9193904/");
       if (!isSamoto && !isTechfine) return;
 
-      // 1. Jika payload format JSON
       if (rawStr.startsWith("{")) {
         try {
           const data = JSON.parse(rawStr);
+
           const kwhVal = data.kwh ?? data.e_day ?? data.energy ?? data.d_kwh ?? data.D;
           if (kwhVal !== undefined && !isNaN(parseFloat(kwhVal))) {
-            if (isSamoto) {
-              kwhSamoto = parseFloat(kwhVal);
-              localStorage.setItem('mppt_samoto_kwh', kwhSamoto.toString());
-            } else {
-              kwhTechfine = parseFloat(kwhVal);
-              localStorage.setItem('mppt_techfine_kwh', kwhTechfine.toString());
-            }
+            if (isSamoto) { kwhSamoto = parseFloat(kwhVal); localStorage.setItem('mppt_samoto_kwh', kwhSamoto.toString()); }
+            else { kwhTechfine = parseFloat(kwhVal); localStorage.setItem('mppt_techfine_kwh', kwhTechfine.toString()); }
             updateProduksiChargeKwh();
           }
 
-          const pvVolt = parseFloat(data.pv_v ?? data.volt_pv ?? data.vpv ?? data.pv_volt ?? data.V ?? 0);
-          if (!isNaN(pvVolt) && pvVolt > 0) {
+          const pvVolt = parseFloat(data.pv_v ?? data.volt_pv ?? data.vpv ?? data.pv_volt ?? data.V ?? NaN);
+          if (!isNaN(pvVolt) && pvVolt >= 0) {
             lastMpptUpdate = Date.now();
-            if (isSamoto) voltPvSamoto = pvVolt;
-            else voltPvTechfine = pvVolt;
+            if (isSamoto) voltPvSamoto = pvVolt; else voltPvTechfine = pvVolt;
           }
 
           const pvCurr = parseFloat(data.pv_i ?? data.ipv ?? data.pv_curr ?? data.curr_pv ?? NaN);
           if (!isNaN(pvCurr)) {
-            if (isSamoto) arusPvSamoto = pvCurr;
-            else arusPvTechfine = pvCurr;
-            perbaruiTampilanArusMppt();
+            if (isSamoto) arusPvSamoto = pvCurr; else arusPvTechfine = pvCurr;
           }
 
-          // Tangkap Arus Output/Charge MPPT dari JSON
-          const mpptCurr = parseFloat(data.chg_i ?? data.bat_i ?? data.out_i ?? data.curr ?? data.ampere ?? data.I ?? NaN);
-          if (!isNaN(mpptCurr)) {
-            if (isSamoto) arusMpptSamoto = mpptCurr;
-            else arusMpptTechfine = mpptCurr;
-            perbaruiTampilanArusMppt();
+          const pvWatt = parseFloat(data.pv_w ?? data.pv_p ?? data.pv_power ?? NaN);
+          if (!isNaN(pvWatt)) {
+            if (isSamoto) dayaPvSamoto = pvWatt; else dayaPvTechfine = pvWatt;
           }
 
-          const mpptWatt = parseFloat(data.chg_w ?? data.pv_w ?? data.power ?? data.watt ?? data.W ?? data.P ?? NaN);
-          if (!isNaN(mpptWatt)) {
-            if (isSamoto) dayaMpptSamoto = mpptWatt;
-            else dayaMpptTechfine = mpptWatt;
-            perbaruiTampilanArusMppt();
+          const outVolt = parseFloat(data.bat_v ?? data.vbat ?? data.out_v ?? data.volt_bat ?? data.chg_v ?? NaN);
+          if (!isNaN(outVolt) && outVolt > 10) {
+            if (isSamoto) voltOutSamoto = outVolt; else voltOutTechfine = outVolt;
           }
 
+          const outCurr = parseFloat(data.chg_i ?? data.bat_i ?? data.out_i ?? data.curr ?? data.ampere ?? data.I ?? NaN);
+          if (!isNaN(outCurr)) {
+            if (isSamoto) arusOutSamoto = outCurr; else arusOutTechfine = outCurr;
+          }
+
+          const outWatt = parseFloat(data.chg_w ?? data.bat_w ?? data.out_w ?? data.power ?? data.watt ?? data.W ?? data.P ?? NaN);
+          if (!isNaN(outWatt)) {
+            if (isSamoto) dayaOutSamoto = outWatt; else dayaOutTechfine = outWatt;
+          }
+
+          perbaruiTampilanArusMppt();
           return;
         } catch (e) {}
       }
 
-      // 2. Jika payload berupa angka biasa per topik
       const val = parseFloat(rawStr);
       if (isNaN(val)) return;
 
       if (lowerTopic.includes("kwh") || lowerTopic.includes("day") || lowerTopic.includes("energy") || lowerTopic.includes("e_day") || lowerTopic.includes("total_e")) {
-        if (isSamoto) {
-          kwhSamoto = val;
-          localStorage.setItem('mppt_samoto_kwh', val.toString());
-        } else {
-          kwhTechfine = val;
-          localStorage.setItem('mppt_techfine_kwh', val.toString());
-        }
+        if (isSamoto) { kwhSamoto = val; localStorage.setItem('mppt_samoto_kwh', val.toString()); }
+        else { kwhTechfine = val; localStorage.setItem('mppt_techfine_kwh', val.toString()); }
         updateProduksiChargeKwh();
       }
 
-      if (lowerTopic.includes("pv_i") || lowerTopic.includes("ipv") || lowerTopic.includes("pv_curr") || lowerTopic.includes("arus_pv")) {
-        if (isSamoto) arusPvSamoto = val;
-        else arusPvTechfine = val;
-        perbaruiTampilanArusMppt();
-      }
-
-      // Deteksi topik Volt PV (Tegangan Panel Surya)
       if (lowerTopic.includes("pv_v") || lowerTopic.includes("volt_pv") || lowerTopic.includes("vpv") || lowerTopic.includes("pv_volt") || lowerTopic.endsWith("/v")) {
         lastMpptUpdate = Date.now();
-        if (isSamoto) voltPvSamoto = val;
-        else voltPvTechfine = val;
+        if (isSamoto) voltPvSamoto = val; else voltPvTechfine = val;
+      } else if (lowerTopic.includes("pv_i") || lowerTopic.includes("ipv") || lowerTopic.includes("pv_curr") || lowerTopic.includes("arus_pv")) {
+        if (isSamoto) arusPvSamoto = val; else arusPvTechfine = val;
+      } else if (lowerTopic.includes("pv_w") || lowerTopic.includes("pv_p") || lowerTopic.includes("daya_pv")) {
+        if (isSamoto) dayaPvSamoto = val; else dayaPvTechfine = val;
       }
 
-      // Deteksi topik Arus MPPT (misal: /arus, /ampere, /chg_i, /bat_i, /i)
-      if (lowerTopic.includes("arus") || lowerTopic.includes("amp") || lowerTopic.includes("chg_i") || lowerTopic.includes("bat_i") || lowerTopic.includes("curr") || lowerTopic.endsWith("/i")) {
-        if (isSamoto) arusMpptSamoto = val;
-        else arusMpptTechfine = val;
-        perbaruiTampilanArusMppt();
+      if (lowerTopic.includes("bat_v") || lowerTopic.includes("vbat") || lowerTopic.includes("out_v") || lowerTopic.includes("volt_bat") || lowerTopic.includes("chg_v")) {
+        if (isSamoto) voltOutSamoto = val; else voltOutTechfine = val;
+      } else if (lowerTopic.includes("arus") || lowerTopic.includes("amp") || lowerTopic.includes("chg_i") || lowerTopic.includes("bat_i") || lowerTopic.includes("out_i") || lowerTopic.includes("curr") || lowerTopic.endsWith("/i")) {
+        if (isSamoto) arusOutSamoto = val; else arusOutTechfine = val;
+      } else if (lowerTopic.includes("daya") || lowerTopic.includes("watt") || lowerTopic.includes("power") || lowerTopic.includes("chg_w") || lowerTopic.endsWith("/w") || lowerTopic.endsWith("/p")) {
+        if (isSamoto) dayaOutSamoto = val; else dayaOutTechfine = val;
       }
 
-      if (lowerTopic.includes("daya") || lowerTopic.includes("watt") || lowerTopic.includes("power") || lowerTopic.endsWith("/w") || lowerTopic.endsWith("/p")) {
-        if (isSamoto) dayaMpptSamoto = val;
-        else dayaMpptTechfine = val;
-        perbaruiTampilanArusMppt();
-      }
+      perbaruiTampilanArusMppt();
     });
   })();
 
