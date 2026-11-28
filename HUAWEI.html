@@ -3163,38 +3163,21 @@ function updateModal() {
 </div>
 
 <script>
-  // Variabel terpisah untuk Input PV dan Output Baterai milik MPPT Samoto (14751036) & Techfine (9193904)
+  // Variabel terpisah sesuai nama sensor asli MQTT dari Samoto (14751036) & Techfine (9193904)
   let voltPvSamoto = 0.0, voltPvTechfine = 0.0;
-  let arusPvSamoto = 0.0, arusPvTechfine = 0.0;
-  let dayaPvSamoto = 0.0, dayaPvTechfine = 0.0;
-
   let voltOutSamoto = 0.0, voltOutTechfine = 0.0;
   let arusOutSamoto = 0.0, arusOutTechfine = 0.0;
   let dayaOutSamoto = 0.0, dayaOutTechfine = 0.0;
-
   let lastMpptUpdate = 0;
 
   let kwhSamoto = parseFloat(localStorage.getItem('mppt_samoto_kwh')) || 0.0;
   let kwhTechfine = parseFloat(localStorage.getItem('mppt_techfine_kwh')) || 0.0;
 
   function hitungDataMpptAkurat() {
-    // 1. KALKULASI INPUT PANEL SURYA (KOLOM 1 - ATAS)
-    const vPv1 = parseFloat(voltPvSamoto) || 0;
-    const vPv2 = parseFloat(voltPvTechfine) || 0;
-    const avgVoltPv = (vPv1 > 0 && vPv2 > 0) ? ((vPv1 + vPv2) / 2) : Math.max(vPv1, vPv2);
-
-    const wPv1 = dayaPvSamoto > 0 ? dayaPvSamoto : (vPv1 * arusPvSamoto);
-    const wPv2 = dayaPvTechfine > 0 ? dayaPvTechfine : (vPv2 * arusPvTechfine);
-    const totalDayaPv = wPv1 + wPv2;
-
-    const iPv1 = arusPvSamoto > 0 ? arusPvSamoto : (vPv1 > 0 ? (wPv1 / vPv1) : 0);
-    const iPv2 = arusPvTechfine > 0 ? arusPvTechfine : (vPv2 > 0 ? (wPv2 / vPv2) : 0);
-    const totalArusPv = iPv1 + iPv2;
-
-    // 2. KALKULASI OUTPUT MPPT KE SISTEM/BATERAI (KOLOM 2 - KIRI MPPT)
     const elVoltBms = document.getElementById('avg-voltage');
     const voltBms = parseFloat(elVoltBms ? elVoltBms.textContent : "0") || 0;
 
+    // 1. OUTPUT MPPT KE SISTEM/BATERAI (KOLOM 2 - SAMPING KIRI MPPT)
     const vOut1 = voltOutSamoto > 10 ? voltOutSamoto : voltBms;
     const vOut2 = voltOutTechfine > 10 ? voltOutTechfine : voltBms;
     const avgVoltOutMppt = (voltOutSamoto > 10 && voltOutTechfine > 10)
@@ -3205,9 +3188,26 @@ function updateModal() {
     const iOut2 = parseFloat(arusOutTechfine) || 0;
     const totalArusOutMppt = iOut1 + iOut2;
 
+    // Gunakan sensor 'power' asli jika ada, atau hitung Vbat x Current
     const wOut1 = dayaOutSamoto > 0 ? dayaOutSamoto : (vOut1 * iOut1);
     const wOut2 = dayaOutTechfine > 0 ? dayaOutTechfine : (vOut2 * iOut2);
     const totalDayaOutMppt = wOut1 + wOut2;
+
+    // 2. INPUT PANEL SURYA (KOLOM 1 - PALING ATAS DEKAT PANEL SURYA)
+    const vPv1 = parseFloat(voltPvSamoto) || 0;
+    const vPv2 = parseFloat(voltPvTechfine) || 0;
+    const avgVoltPv = (vPv1 > 0 && vPv2 > 0) ? ((vPv1 + vPv2) / 2) : Math.max(vPv1, vPv2);
+
+    // Efisiensi konversi DC-DC MPPT ~97% (Daya PV sedikit lebih besar dari Daya Output MPPT)
+    const efisiensiMppt = 0.97;
+    const wPv1 = wOut1 > 0 ? (wOut1 / efisiensiMppt) : 0;
+    const wPv2 = wOut2 > 0 ? (wOut2 / efisiensiMppt) : 0;
+    const totalDayaPv = wPv1 + wPv2;
+
+    // Hitung arus masing-masing string PV secara terpisah lalu jumlahkan (I_pv1 + I_pv2)
+    const iPv1 = vPv1 > 10 ? (wPv1 / vPv1) : 0;
+    const iPv2 = vPv2 > 10 ? (wPv2 / vPv2) : 0;
+    const totalArusPv = iPv1 + iPv2;
 
     return {
       avgVoltPv,
@@ -3220,12 +3220,13 @@ function updateModal() {
     };
   }
 
-    function perbaruiTampilanArusMppt() {
+  function perbaruiTampilanArusMppt() {
     const mppt = hitungDataMpptAkurat();
     const isMobileMode = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1023;
     const elKolom1Pv = document.getElementById('nilaiArusMppt');
     const elKolom2Out = document.getElementById('nilaiDayaMppt');
 
+    // Kolom 1: Input Panel Surya (PV)
     if (elKolom1Pv) {
       if (isMobileMode) {
         elKolom1Pv.innerHTML = `
@@ -3238,6 +3239,7 @@ function updateModal() {
       }
     }
 
+    // Kolom 2: Output MPPT ke Sistem/Baterai (50.60 V pada layar MPPT)
     if (elKolom2Out) {
       if (isMobileMode) {
         elKolom2Out.innerHTML = `
@@ -3260,7 +3262,8 @@ function updateModal() {
     const arusBms  = parseFloat(elArusUtama ? elArusUtama.textContent : "0") || 0;
     const dayaBms  = parseFloat(elPowerUtama ? elPowerUtama.textContent : "0") || 0;
 
-    // 3. KALKULASI BEBAN RUMAH (KOLOM 3 - DI ATAS RUMAH)
+    // 3. BEBAN RUMAH (KOLOM 3 - DI ATAS RUMAH)
+    // Daya Beban = Total Daya Output MPPT - Daya Masuk Baterai (BMS)
     const dayaBebanAkurat = Math.max(0, mppt.totalDayaOutMppt - dayaBms);
     const arusBebanAkurat = mppt.voltBms > 10 ? (dayaBebanAkurat / mppt.voltBms) : Math.max(0, mppt.totalArusOutMppt - arusBms);
 
@@ -3403,6 +3406,7 @@ function updateModal() {
     }
   }
 
+  // Listener MQTT Presisi sesuai nama topik asli Samoto (14751036) & Techfine (9193904)
   (function initMpptEnergyMerge() {
     const mpptClientId = "WebRezky_MPPT_Merge_" + Math.random().toString(16).substring(2, 8);
     const mpptClient = mqtt.connect("wss://public:public@public.cloud.shiftr.io", {
@@ -3418,82 +3422,41 @@ function updateModal() {
 
     mpptClient.on("message", (topic, payload) => {
       const rawStr = payload.toString().trim();
-      const lowerTopic = topic.toLowerCase();
       const isSamoto = topic.startsWith("14751036/");
       const isTechfine = topic.startsWith("9193904/");
       if (!isSamoto && !isTechfine) return;
 
-      if (rawStr.startsWith("{")) {
-        try {
-          const data = JSON.parse(rawStr);
-
-          const kwhVal = data.kwh ?? data.e_day ?? data.energy ?? data.d_kwh ?? data.D;
-          if (kwhVal !== undefined && !isNaN(parseFloat(kwhVal))) {
-            if (isSamoto) { kwhSamoto = parseFloat(kwhVal); localStorage.setItem('mppt_samoto_kwh', kwhSamoto.toString()); }
-            else { kwhTechfine = parseFloat(kwhVal); localStorage.setItem('mppt_techfine_kwh', kwhTechfine.toString()); }
-            updateProduksiChargeKwh();
-          }
-
-          const pvVolt = parseFloat(data.pv_v ?? data.volt_pv ?? data.vpv ?? data.pv_volt ?? data.V ?? NaN);
-          if (!isNaN(pvVolt) && pvVolt >= 0) {
-            lastMpptUpdate = Date.now();
-            if (isSamoto) voltPvSamoto = pvVolt; else voltPvTechfine = pvVolt;
-          }
-
-          const pvCurr = parseFloat(data.pv_i ?? data.ipv ?? data.pv_curr ?? data.curr_pv ?? NaN);
-          if (!isNaN(pvCurr)) {
-            if (isSamoto) arusPvSamoto = pvCurr; else arusPvTechfine = pvCurr;
-          }
-
-          const pvWatt = parseFloat(data.pv_w ?? data.pv_p ?? data.pv_power ?? NaN);
-          if (!isNaN(pvWatt)) {
-            if (isSamoto) dayaPvSamoto = pvWatt; else dayaPvTechfine = pvWatt;
-          }
-
-          const outVolt = parseFloat(data.bat_v ?? data.vbat ?? data.out_v ?? data.volt_bat ?? data.chg_v ?? NaN);
-          if (!isNaN(outVolt) && outVolt > 10) {
-            if (isSamoto) voltOutSamoto = outVolt; else voltOutTechfine = outVolt;
-          }
-
-          const outCurr = parseFloat(data.chg_i ?? data.bat_i ?? data.out_i ?? data.curr ?? data.ampere ?? data.I ?? NaN);
-          if (!isNaN(outCurr)) {
-            if (isSamoto) arusOutSamoto = outCurr; else arusOutTechfine = outCurr;
-          }
-
-          const outWatt = parseFloat(data.chg_w ?? data.bat_w ?? data.out_w ?? data.power ?? data.watt ?? data.W ?? data.P ?? NaN);
-          if (!isNaN(outWatt)) {
-            if (isSamoto) dayaOutSamoto = outWatt; else dayaOutTechfine = outWatt;
-          }
-
-          perbaruiTampilanArusMppt();
-          return;
-        } catch (e) {}
-      }
-
+      // Ambil nama sensor di segmen terakhir topik (misal: vpv, pv, vbat, current, power, daye)
+      const sensorKey = topic.split('/').pop().toLowerCase();
       const val = parseFloat(rawStr);
       if (isNaN(val)) return;
 
-      if (lowerTopic.includes("kwh") || lowerTopic.includes("day") || lowerTopic.includes("energy") || lowerTopic.includes("e_day") || lowerTopic.includes("total_e")) {
+      // 1. Produksi Energi Harian ('daye' pada Samoto & Techfine)
+      if (sensorKey === "daye" || sensorKey === "kwh" || sensorKey === "e_day") {
         if (isSamoto) { kwhSamoto = val; localStorage.setItem('mppt_samoto_kwh', val.toString()); }
         else { kwhTechfine = val; localStorage.setItem('mppt_techfine_kwh', val.toString()); }
         updateProduksiChargeKwh();
       }
-
-      if (lowerTopic.includes("pv_v") || lowerTopic.includes("volt_pv") || lowerTopic.includes("vpv") || lowerTopic.includes("pv_volt") || lowerTopic.endsWith("/v")) {
+      // 2. Tegangan Panel Surya ('vpv' pada Samoto, 'pv' atau 'vpv' pada Techfine)
+      else if (sensorKey === "vpv" || sensorKey === "pv") {
         lastMpptUpdate = Date.now();
-        if (isSamoto) voltPvSamoto = val; else voltPvTechfine = val;
-      } else if (lowerTopic.includes("pv_i") || lowerTopic.includes("ipv") || lowerTopic.includes("pv_curr") || lowerTopic.includes("arus_pv")) {
-        if (isSamoto) arusPvSamoto = val; else arusPvTechfine = val;
-      } else if (lowerTopic.includes("pv_w") || lowerTopic.includes("pv_p") || lowerTopic.includes("daya_pv")) {
-        if (isSamoto) dayaPvSamoto = val; else dayaPvTechfine = val;
+        if (isSamoto) voltPvSamoto = val;
+        else voltPvTechfine = val;
       }
-
-      if (lowerTopic.includes("bat_v") || lowerTopic.includes("vbat") || lowerTopic.includes("out_v") || lowerTopic.includes("volt_bat") || lowerTopic.includes("chg_v")) {
-        if (isSamoto) voltOutSamoto = val; else voltOutTechfine = val;
-      } else if (lowerTopic.includes("arus") || lowerTopic.includes("amp") || lowerTopic.includes("chg_i") || lowerTopic.includes("bat_i") || lowerTopic.includes("out_i") || lowerTopic.includes("curr") || lowerTopic.endsWith("/i")) {
-        if (isSamoto) arusOutSamoto = val; else arusOutTechfine = val;
-      } else if (lowerTopic.includes("daya") || lowerTopic.includes("watt") || lowerTopic.includes("power") || lowerTopic.includes("chg_w") || lowerTopic.endsWith("/w") || lowerTopic.endsWith("/p")) {
-        if (isSamoto) dayaOutSamoto = val; else dayaOutTechfine = val;
+      // 3. Tegangan Output Baterai di Layar MPPT ('vbat' pada Samoto & Techfine -> 50.60 V)
+      else if (sensorKey === "vbat" || sensorKey === "bat") {
+        if (isSamoto) voltOutSamoto = val;
+        else voltOutTechfine = val;
+      }
+      // 4. Arus Output MPPT ('current' pada Samoto & Techfine)
+      else if (sensorKey === "current" || sensorKey === "curr") {
+        if (isSamoto) arusOutSamoto = val;
+        else arusOutTechfine = val;
+      }
+      // 5. Daya Output MPPT ('power' pada Samoto & Techfine)
+      else if (sensorKey === "power" || sensorKey === "daya") {
+        if (isSamoto) dayaOutSamoto = val;
+        else dayaOutTechfine = val;
       }
 
       perbaruiTampilanArusMppt();
